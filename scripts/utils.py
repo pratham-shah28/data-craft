@@ -16,18 +16,74 @@ def detect_encoding(file_path):
         confidence = result['confidence']
         return encoding, confidence
     
-def setup_logging(name="root"):
-    logger = logging.getLogger(name)
+def setup_logging(log_name):
+    """
+    Setup logging configuration for pipeline components
+    Ensures logs are always created in project_root/logs/ directory
+    
+    Args:
+        log_name (str): Name of the logger (used for log file naming)
+    
+    Returns:
+        logging.Logger: Configured logger instance
+    """
+    import sys
+    from pathlib import Path
+    
+    # Determine project root
+    # If running from scripts/, go up one level
+    # If running from project root, stay there
+    current_file = Path(__file__).resolve()
+    
+    if current_file.parent.name == 'scripts':
+        project_root = current_file.parent.parent
+    else:
+        project_root = current_file.parent
+    
+    # Create logs directory in project root
+    log_dir = project_root / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Create unique log file with timestamp
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_file = log_dir / f"{log_name}_{timestamp}.log"
+    
+    # Create logger
+    logger = logging.getLogger(log_name)
     logger.setLevel(logging.INFO)
     
-    if not logger.handlers:
-        handler = logging.StreamHandler(sys.stdout)
-        # Set formatter
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        handler.setFormatter(formatter)
-        # Force UTF-8 encoding
-        handler.setStream(sys.stdout)
-        logger.addHandler(handler)
+    # Prevent duplicate handlers
+    if logger.handlers:
+        logger.handlers.clear()
+    
+    # Detailed formatter for file logs
+    detailed_formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    
+    # Simple formatter for console
+    simple_formatter = logging.Formatter(
+        '%(levelname)s - %(message)s'
+    )
+    
+    # File handler - save everything to file
+    try:
+        file_handler = logging.FileHandler(log_file, encoding='utf-8', mode='w')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(detailed_formatter)
+        logger.addHandler(file_handler)
+    except Exception as e:
+        print(f"Warning: Could not create log file: {e}")
+    
+    # Console handler - only important messages
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(simple_formatter)
+    logger.addHandler(console_handler)
+    
+    # First log message shows where logs are saved
+    logger.debug(f"Log file created: {log_file}")
     
     return logger
 

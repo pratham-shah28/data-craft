@@ -1,0 +1,13 @@
+2025-10-27 18:38:28 - data_validation - INFO - Starting data validation for: orders
+2025-10-27 18:38:29 - data_validation - INFO - Loaded data: (51290, 24)
+2025-10-27 18:38:29 - data_validation - INFO - Validating basic structure...
+2025-10-27 18:38:29 - data_validation - INFO - Structure validation passed
+2025-10-27 18:38:29 - data_validation - INFO - Checking for null values...
+2025-10-27 18:38:29 - data_validation - WARNING - Null check failed. Columns exceeding threshold: ['Postal Code']
+2025-10-27 18:38:29 - data_validation - INFO - Checking for duplicates...
+2025-10-27 18:38:29 - data_validation - INFO - Duplicate check passed. Found 0 duplicates (0.00%)
+2025-10-27 18:38:29 - data_validation - INFO - Detecting anomalies...
+2025-10-27 18:38:29 - data_validation - INFO - Found anomalies in 4 columns
+2025-10-27 18:38:29 - data_validation - INFO - Validation report saved to data\processed\orders_validation_report.json
+2025-10-27 18:38:29 - data_validation - INFO - Validated data saved to data\processed\orders_validated.csv
+2025-10-27 18:38:29 - data_validation - WARNING - ⚠ Some validation checks failed. Review validation report.
