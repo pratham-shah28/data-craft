@@ -1,0 +1,104 @@
+{
+  "timestamp": "2025-10-27T05:27:17.718109",
+  "dataset_name": "orders",
+  "checks": {
+    "structure": {
+      "valid": true,
+      "actual_rows": 51290,
+      "actual_columns": 24,
+      "min_rows_required": 10,
+      "min_columns_required": 2
+    },
+    "nulls": {
+      "valid": false,
+      "threshold": 0.15,
+      "null_percentages": {
+        "Row ID": 0.0,
+        "Order ID": 0.0,
+        "Order date": 0.0,
+        "ship date ": 0.0,
+        "Ship Mode": 0.0,
+        "Customer ID": 0.0,
+        "Customer Name": 0.0,
+        "Segment": 0.0,
+        "City": 0.0,
+        "State": 0.0,
+        "Country": 0.0,
+        "Postal Code": 0.8051472021836615,
+        "Market": 0.0,
+        "Region": 0.0,
+        "Product ID": 0.0,
+        "Category": 0.0,
+        "Sub-Category": 0.0,
+        "Product Name": 0.0,
+        "Sales": 0.0,
+        "Quantity": 0.0,
+        "Discount": 0.0,
+        "Profit": 0.0,
+        "Shipping Cost": 0.0,
+        "Order Priority": 0.0
+      },
+      "columns_exceeding_threshold": {
+        "Postal Code": 0.8051472021836615
+      },
+      "total_null_cells": 41296,
+      "null_percentage_overall": 3.3547800090985893
+    },
+    "duplicates": {
+      "valid": true,
+      "threshold": 0.05,
+      "duplicate_count": 0,
+      "duplicate_percentage": 0.0
+    },
+    "anomalies": {
+      "columns_analyzed": [
+        "Postal Code",
+        "Sales",
+        "Discount",
+        "Profit",
+        "Shipping Cost"
+      ],
+      "columns_with_anomalies": [
+        "Sales",
+        "Discount",
+        "Profit",
+        "Shipping Cost"
+      ],
+      "details": {
+        "Sales": {
+          "outlier_count": 3010,
+          "outlier_percentage": 5.8685903684928835,
+          "lower_bound": -630.1251,
+          "upper_bound": 911.936925,
+          "min_value": 0.444,
+          "max_value": 22638.48
+        },
+        "Discount": {
+          "outlier_count": 2,
+          "outlier_percentage": 0.0038993955936829795,
+          "lower_bound": -0.6000000000000001,
+          "upper_bound": 0.8,
+          "min_value": 0.0,
+          "max_value": 0.85
+        },
+        "Profit": {
+          "outlier_count": 5920,
+          "outlier_percentage": 11.542210957301618,
+          "lower_bound": -110.43,
+          "upper_bound": 147.24,
+          "min_value": -6599.978,
+          "max_value": 8399.976
+        },
+        "Shipping Cost": {
+          "outlier_count": 3415,
+          "outlier_percentage": 6.658217976213687,
+          "lower_bound": -62.91,
+          "upper_bound": 89.97,
+          "min_value": 0.002,
+          "max_value": 933.57
+        }
+      }
+    }
+  },
+  "overall_valid": false
+}

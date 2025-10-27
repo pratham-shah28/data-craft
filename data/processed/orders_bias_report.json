@@ -1,0 +1,3629 @@
+{
+  "timestamp": "2025-10-27T05:27:26.542529",
+  "dataset_name": "orders",
+  "analysis": {
+    "Ship Mode": {
+      "representation_bias": {
+        "representation_by_group": {
+          "Standard Class": {
+            "count": 30775,
+            "percentage": 60.00194969779684,
+            "under_represented": false
+          },
+          "Second Class": {
+            "count": 10309,
+            "percentage": 20.099434587638914,
+            "under_represented": false
+          },
+          "First Class": {
+            "count": 7505,
+            "percentage": 14.63248196529538,
+            "under_represented": false
+          },
+          "Same Day": {
+            "count": 2701,
+            "percentage": 5.266133749268864,
+            "under_represented": true
+          }
+        },
+        "under_represented_groups": [
+          "Same Day"
+        ],
+        "has_representation_bias": true,
+        "interpretation": "1 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "First Class": {
+              "count": 1538,
+              "mean": 54765.61,
+              "median": 60016.0,
+              "std": 32766.64,
+              "min": 1810.0,
+              "max": 99207.0
+            },
+            "Same Day": {
+              "count": 543,
+              "mean": 57536.08,
+              "median": 60076.0,
+              "std": 31333.56,
+              "min": 1841.0,
+              "max": 99207.0
+            },
+            "Second Class": {
+              "count": 1945,
+              "mean": 55626.01,
+              "median": 60505.0,
+              "std": 31966.04,
+              "min": 1841.0,
+              "max": 99207.0
+            },
+            "Standard Class": {
+              "count": 5968,
+              "mean": 54944.45,
+              "median": 55407.0,
+              "std": 31975.47,
+              "min": 1040.0,
+              "max": 99301.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9518481116363646,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Same Day",
+            "underprivileged_group": "First Class",
+            "privileged_mean": 57536.08287292818,
+            "underprivileged_mean": 54765.611833550065,
+            "interpretation": "Ratio of 0.95 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.5748791376856179,
+            "max_cv": 0.5983069167116641,
+            "min_cv": 0.5445897047434601,
+            "cv_by_group": {
+              "First Class": 0.5983069167116641,
+              "Same Day": 0.5445897047434601,
+              "Second Class": 0.5746599534995909,
+              "Standard Class": 0.5819599757877568
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "First Class": {
+              "count": 7505,
+              "mean": 243.97,
+              "median": 84.42,
+              "std": 482.88,
+              "min": 0.98,
+              "max": 13999.96
+            },
+            "Same Day": {
+              "count": 2701,
+              "mean": 247.02,
+              "median": 83.55,
+              "std": 470.23,
+              "min": 0.56,
+              "max": 7999.98
+            },
+            "Second Class": {
+              "count": 10309,
+              "mean": 248.88,
+              "median": 84.5,
+              "std": 482.47,
+              "min": 1.16,
+              "max": 8749.95
+            },
+            "Standard Class": {
+              "count": 30775,
+              "mean": 246.26,
+              "median": 85.68,
+              "std": 491.89,
+              "min": 0.44,
+              "max": 22638.48
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.15265605276913582,
+            "p_value": 0.9280231614232922,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.980273916452052,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Second Class",
+            "underprivileged_group": "First Class",
+            "privileged_mean": 248.876872740324,
+            "underprivileged_mean": 243.96750675549632,
+            "interpretation": "Ratio of 0.98 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.9547353553466251,
+            "max_cv": 1.9974600608768176,
+            "min_cv": 1.9036116164406134,
+            "cv_by_group": {
+              "First Class": 1.97926648212075,
+              "Same Day": 1.9036116164406134,
+              "Second Class": 1.9386032619483191,
+              "Standard Class": 1.9974600608768176
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "First Class": {
+              "count": 7505,
+              "mean": 0.15,
+              "median": 0.0,
+              "std": 0.22,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Same Day": {
+              "count": 2701,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Second Class": {
+              "count": 10309,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.85
+            },
+            "Standard Class": {
+              "count": 30775,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.85
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 2.526480810134969,
+            "p_value": 0.055564058544596825,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.944409033359565,
+            "passes_80_percent_rule": true,
+            "privileged_group": "First Class",
+            "underprivileged_group": "Second Class",
+            "privileged_mean": 0.14889780146568954,
+            "underprivileged_mean": 0.1406204287515763,
+            "interpretation": "Ratio of 0.94 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.4810777560634651,
+            "max_cv": 1.4952556539922517,
+            "min_cv": 1.4532987356632407,
+            "cv_by_group": {
+              "First Class": 1.4532987356632407,
+              "Same Day": 1.4855857875915086,
+              "Second Class": 1.4952556539922517,
+              "Standard Class": 1.4901708470068595
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "First Class": {
+              "count": 7505,
+              "mean": 27.73,
+              "median": 9.0,
+              "std": 180.04,
+              "min": -2639.99,
+              "max": 6719.98
+            },
+            "Same Day": {
+              "count": 2701,
+              "mean": 28.2,
+              "median": 8.94,
+              "std": 204.48,
+              "min": -4088.38,
+              "max": 2461.32
+            },
+            "Second Class": {
+              "count": 10309,
+              "mean": 28.38,
+              "median": 9.18,
+              "std": 163.01,
+              "min": -2750.28,
+              "max": 2799.98
+            },
+            "Standard Class": {
+              "count": 30775,
+              "mean": 28.94,
+              "median": 9.33,
+              "std": 173.73,
+              "min": -6599.98,
+              "max": 8399.98
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.11126944003460384,
+            "p_value": 0.953549120213493,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9581829781688087,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Standard Class",
+            "underprivileged_group": "First Class",
+            "privileged_mean": 28.938944636880585,
+            "underprivileged_mean": 27.728804157228513,
+            "interpretation": "Ratio of 0.96 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 6.37259727638658,
+            "max_cv": 7.250450930603574,
+            "min_cv": 5.743541274974181,
+            "cv_by_group": {
+              "First Class": 6.492903636753565,
+              "Same Day": 7.250450930603574,
+              "Second Class": 5.743541274974181,
+              "Standard Class": 6.003493263215002
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "First Class": {
+              "count": 7505,
+              "mean": 41.05,
+              "median": 12.82,
+              "std": 80.58,
+              "min": 0.01,
+              "max": 915.49
+            },
+            "Same Day": {
+              "count": 2701,
+              "mean": 42.94,
+              "median": 12.34,
+              "std": 86.0,
+              "min": 0.01,
+              "max": 933.57
+            },
+            "Second Class": {
+              "count": 10309,
+              "mean": 30.47,
+              "median": 8.95,
+              "std": 65.0,
+              "min": 0.0,
+              "max": 923.63
+            },
+            "Standard Class": {
+              "count": 30775,
+              "mean": 19.97,
+              "median": 6.34,
+              "std": 41.24,
+              "min": 0.0,
+              "max": 878.38
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 393.9252875290514,
+            "p_value": 5.3240110153517756e-253,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.4651350291676957,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Same Day",
+            "underprivileged_group": "Standard Class",
+            "privileged_mean": 42.937325435024064,
+            "underprivileged_mean": 19.97165411860276,
+            "interpretation": "Ratio of 0.47 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 2.0409850102281486,
+            "max_cv": 2.1331731648632295,
+            "min_cv": 1.9628631297118218,
+            "cv_by_group": {
+              "First Class": 1.9628631297118218,
+              "Same Day": 2.0028790024698195,
+              "Second Class": 2.1331731648632295,
+              "Standard Class": 2.065024743867724
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    },
+    "Segment": {
+      "representation_bias": {
+        "representation_by_group": {
+          "Consumer": {
+            "count": 26518,
+            "percentage": 51.702086176642624,
+            "under_represented": false
+          },
+          "Corporate": {
+            "count": 15429,
+            "percentage": 30.08188730746734,
+            "under_represented": false
+          },
+          "Home Office": {
+            "count": 9343,
+            "percentage": 18.21602651589004,
+            "under_represented": false
+          }
+        },
+        "under_represented_groups": [],
+        "has_representation_bias": false,
+        "interpretation": "0 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "Consumer": {
+              "count": 5191,
+              "mean": 55649.9,
+              "median": 60201.0,
+              "std": 31986.47,
+              "min": 1453.0,
+              "max": 99301.0
+            },
+            "Corporate": {
+              "count": 3020,
+              "mean": 54482.23,
+              "median": 53209.0,
+              "std": 32313.06,
+              "min": 1453.0,
+              "max": 99207.0
+            },
+            "Home Office": {
+              "count": 1783,
+              "mean": 55052.0,
+              "median": 55113.0,
+              "std": 31858.41,
+              "min": 1040.0,
+              "max": 99207.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9790176192075849,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Consumer",
+            "underprivileged_group": "Corporate",
+            "privileged_mean": 55649.8957811597,
+            "underprivileged_mean": 54482.22847682119,
+            "interpretation": "Ratio of 0.98 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.582190251206303,
+            "max_cv": 0.5930935253694768,
+            "min_cv": 0.5747804403225261,
+            "cv_by_group": {
+              "Consumer": 0.5747804403225261,
+              "Corporate": 0.5930935253694768,
+              "Home Office": 0.5786967879269058
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "Consumer": {
+              "count": 26518,
+              "mean": 245.42,
+              "median": 85.0,
+              "std": 477.13,
+              "min": 0.44,
+              "max": 13999.96
+            },
+            "Corporate": {
+              "count": 15429,
+              "mean": 247.89,
+              "median": 85.44,
+              "std": 486.04,
+              "min": 0.56,
+              "max": 17499.95
+            },
+            "Home Office": {
+              "count": 9343,
+              "mean": 247.23,
+              "median": 84.6,
+              "std": 518.44,
+              "min": 0.99,
+              "max": 22638.48
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.13863205044443952,
+            "p_value": 0.8705486136081234,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9900202713009842,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Corporate",
+            "underprivileged_group": "Consumer",
+            "privileged_mean": 247.89017573789616,
+            "underprivileged_mean": 245.41629903688062,
+            "interpretation": "Ratio of 0.99 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 2.000633766864574,
+            "max_cv": 2.0970058012345727,
+            "min_cv": 1.9441761604202719,
+            "cv_by_group": {
+              "Consumer": 1.9441761604202719,
+              "Corporate": 1.9607193389388782,
+              "Home Office": 2.0970058012345727
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "Consumer": {
+              "count": 26518,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Corporate": {
+              "count": 15429,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.85
+            },
+            "Home Office": {
+              "count": 9343,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.85
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.5610400946261329,
+            "p_value": 0.5706187632492097,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9811631326721193,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Consumer",
+            "underprivileged_group": "Home Office",
+            "privileged_mean": 0.1436021570254167,
+            "underprivileged_mean": 0.14089714224553143,
+            "interpretation": "Ratio of 0.98 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.4891395249038346,
+            "max_cv": 1.5026483180984715,
+            "min_cv": 1.4797436825625472,
+            "cv_by_group": {
+              "Consumer": 1.4797436825625472,
+              "Corporate": 1.4850265740504849,
+              "Home Office": 1.5026483180984715
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "Consumer": {
+              "count": 26518,
+              "mean": 28.25,
+              "median": 9.18,
+              "std": 174.01,
+              "min": -6599.98,
+              "max": 6719.98
+            },
+            "Corporate": {
+              "count": 15429,
+              "mean": 28.6,
+              "median": 9.32,
+              "std": 177.16,
+              "min": -4088.38,
+              "max": 8399.98
+            },
+            "Home Office": {
+              "count": 9343,
+              "mean": 29.65,
+              "median": 9.32,
+              "std": 170.58,
+              "min": -3399.98,
+              "max": 3919.99
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.22119237404323583,
+            "p_value": 0.8015632303031714,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9529546835815929,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Home Office",
+            "underprivileged_group": "Consumer",
+            "privileged_mean": 29.648847325270257,
+            "underprivileged_mean": 28.254007921411873,
+            "interpretation": "Ratio of 0.95 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 6.035676727811006,
+            "max_cv": 6.195135797808382,
+            "min_cv": 5.753262118945514,
+            "cv_by_group": {
+              "Consumer": 6.158632266679121,
+              "Corporate": 6.195135797808382,
+              "Home Office": 5.753262118945514
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "Consumer": {
+              "count": 26518,
+              "mean": 26.3,
+              "median": 7.87,
+              "std": 57.02,
+              "min": 0.0,
+              "max": 933.57
+            },
+            "Corporate": {
+              "count": 15429,
+              "mean": 26.6,
+              "median": 7.78,
+              "std": 58.62,
+              "min": 0.01,
+              "max": 923.63
+            },
+            "Home Office": {
+              "count": 9343,
+              "mean": 26.23,
+              "median": 7.62,
+              "std": 55.87,
+              "min": 0.0,
+              "max": 910.16
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.17978286397551554,
+            "p_value": 0.8354521248683504,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9858530651126579,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Corporate",
+            "underprivileged_group": "Home Office",
+            "privileged_mean": 26.603986778145053,
+            "underprivileged_mean": 26.227621909450924,
+            "interpretation": "Ratio of 0.99 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 2.1672705543324615,
+            "max_cv": 2.203389088811787,
+            "min_cv": 2.1300747958634902,
+            "cv_by_group": {
+              "Consumer": 2.168347778322108,
+              "Corporate": 2.203389088811787,
+              "Home Office": 2.1300747958634902
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    },
+    "Market": {
+      "representation_bias": {
+        "representation_by_group": {
+          "APAC": {
+            "count": 11002,
+            "percentage": 21.450575160850068,
+            "under_represented": false
+          },
+          "LATAM": {
+            "count": 10294,
+            "percentage": 20.070189120686294,
+            "under_represented": false
+          },
+          "EU": {
+            "count": 10000,
+            "percentage": 19.496977968414896,
+            "under_represented": false
+          },
+          "US": {
+            "count": 9994,
+            "percentage": 19.485279781633846,
+            "under_represented": false
+          },
+          "EMEA": {
+            "count": 5029,
+            "percentage": 9.805030220315851,
+            "under_represented": true
+          },
+          "Africa": {
+            "count": 4587,
+            "percentage": 8.943263794111912,
+            "under_represented": true
+          },
+          "Canada": {
+            "count": 384,
+            "percentage": 0.748683953987132,
+            "under_represented": true
+          }
+        },
+        "under_represented_groups": [
+          "EMEA",
+          "Africa",
+          "Canada"
+        ],
+        "has_representation_bias": true,
+        "interpretation": "3 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "APAC": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "Africa": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "Canada": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "EMEA": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "EU": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "LATAM": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "US": {
+              "count": 9994,
+              "mean": 55190.38,
+              "median": 56430.5,
+              "std": 32063.69,
+              "min": 1040.0,
+              "max": 99301.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 1.0,
+            "passes_80_percent_rule": true,
+            "privileged_group": "US",
+            "underprivileged_group": "US",
+            "privileged_mean": 55190.3794276566,
+            "underprivileged_mean": 55190.3794276566,
+            "interpretation": "Ratio of 1.00 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.5809652639259981,
+            "max_cv": 0.5809652639259981,
+            "min_cv": 0.5809652639259981,
+            "cv_by_group": {
+              "US": 0.5809652639259981
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "APAC": {
+              "count": 11002,
+              "mean": 325.92,
+              "median": 122.7,
+              "std": 551.63,
+              "min": 2.88,
+              "max": 6998.64
+            },
+            "Africa": {
+              "count": 4587,
+              "mean": 170.87,
+              "median": 52.44,
+              "std": 359.4,
+              "min": 1.16,
+              "max": 5301.24
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 174.29,
+              "median": 60.03,
+              "std": 332.85,
+              "min": 3.99,
+              "max": 3863.88
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 160.3,
+              "median": 51.78,
+              "std": 327.19,
+              "min": 1.44,
+              "max": 5211.12
+            },
+            "EU": {
+              "count": 10000,
+              "mean": 293.81,
+              "median": 119.36,
+              "std": 486.06,
+              "min": 2.96,
+              "max": 7958.58
+            },
+            "LATAM": {
+              "count": 10294,
+              "mean": 210.28,
+              "median": 80.36,
+              "std": 349.07,
+              "min": 1.57,
+              "max": 3474.08
+            },
+            "US": {
+              "count": 9994,
+              "mean": 229.86,
+              "median": 54.49,
+              "std": 623.25,
+              "min": 0.44,
+              "max": 22638.48
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 123.49300012762689,
+            "p_value": 1.2042700444383753e-155,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.4918499830936721,
+            "passes_80_percent_rule": false,
+            "privileged_group": "APAC",
+            "underprivileged_group": "EMEA",
+            "privileged_mean": 325.91748127613164,
+            "underprivileged_mean": 160.30250765559754,
+            "interpretation": "Ratio of 0.49 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.967503794353434,
+            "max_cv": 2.7114353133536326,
+            "min_cv": 1.6543257347963942,
+            "cv_by_group": {
+              "APAC": 1.6925561776820506,
+              "Africa": 2.103345212226936,
+              "Canada": 1.9097181186721193,
+              "EMEA": 2.0410931054270915,
+              "EU": 1.6543257347963942,
+              "LATAM": 1.6600528983158134,
+              "US": 2.7114353133536326
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "APAC": {
+              "count": 11002,
+              "mean": 0.15,
+              "median": 0.1,
+              "std": 0.18,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Africa": {
+              "count": 4587,
+              "mean": 0.16,
+              "median": 0.0,
+              "std": 0.29,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 0.0,
+              "median": 0.0,
+              "std": 0.0,
+              "min": 0.0,
+              "max": 0.0
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 0.2,
+              "median": 0.0,
+              "std": 0.29,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "EU": {
+              "count": 10000,
+              "mean": 0.1,
+              "median": 0.0,
+              "std": 0.17,
+              "min": 0.0,
+              "max": 0.85
+            },
+            "LATAM": {
+              "count": 10294,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "US": {
+              "count": 9994,
+              "mean": 0.16,
+              "median": 0.2,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 156.24525942645238,
+            "p_value": 1.9766251848250253e-197,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.0,
+            "passes_80_percent_rule": false,
+            "privileged_group": "EMEA",
+            "underprivileged_group": "Canada",
+            "privileged_mean": 0.19608272022270828,
+            "underprivileged_mean": 0.0,
+            "interpretation": "Ratio of 0.00 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.4942643798843571,
+            "max_cv": 1.8573285708119638,
+            "min_cv": 1.184893137527281,
+            "cv_by_group": {
+              "APAC": 1.184893137527281,
+              "Africa": 1.8573285708119638,
+              "EMEA": 1.4621147864843265,
+              "EU": 1.6951821988112563,
+              "LATAM": 1.4443750718186823,
+              "US": 1.3216925138526325
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "APAC": {
+              "count": 11002,
+              "mean": 39.63,
+              "median": 10.89,
+              "std": 170.52,
+              "min": -3009.44,
+              "max": 2939.31
+            },
+            "Africa": {
+              "count": 4587,
+              "mean": 19.37,
+              "median": 7.56,
+              "std": 146.53,
+              "min": -1576.82,
+              "max": 2597.28
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 46.4,
+              "median": 12.34,
+              "std": 115.44,
+              "min": 0.0,
+              "max": 1159.02
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 8.73,
+              "median": 5.04,
+              "std": 154.2,
+              "min": -4088.38,
+              "max": 1622.88
+            },
+            "EU": {
+              "count": 10000,
+              "mean": 37.28,
+              "median": 14.22,
+              "std": 178.1,
+              "min": -3059.82,
+              "max": 3979.08
+            },
+            "LATAM": {
+              "count": 10294,
+              "mean": 21.53,
+              "median": 8.0,
+              "std": 118.8,
+              "min": -1806.24,
+              "max": 1313.28
+            },
+            "US": {
+              "count": 9994,
+              "mean": 28.66,
+              "median": 8.67,
+              "std": 234.26,
+              "min": -6599.98,
+              "max": 8399.98
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 28.078188749595615,
+            "p_value": 1.0834601137634787e-33,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.18812648874431825,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Canada",
+            "underprivileged_group": "EMEA",
+            "privileged_mean": 46.399453125,
+            "underprivileged_mean": 8.728966196062835,
+            "interpretation": "Ratio of 0.19 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 7.212537894279243,
+            "max_cv": 17.664970045903434,
+            "min_cv": 2.487957798311176,
+            "cv_by_group": {
+              "APAC": 4.3028811191419525,
+              "Africa": 7.56298943525148,
+              "Canada": 2.487957798311176,
+              "EMEA": 17.664970045903434,
+              "EU": 4.7769897040463905,
+              "LATAM": 5.517326798275836,
+              "US": 8.174650359024422
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "APAC": {
+              "count": 11002,
+              "mean": 35.19,
+              "median": 11.19,
+              "std": 70.26,
+              "min": 0.01,
+              "max": 923.63
+            },
+            "Africa": {
+              "count": 4587,
+              "mean": 19.22,
+              "median": 5.15,
+              "std": 47.75,
+              "min": 0.02,
+              "max": 903.04
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 19.29,
+              "median": 6.27,
+              "std": 43.97,
+              "min": 0.04,
+              "max": 546.56
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 17.57,
+              "median": 5.07,
+              "std": 42.76,
+              "min": 0.02,
+              "max": 832.41
+            },
+            "EU": {
+              "count": 10000,
+              "mean": 30.94,
+              "median": 11.28,
+              "std": 59.45,
+              "min": 0.02,
+              "max": 910.16
+            },
+            "LATAM": {
+              "count": 10294,
+              "mean": 22.74,
+              "median": 7.47,
+              "std": 45.9,
+              "min": 0.0,
+              "max": 810.25
+            },
+            "US": {
+              "count": 9994,
+              "mean": 23.83,
+              "median": 5.1,
+              "std": 58.96,
+              "min": 0.01,
+              "max": 933.57
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 97.96104603299906,
+            "p_value": 5.278005070444385e-123,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.49937500547285524,
+            "passes_80_percent_rule": false,
+            "privileged_group": "APAC",
+            "underprivileged_group": "EMEA",
+            "privileged_mean": 35.190430285402655,
+            "underprivileged_mean": 17.573221316365082,
+            "interpretation": "Ratio of 0.50 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 2.229764337461268,
+            "max_cv": 2.4849893570920436,
+            "min_cv": 1.9214172368244908,
+            "cv_by_group": {
+              "APAC": 1.9966323468878697,
+              "Africa": 2.4849893570920436,
+              "Canada": 2.2797702715591024,
+              "EMEA": 2.4333775280725547,
+              "EU": 1.9214172368244908,
+              "LATAM": 2.018026130186826,
+              "US": 2.4741374916059886
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    },
+    "Region": {
+      "representation_bias": {
+        "representation_by_group": {
+          "Central": {
+            "count": 11117,
+            "percentage": 21.674790407486842,
+            "under_represented": false
+          },
+          "South": {
+            "count": 6645,
+            "percentage": 12.955741860011699,
+            "under_represented": false
+          },
+          "EMEA": {
+            "count": 5029,
+            "percentage": 9.805030220315851,
+            "under_represented": true
+          },
+          "North": {
+            "count": 4785,
+            "percentage": 9.329303957886527,
+            "under_represented": true
+          },
+          "Africa": {
+            "count": 4587,
+            "percentage": 8.943263794111912,
+            "under_represented": true
+          },
+          "Oceania": {
+            "count": 3487,
+            "percentage": 6.798596217586274,
+            "under_represented": true
+          },
+          "West": {
+            "count": 3203,
+            "percentage": 6.244882043283291,
+            "under_represented": true
+          },
+          "Southeast Asia": {
+            "count": 3129,
+            "percentage": 6.100604406317021,
+            "under_represented": true
+          },
+          "East": {
+            "count": 2848,
+            "percentage": 5.552739325404563,
+            "under_represented": true
+          },
+          "North Asia": {
+            "count": 2338,
+            "percentage": 4.558393449015403,
+            "under_represented": true
+          },
+          "Central Asia": {
+            "count": 2048,
+            "percentage": 3.992981087931371,
+            "under_represented": true
+          },
+          "Caribbean": {
+            "count": 1690,
+            "percentage": 3.294989276662117,
+            "under_represented": true
+          },
+          "Canada": {
+            "count": 384,
+            "percentage": 0.748683953987132,
+            "under_represented": true
+          }
+        },
+        "under_represented_groups": [
+          "EMEA",
+          "North",
+          "Africa",
+          "Oceania",
+          "West",
+          "Southeast Asia",
+          "East",
+          "North Asia",
+          "Central Asia",
+          "Caribbean",
+          "Canada"
+        ],
+        "has_representation_bias": true,
+        "interpretation": "11 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "Africa": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "Canada": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "Caribbean": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "Central": {
+              "count": 2323,
+              "mean": 65340.57,
+              "median": 65203.0,
+              "std": 11427.95,
+              "min": 46060.0,
+              "max": 79907.0
+            },
+            "Central Asia": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "EMEA": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "East": {
+              "count": 2848,
+              "mean": 17616.47,
+              "median": 11561.0,
+              "std": 12742.76,
+              "min": 1040.0,
+              "max": 45503.0
+            },
+            "North": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "North Asia": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "Oceania": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "South": {
+              "count": 1620,
+              "mean": 34490.77,
+              "median": 32718.5,
+              "std": 11000.26,
+              "min": 22153.0,
+              "max": 72762.0
+            },
+            "Southeast Asia": {
+              "count": 0,
+              "mean": NaN,
+              "median": NaN,
+              "std": NaN,
+              "min": NaN,
+              "max": NaN
+            },
+            "West": {
+              "count": 3203,
+              "mean": 91707.7,
+              "median": 92105.0,
+              "std": 5202.14,
+              "min": 59102.0,
+              "max": 99301.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.192093659093869,
+            "passes_80_percent_rule": false,
+            "privileged_group": "West",
+            "underprivileged_group": "East",
+            "privileged_mean": 91707.6965344989,
+            "underprivileged_mean": 17616.466994382023,
+            "interpretation": "Ratio of 0.19 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.3184750965193514,
+            "max_cv": 0.7233436586383517,
+            "min_cv": 0.05672517825672489,
+            "cv_by_group": {
+              "Central": 0.17489820797698327,
+              "East": 0.7233436586383517,
+              "South": 0.3189333412053457,
+              "West": 0.05672517825672489
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "Africa": {
+              "count": 4587,
+              "mean": 170.87,
+              "median": 52.44,
+              "std": 359.4,
+              "min": 1.16,
+              "max": 5301.24
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 174.29,
+              "median": 60.03,
+              "std": 332.85,
+              "min": 3.99,
+              "max": 3863.88
+            },
+            "Caribbean": {
+              "count": 1690,
+              "mean": 191.88,
+              "median": 77.49,
+              "std": 302.95,
+              "min": 3.18,
+              "max": 2818.08
+            },
+            "Central": {
+              "count": 11117,
+              "mean": 253.87,
+              "median": 95.07,
+              "std": 479.37,
+              "min": 0.44,
+              "max": 17499.95
+            },
+            "Central Asia": {
+              "count": 2048,
+              "mean": 367.59,
+              "median": 136.61,
+              "std": 624.29,
+              "min": 3.5,
+              "max": 5751.54
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 160.3,
+              "median": 51.78,
+              "std": 327.19,
+              "min": 1.44,
+              "max": 5211.12
+            },
+            "East": {
+              "count": 2848,
+              "mean": 238.34,
+              "median": 54.9,
+              "std": 620.71,
+              "min": 0.85,
+              "max": 11199.97
+            },
+            "North": {
+              "count": 4785,
+              "mean": 260.85,
+              "median": 96.78,
+              "std": 453.0,
+              "min": 2.96,
+              "max": 5785.02
+            },
+            "North Asia": {
+              "count": 2338,
+              "mean": 362.84,
+              "median": 144.9,
+              "std": 585.38,
+              "min": 2.96,
+              "max": 6998.64
+            },
+            "Oceania": {
+              "count": 3487,
+              "mean": 315.51,
+              "median": 118.22,
+              "std": 546.85,
+              "min": 2.88,
+              "max": 6439.8
+            },
+            "South": {
+              "count": 6645,
+              "mean": 240.92,
+              "median": 86.04,
+              "std": 528.86,
+              "min": 1.17,
+              "max": 22638.48
+            },
+            "Southeast Asia": {
+              "count": 3129,
+              "mean": 282.65,
+              "median": 104.7,
+              "std": 470.88,
+              "min": 3.32,
+              "max": 4242.36
+            },
+            "West": {
+              "count": 3203,
+              "mean": 226.49,
+              "median": 60.84,
+              "std": 524.88,
+              "min": 0.99,
+              "max": 13999.96
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 55.48438366881459,
+            "p_value": 7.28547664877952e-134,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.4360892004474966,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Central Asia",
+            "underprivileged_group": "EMEA",
+            "privileged_mean": 367.59109716796877,
+            "underprivileged_mean": 160.30250765559754,
+            "interpretation": "Ratio of 0.44 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.9296616262094415,
+            "max_cv": 2.6043584137604645,
+            "min_cv": 1.578849328366718,
+            "cv_by_group": {
+              "Africa": 2.103345212226936,
+              "Canada": 1.9097181186721193,
+              "Caribbean": 1.578849328366718,
+              "Central": 1.8882281146741833,
+              "Central Asia": 1.6983212429058308,
+              "EMEA": 2.0410931054270915,
+              "East": 2.6043584137604645,
+              "North": 1.736622845093401,
+              "North Asia": 1.6133375793301312,
+              "Oceania": 1.73322152455695,
+              "South": 2.1951822728871697,
+              "Southeast Asia": 1.6659169382073822,
+              "West": 2.3174064446143645
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "Africa": {
+              "count": 4587,
+              "mean": 0.16,
+              "median": 0.0,
+              "std": 0.29,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 0.0,
+              "median": 0.0,
+              "std": 0.0,
+              "min": 0.0,
+              "max": 0.0
+            },
+            "Caribbean": {
+              "count": 1690,
+              "mean": 0.14,
+              "median": 0.2,
+              "std": 0.16,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Central": {
+              "count": 11117,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.85
+            },
+            "Central Asia": {
+              "count": 2048,
+              "mean": 0.07,
+              "median": 0.0,
+              "std": 0.17,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 0.2,
+              "median": 0.0,
+              "std": 0.29,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "East": {
+              "count": 2848,
+              "mean": 0.15,
+              "median": 0.0,
+              "std": 0.19,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "North": {
+              "count": 4785,
+              "mean": 0.1,
+              "median": 0.0,
+              "std": 0.17,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "North Asia": {
+              "count": 2338,
+              "mean": 0.05,
+              "median": 0.0,
+              "std": 0.14,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Oceania": {
+              "count": 3487,
+              "mean": 0.15,
+              "median": 0.1,
+              "std": 0.14,
+              "min": 0.0,
+              "max": 0.6
+            },
+            "South": {
+              "count": 6645,
+              "mean": 0.15,
+              "median": 0.0,
+              "std": 0.22,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Southeast Asia": {
+              "count": 3129,
+              "mean": 0.27,
+              "median": 0.27,
+              "std": 0.16,
+              "min": 0.0,
+              "max": 0.57
+            },
+            "West": {
+              "count": 3203,
+              "mean": 0.11,
+              "median": 0.0,
+              "std": 0.15,
+              "min": 0.0,
+              "max": 0.7
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 239.27038827945827,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.0,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Southeast Asia",
+            "underprivileged_group": "Canada",
+            "privileged_mean": 0.2720773410035155,
+            "underprivileged_mean": 0.0,
+            "interpretation": "Ratio of 0.00 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.5710820566888775,
+            "max_cv": 2.952228156290168,
+            "min_cv": 0.5997091749720717,
+            "cv_by_group": {
+              "Africa": 1.8573285708119638,
+              "Caribbean": 1.2087093335480341,
+              "Central": 1.4636370896579418,
+              "Central Asia": 2.5003519543338886,
+              "EMEA": 1.4621147864843265,
+              "East": 1.328760309024738,
+              "North": 1.778238329435099,
+              "North Asia": 2.952228156290168,
+              "Oceania": 0.9097117854232515,
+              "South": 1.4489781327624627,
+              "Southeast Asia": 0.5997091749720717,
+              "West": 1.3432170575225826
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "Africa": {
+              "count": 4587,
+              "mean": 19.37,
+              "median": 7.56,
+              "std": 146.53,
+              "min": -1576.82,
+              "max": 2597.28
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 46.4,
+              "median": 12.34,
+              "std": 115.44,
+              "min": 0.0,
+              "max": 1159.02
+            },
+            "Caribbean": {
+              "count": 1690,
+              "mean": 20.46,
+              "median": 7.16,
+              "std": 110.97,
+              "min": -1315.55,
+              "max": 1073.44
+            },
+            "Central": {
+              "count": 11117,
+              "mean": 28.01,
+              "median": 9.78,
+              "std": 185.71,
+              "min": -3701.89,
+              "max": 8399.98
+            },
+            "Central Asia": {
+              "count": 2048,
+              "mean": 64.69,
+              "median": 21.63,
+              "std": 210.95,
+              "min": -3009.44,
+              "max": 2817.99
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 8.73,
+              "median": 5.04,
+              "std": 154.2,
+              "min": -4088.38,
+              "max": 1622.88
+            },
+            "East": {
+              "count": 2848,
+              "mean": 32.14,
+              "median": 8.17,
+              "std": 251.61,
+              "min": -6599.98,
+              "max": 5039.99
+            },
+            "North": {
+              "count": 4785,
+              "mean": 40.67,
+              "median": 12.4,
+              "std": 148.17,
+              "min": -1981.4,
+              "max": 2461.32
+            },
+            "North Asia": {
+              "count": 2338,
+              "mean": 70.82,
+              "median": 24.24,
+              "std": 188.5,
+              "min": -1097.28,
+              "max": 2939.31
+            },
+            "Oceania": {
+              "count": 3487,
+              "mean": 34.44,
+              "median": 8.77,
+              "std": 153.8,
+              "min": -1479.13,
+              "max": 2447.1
+            },
+            "South": {
+              "count": 6645,
+              "mean": 21.12,
+              "median": 9.16,
+              "std": 183.74,
+              "min": -3839.99,
+              "max": 3979.08
+            },
+            "Southeast Asia": {
+              "count": 3129,
+              "mean": 5.71,
+              "median": -1.35,
+              "std": 133.84,
+              "min": -1294.35,
+              "max": 1554.43
+            },
+            "West": {
+              "count": 3203,
+              "mean": 33.85,
+              "median": 11.17,
+              "std": 174.11,
+              "min": -3399.98,
+              "max": 6719.98
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 34.26121568235656,
+            "p_value": 3.617471983600004e-80,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.08056197208061258,
+            "passes_80_percent_rule": false,
+            "privileged_group": "North Asia",
+            "underprivileged_group": "Southeast Asia",
+            "privileged_mean": 70.82053934987168,
+            "underprivileged_mean": 5.705442313838287,
+            "interpretation": "Ratio of 0.08 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 7.610197292425917,
+            "max_cv": 23.458446799438818,
+            "min_cv": 2.487957798311176,
+            "cv_by_group": {
+              "Africa": 7.56298943525148,
+              "Canada": 2.487957798311176,
+              "Caribbean": 5.424652910947333,
+              "Central": 6.629687923125846,
+              "Central Asia": 3.2609947178053265,
+              "EMEA": 17.664970045903434,
+              "East": 7.829430879588048,
+              "North": 3.64339511785955,
+              "North Asia": 2.6615901804702227,
+              "Oceania": 4.4659898330932455,
+              "South": 8.698764608070924,
+              "Southeast Asia": 23.458446799438818,
+              "West": 5.143694551671497
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "Africa": {
+              "count": 4587,
+              "mean": 19.22,
+              "median": 5.15,
+              "std": 47.75,
+              "min": 0.02,
+              "max": 903.04
+            },
+            "Canada": {
+              "count": 384,
+              "mean": 19.29,
+              "median": 6.27,
+              "std": 43.97,
+              "min": 0.04,
+              "max": 546.56
+            },
+            "Caribbean": {
+              "count": 1690,
+              "mean": 21.06,
+              "median": 7.44,
+              "std": 41.13,
+              "min": 0.02,
+              "max": 704.06
+            },
+            "Central": {
+              "count": 11117,
+              "mean": 26.71,
+              "median": 8.56,
+              "std": 55.78,
+              "min": 0.0,
+              "max": 910.16
+            },
+            "Central Asia": {
+              "count": 2048,
+              "mean": 38.0,
+              "median": 11.96,
+              "std": 75.48,
+              "min": 0.01,
+              "max": 835.57
+            },
+            "EMEA": {
+              "count": 5029,
+              "mean": 17.57,
+              "median": 5.07,
+              "std": 42.76,
+              "min": 0.02,
+              "max": 832.41
+            },
+            "East": {
+              "count": 2848,
+              "mean": 25.54,
+              "median": 5.26,
+              "std": 62.34,
+              "min": 0.03,
+              "max": 933.57
+            },
+            "North": {
+              "count": 4785,
+              "mean": 27.48,
+              "median": 8.93,
+              "std": 53.59,
+              "min": 0.02,
+              "max": 730.91
+            },
+            "North Asia": {
+              "count": 2338,
+              "mean": 40.65,
+              "median": 13.32,
+              "std": 74.82,
+              "min": 0.01,
+              "max": 804.54
+            },
+            "Oceania": {
+              "count": 3487,
+              "mean": 34.59,
+              "median": 11.16,
+              "std": 72.42,
+              "min": 0.01,
+              "max": 923.63
+            },
+            "South": {
+              "count": 6645,
+              "mean": 25.35,
+              "median": 7.89,
+              "std": 54.43,
+              "min": 0.0,
+              "max": 865.74
+            },
+            "Southeast Asia": {
+              "count": 3129,
+              "mean": 29.94,
+              "median": 9.28,
+              "std": 59.59,
+              "min": 0.03,
+              "max": 660.87
+            },
+            "West": {
+              "count": 3203,
+              "mean": 23.89,
+              "median": 5.65,
+              "std": 56.33,
+              "min": 0.01,
+              "max": 867.69
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 45.03170252635364,
+            "p_value": 2.1707550389789433e-107,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.4323469189312955,
+            "passes_80_percent_rule": false,
+            "privileged_group": "North Asia",
+            "underprivileged_group": "EMEA",
+            "privileged_mean": 40.646112061591104,
+            "underprivileged_mean": 17.573221316365082,
+            "interpretation": "Ratio of 0.43 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 2.1574555500545434,
+            "max_cv": 2.4849893570920436,
+            "min_cv": 1.840852354109733,
+            "cv_by_group": {
+              "Africa": 2.4849893570920436,
+              "Canada": 2.2797702715591024,
+              "Caribbean": 1.9533024378727357,
+              "Central": 2.0883613014328133,
+              "Central Asia": 1.986189608698442,
+              "EMEA": 2.4333775280725547,
+              "East": 2.4408050570983635,
+              "North": 1.9506115414679934,
+              "North Asia": 1.840852354109733,
+              "Oceania": 2.093439019140358,
+              "South": 2.146889846298174,
+              "Southeast Asia": 1.9904198085210054,
+              "West": 2.3579140193457486
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    },
+    "Category": {
+      "representation_bias": {
+        "representation_by_group": {
+          "Office Supplies": {
+            "count": 31273,
+            "percentage": 60.9728992006239,
+            "under_represented": false
+          },
+          "Technology": {
+            "count": 10141,
+            "percentage": 19.771885357769545,
+            "under_represented": false
+          },
+          "Furniture": {
+            "count": 9876,
+            "percentage": 19.255215441606552,
+            "under_represented": false
+          }
+        },
+        "under_represented_groups": [],
+        "has_representation_bias": false,
+        "interpretation": "0 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "Furniture": {
+              "count": 2121,
+              "mean": 55726.56,
+              "median": 60505.0,
+              "std": 32261.89,
+              "min": 1040.0,
+              "max": 99301.0
+            },
+            "Office Supplies": {
+              "count": 6026,
+              "mean": 54890.95,
+              "median": 55247.0,
+              "std": 32046.67,
+              "min": 1453.0,
+              "max": 99301.0
+            },
+            "Technology": {
+              "count": 1847,
+              "mean": 55551.57,
+              "median": 59601.0,
+              "std": 31896.12,
+              "min": 1841.0,
+              "max": 99207.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.985005261677883,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Furniture",
+            "underprivileged_group": "Office Supplies",
+            "privileged_mean": 55726.55634134842,
+            "underprivileged_mean": 54890.951211417196,
+            "interpretation": "Ratio of 0.99 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.5789758418066102,
+            "max_cv": 0.5838242017281472,
+            "min_cv": 0.5741712966122845,
+            "cv_by_group": {
+              "Furniture": 0.5789320270793991,
+              "Office Supplies": 0.5838242017281472,
+              "Technology": 0.5741712966122845
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "Furniture": {
+              "count": 9876,
+              "mean": 416.25,
+              "median": 220.2,
+              "std": 553.07,
+              "min": 1.89,
+              "max": 5759.96
+            },
+            "Office Supplies": {
+              "count": 31273,
+              "mean": 121.1,
+              "median": 46.38,
+              "std": 299.32,
+              "min": 0.44,
+              "max": 9892.74
+            },
+            "Technology": {
+              "count": 10141,
+              "mean": 467.86,
+              "median": 260.34,
+              "std": 708.97,
+              "min": 0.99,
+              "max": 22638.48
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 2990.276309715733,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.2588325448133911,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Technology",
+            "underprivileged_group": "Office Supplies",
+            "privileged_mean": 467.85893877132435,
+            "underprivileged_mean": 121.0971197358744,
+            "interpretation": "Ratio of 0.26 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.7719313193907953,
+            "max_cv": 2.471746692188388,
+            "min_cv": 1.3286915849796495,
+            "cv_by_group": {
+              "Furniture": 1.3286915849796495,
+              "Office Supplies": 2.471746692188388,
+              "Technology": 1.5153556810043483
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "Furniture": {
+              "count": 9876,
+              "mean": 0.17,
+              "median": 0.1,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.85
+            },
+            "Office Supplies": {
+              "count": 31273,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.22,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Technology": {
+              "count": 10141,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.7
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 86.69568670508981,
+            "p_value": 2.582525991730761e-38,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.8051916201173936,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Furniture",
+            "underprivileged_group": "Technology",
+            "privileged_mean": 0.16808728230052652,
+            "underprivileged_mean": 0.13534247115669065,
+            "interpretation": "Ratio of 0.81 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.4238085649404433,
+            "max_cv": 1.5902782634692398,
+            "min_cv": 1.2077241272996397,
+            "cv_by_group": {
+              "Furniture": 1.2077241272996397,
+              "Office Supplies": 1.5902782634692398,
+              "Technology": 1.4734233040524505
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "Furniture": {
+              "count": 9876,
+              "mean": 28.88,
+              "median": 15.5,
+              "std": 205.76,
+              "min": -2750.28,
+              "max": 2316.51
+            },
+            "Office Supplies": {
+              "count": 31273,
+              "mean": 16.58,
+              "median": 6.55,
+              "std": 109.75,
+              "min": -3701.89,
+              "max": 4946.37
+            },
+            "Technology": {
+              "count": 10141,
+              "mean": 65.45,
+              "median": 29.94,
+              "std": 271.22,
+              "min": -6599.98,
+              "max": 8399.98
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 304.50613538510214,
+            "p_value": 3.4173111634965594e-132,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.25328807758393235,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Technology",
+            "underprivileged_group": "Office Supplies",
+            "privileged_mean": 65.4549584044966,
+            "underprivileged_mean": 16.5789605826112,
+            "interpretation": "Ratio of 0.25 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 5.962779361748477,
+            "max_cv": 7.125005156098548,
+            "min_cv": 4.143542099175924,
+            "cv_by_group": {
+              "Furniture": 7.125005156098548,
+              "Office Supplies": 6.619790829970958,
+              "Technology": 4.143542099175924
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "Furniture": {
+              "count": 9876,
+              "mean": 44.58,
+              "median": 20.23,
+              "std": 72.56,
+              "min": 0.04,
+              "max": 923.63
+            },
+            "Office Supplies": {
+              "count": 31273,
+              "mean": 12.96,
+              "median": 4.25,
+              "std": 35.09,
+              "min": 0.0,
+              "max": 867.69
+            },
+            "Technology": {
+              "count": 10141,
+              "mean": 50.0,
+              "median": 23.4,
+              "std": 79.02,
+              "min": 0.04,
+              "max": 933.57
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 2427.1241293148278,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.25929718331183216,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Technology",
+            "underprivileged_group": "Office Supplies",
+            "privileged_mean": 49.99979088847253,
+            "underprivileged_mean": 12.964804943561537,
+            "interpretation": "Ratio of 0.26 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.9715216034258984,
+            "max_cv": 2.7066481618522578,
+            "min_cv": 1.5804518245193682,
+            "cv_by_group": {
+              "Furniture": 1.627464823906069,
+              "Office Supplies": 2.7066481618522578,
+              "Technology": 1.5804518245193682
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    },
+    "Sub-Category": {
+      "representation_bias": {
+        "representation_by_group": {
+          "Binders": {
+            "count": 6152,
+            "percentage": 11.994540846168844,
+            "under_represented": false
+          },
+          "Storage": {
+            "count": 5059,
+            "percentage": 9.863521154221095,
+            "under_represented": true
+          },
+          "Art": {
+            "count": 4883,
+            "percentage": 9.520374341976993,
+            "under_represented": true
+          },
+          "Paper": {
+            "count": 3538,
+            "percentage": 6.89803080522519,
+            "under_represented": true
+          },
+          "Chairs": {
+            "count": 3434,
+            "percentage": 6.695262234353676,
+            "under_represented": true
+          },
+          "Phones": {
+            "count": 3357,
+            "percentage": 6.545135503996881,
+            "under_represented": true
+          },
+          "Furnishings": {
+            "count": 3170,
+            "percentage": 6.1805420159875215,
+            "under_represented": true
+          },
+          "Accessories": {
+            "count": 3075,
+            "percentage": 5.995320725287581,
+            "under_represented": true
+          },
+          "Labels": {
+            "count": 2606,
+            "percentage": 5.080912458568922,
+            "under_represented": true
+          },
+          "Envelopes": {
+            "count": 2435,
+            "percentage": 4.747514135309027,
+            "under_represented": true
+          },
+          "Supplies": {
+            "count": 2425,
+            "percentage": 4.728017157340612,
+            "under_represented": true
+          },
+          "Fasteners": {
+            "count": 2420,
+            "percentage": 4.718268668356405,
+            "under_represented": true
+          },
+          "Bookcases": {
+            "count": 2411,
+            "percentage": 4.7007213881848315,
+            "under_represented": true
+          },
+          "Copiers": {
+            "count": 2223,
+            "percentage": 4.334178202378632,
+            "under_represented": true
+          },
+          "Appliances": {
+            "count": 1755,
+            "percentage": 3.421719633456814,
+            "under_represented": true
+          },
+          "Machines": {
+            "count": 1486,
+            "percentage": 2.8972509261064534,
+            "under_represented": true
+          },
+          "Tables": {
+            "count": 861,
+            "percentage": 1.6786898030805224,
+            "under_represented": true
+          }
+        },
+        "under_represented_groups": [
+          "Storage",
+          "Art",
+          "Paper",
+          "Chairs",
+          "Phones",
+          "Furnishings",
+          "Accessories",
+          "Labels",
+          "Envelopes",
+          "Supplies",
+          "Fasteners",
+          "Bookcases",
+          "Copiers",
+          "Appliances",
+          "Machines",
+          "Tables"
+        ],
+        "has_representation_bias": true,
+        "interpretation": "16 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "Accessories": {
+              "count": 775,
+              "mean": 57378.62,
+              "median": 60623.0,
+              "std": 31584.79,
+              "min": 2038.0,
+              "max": 99207.0
+            },
+            "Appliances": {
+              "count": 466,
+              "mean": 54185.7,
+              "median": 53209.0,
+              "std": 31409.48,
+              "min": 1841.0,
+              "max": 99301.0
+            },
+            "Art": {
+              "count": 796,
+              "mean": 54434.24,
+              "median": 49201.0,
+              "std": 32007.22,
+              "min": 1841.0,
+              "max": 99301.0
+            },
+            "Binders": {
+              "count": 1523,
+              "mean": 54908.99,
+              "median": 55407.0,
+              "std": 31758.21,
+              "min": 1453.0,
+              "max": 99301.0
+            },
+            "Bookcases": {
+              "count": 228,
+              "mean": 56015.52,
+              "median": 60653.0,
+              "std": 33706.84,
+              "min": 1040.0,
+              "max": 98115.0
+            },
+            "Chairs": {
+              "count": 617,
+              "mean": 56622.74,
+              "median": 60505.0,
+              "std": 31971.72,
+              "min": 1810.0,
+              "max": 99301.0
+            },
+            "Copiers": {
+              "count": 68,
+              "mean": 56962.9,
+              "median": 60405.5,
+              "std": 32507.34,
+              "min": 1841.0,
+              "max": 98198.0
+            },
+            "Envelopes": {
+              "count": 254,
+              "mean": 52463.51,
+              "median": 47287.5,
+              "std": 31105.84,
+              "min": 5408.0,
+              "max": 98198.0
+            },
+            "Fasteners": {
+              "count": 217,
+              "mean": 57631.63,
+              "median": 60623.0,
+              "std": 31499.7,
+              "min": 1841.0,
+              "max": 98632.0
+            },
+            "Furnishings": {
+              "count": 957,
+              "mean": 54211.53,
+              "median": 53209.0,
+              "std": 32064.92,
+              "min": 1752.0,
+              "max": 98661.0
+            },
+            "Labels": {
+              "count": 364,
+              "mean": 53716.99,
+              "median": 49312.0,
+              "std": 32778.57,
+              "min": 1453.0,
+              "max": 98115.0
+            },
+            "Machines": {
+              "count": 115,
+              "mean": 55344.94,
+              "median": 60174.0,
+              "std": 32775.33,
+              "min": 7060.0,
+              "max": 99207.0
+            },
+            "Paper": {
+              "count": 1370,
+              "mean": 55692.86,
+              "median": 60610.0,
+              "std": 32381.77,
+              "min": 1453.0,
+              "max": 98502.0
+            },
+            "Phones": {
+              "count": 889,
+              "mean": 53877.59,
+              "median": 49505.0,
+              "std": 31966.85,
+              "min": 1841.0,
+              "max": 98661.0
+            },
+            "Storage": {
+              "count": 846,
+              "mean": 54667.52,
+              "median": 55407.0,
+              "std": 32135.07,
+              "min": 1453.0,
+              "max": 99301.0
+            },
+            "Supplies": {
+              "count": 190,
+              "mean": 55966.09,
+              "median": 60653.0,
+              "std": 33879.26,
+              "min": 1841.0,
+              "max": 98115.0
+            },
+            "Tables": {
+              "count": 319,
+              "mean": 58331.75,
+              "median": 61107.0,
+              "std": 32271.74,
+              "min": 1841.0,
+              "max": 99207.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.8993988450350586,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Tables",
+            "underprivileged_group": "Envelopes",
+            "privileged_mean": 58331.74921630094,
+            "underprivileged_mean": 52463.50787401575,
+            "interpretation": "Ratio of 0.90 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.5816535346989223,
+            "max_cv": 0.6102086747570907,
+            "min_cv": 0.5465696227158291,
+            "cv_by_group": {
+              "Accessories": 0.5504626123854821,
+              "Appliances": 0.579663569262421,
+              "Art": 0.587997861754535,
+              "Binders": 0.578379087923939,
+              "Bookcases": 0.6017411458977187,
+              "Chairs": 0.5646445011122424,
+              "Copiers": 0.5706756377657527,
+              "Envelopes": 0.5929042342564442,
+              "Fasteners": 0.5465696227158291,
+              "Furnishings": 0.5914780001929715,
+              "Labels": 0.6102086747570907,
+              "Machines": 0.5922009775084828,
+              "Paper": 0.5814348096964683,
+              "Phones": 0.5933236622328705,
+              "Storage": 0.5878274875976237,
+              "Supplies": 0.6053533666578641,
+              "Tables": 0.5532448381639435
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "Accessories": {
+              "count": 3075,
+              "mean": 243.65,
+              "median": 132.5,
+              "std": 327.22,
+              "min": 0.99,
+              "max": 3449.88
+            },
+            "Appliances": {
+              "count": 1755,
+              "mean": 576.11,
+              "median": 248.86,
+              "std": 797.06,
+              "min": 0.44,
+              "max": 7958.58
+            },
+            "Art": {
+              "count": 4883,
+              "mean": 76.2,
+              "median": 49.84,
+              "std": 82.01,
+              "min": 1.34,
+              "max": 1113.02
+            },
+            "Binders": {
+              "count": 6152,
+              "mean": 75.08,
+              "median": 28.11,
+              "std": 288.54,
+              "min": 0.56,
+              "max": 9892.74
+            },
+            "Bookcases": {
+              "count": 2411,
+              "mean": 608.28,
+              "median": 411.33,
+              "std": 602.49,
+              "min": 35.49,
+              "max": 5667.87
+            },
+            "Chairs": {
+              "count": 3434,
+              "mean": 437.3,
+              "median": 258.0,
+              "std": 535.1,
+              "min": 13.54,
+              "max": 5759.96
+            },
+            "Copiers": {
+              "count": 2223,
+              "mean": 679.01,
+              "median": 487.38,
+              "std": 821.1,
+              "min": 35.46,
+              "max": 17499.95
+            },
+            "Envelopes": {
+              "count": 2435,
+              "mean": 70.19,
+              "median": 47.64,
+              "std": 69.69,
+              "min": 1.63,
+              "max": 604.66
+            },
+            "Fasteners": {
+              "count": 2420,
+              "mean": 34.4,
+              "median": 26.12,
+              "std": 28.87,
+              "min": 1.24,
+              "max": 271.32
+            },
+            "Furnishings": {
+              "count": 3170,
+              "mean": 121.63,
+              "median": 73.31,
+              "std": 145.61,
+              "min": 1.89,
+              "max": 1519.14
+            },
+            "Labels": {
+              "count": 2606,
+              "mean": 28.17,
+              "median": 20.64,
+              "std": 34.16,
+              "min": 1.67,
+              "max": 786.48
+            },
+            "Machines": {
+              "count": 1486,
+              "mean": 524.27,
+              "median": 305.14,
+              "std": 928.0,
+              "min": 11.51,
+              "max": 22638.48
+            },
+            "Paper": {
+              "count": 3538,
+              "mean": 69.05,
+              "median": 43.97,
+              "std": 74.44,
+              "min": 3.38,
+              "max": 733.95
+            },
+            "Phones": {
+              "count": 3357,
+              "mean": 508.44,
+              "median": 273.3,
+              "std": 717.31,
+              "min": 2.97,
+              "max": 6998.64
+            },
+            "Storage": {
+              "count": 5059,
+              "mean": 222.79,
+              "median": 113.57,
+              "std": 292.08,
+              "min": 2.8,
+              "max": 2962.68
+            },
+            "Supplies": {
+              "count": 2425,
+              "mean": 100.24,
+              "median": 62.8,
+              "std": 271.25,
+              "min": 1.74,
+              "max": 8187.65
+            },
+            "Tables": {
+              "count": 861,
+              "mean": 879.26,
+              "median": 629.06,
+              "std": 796.4,
+              "min": 24.37,
+              "max": 5451.3
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 861.6155179064883,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.03203529392814547,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Tables",
+            "underprivileged_group": "Labels",
+            "privileged_mean": 879.2589133565622,
+            "underprivileged_mean": 28.16731772831926,
+            "interpretation": "Ratio of 0.03 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.4407505497172635,
+            "max_cv": 3.8429404256218778,
+            "min_cv": 0.8392258068675096,
+            "cv_by_group": {
+              "Accessories": 1.3429863288466772,
+              "Appliances": 1.383537313679118,
+              "Art": 1.0761626175081147,
+              "Binders": 3.8429404256218778,
+              "Bookcases": 0.9904710915860224,
+              "Chairs": 1.2236456483050084,
+              "Copiers": 1.2092645079986095,
+              "Envelopes": 0.992925585751866,
+              "Fasteners": 0.8392258068675096,
+              "Furnishings": 1.1970876964920865,
+              "Labels": 1.212593619998883,
+              "Machines": 1.770093905097957,
+              "Paper": 1.078161434773209,
+              "Phones": 1.4108040915917635,
+              "Storage": 1.311013190456815,
+              "Supplies": 2.7060804607386033,
+              "Tables": 0.9057656198793589
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "Accessories": {
+              "count": 3075,
+              "mean": 0.12,
+              "median": 0.0,
+              "std": 0.19,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Appliances": {
+              "count": 1755,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.22,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Art": {
+              "count": 4883,
+              "mean": 0.12,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Binders": {
+              "count": 6152,
+              "mean": 0.18,
+              "median": 0.0,
+              "std": 0.27,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Bookcases": {
+              "count": 2411,
+              "mean": 0.15,
+              "median": 0.1,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Chairs": {
+              "count": 3434,
+              "mean": 0.16,
+              "median": 0.1,
+              "std": 0.18,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Copiers": {
+              "count": 2223,
+              "mean": 0.12,
+              "median": 0.0,
+              "std": 0.19,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Envelopes": {
+              "count": 2435,
+              "mean": 0.13,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Fasteners": {
+              "count": 2420,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Furnishings": {
+              "count": 3170,
+              "mean": 0.15,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Labels": {
+              "count": 2606,
+              "mean": 0.12,
+              "median": 0.0,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Machines": {
+              "count": 1486,
+              "mean": 0.17,
+              "median": 0.0,
+              "std": 0.23,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Paper": {
+              "count": 3538,
+              "mean": 0.11,
+              "median": 0.0,
+              "std": 0.18,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Phones": {
+              "count": 3357,
+              "mean": 0.15,
+              "median": 0.0,
+              "std": 0.19,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Storage": {
+              "count": 5059,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.2,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Supplies": {
+              "count": 2425,
+              "mean": 0.13,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.7
+            },
+            "Tables": {
+              "count": 861,
+              "mean": 0.29,
+              "median": 0.3,
+              "std": 0.22,
+              "min": 0.0,
+              "max": 0.85
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 59.80877078752385,
+            "p_value": 1.3352855708816236e-191,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.3765279932923845,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Tables",
+            "underprivileged_group": "Paper",
+            "privileged_mean": 0.29073170731707315,
+            "underprivileged_mean": 0.10946862634256642,
+            "interpretation": "Ratio of 0.38 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.459302864380541,
+            "max_cv": 1.7855309305682843,
+            "min_cv": 0.7584767707330015,
+            "cv_by_group": {
+              "Accessories": 1.6051944561082512,
+              "Appliances": 1.5756641229120751,
+              "Art": 1.7855309305682843,
+              "Binders": 1.4828373646550983,
+              "Bookcases": 1.3161139805951423,
+              "Chairs": 1.1063434589269174,
+              "Copiers": 1.6256056332796558,
+              "Envelopes": 1.5912050115951917,
+              "Fasteners": 1.5260006609476278,
+              "Furnishings": 1.3923354957370557,
+              "Labels": 1.6581067677714216,
+              "Machines": 1.374871592657153,
+              "Paper": 1.6361293605207028,
+              "Phones": 1.3149144073583188,
+              "Storage": 1.4384709552955415,
+              "Supplies": 1.6203477248077571,
+              "Tables": 0.7584767707330015
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "Accessories": {
+              "count": 3075,
+              "mean": 42.15,
+              "median": 18.42,
+              "std": 126.79,
+              "min": -1345.5,
+              "max": 1216.02
+            },
+            "Appliances": {
+              "count": 1755,
+              "mean": 80.73,
+              "median": 33.36,
+              "std": 302.6,
+              "min": -3059.82,
+              "max": 3979.08
+            },
+            "Art": {
+              "count": 4883,
+              "mean": 11.87,
+              "median": 7.05,
+              "std": 32.2,
+              "min": -371.23,
+              "max": 269.22
+            },
+            "Binders": {
+              "count": 6152,
+              "mean": 11.78,
+              "median": 4.68,
+              "std": 153.96,
+              "min": -3701.89,
+              "max": 4946.37
+            },
+            "Bookcases": {
+              "count": 2411,
+              "mean": 67.16,
+              "median": 44.97,
+              "std": 242.86,
+              "min": -1981.4,
+              "max": 2316.51
+            },
+            "Chairs": {
+              "count": 3434,
+              "mean": 40.88,
+              "median": 20.18,
+              "std": 180.98,
+              "min": -2211.16,
+              "max": 1868.13
+            },
+            "Copiers": {
+              "count": 2223,
+              "mean": 116.31,
+              "median": 65.91,
+              "std": 365.09,
+              "min": -1672.5,
+              "max": 8399.98
+            },
+            "Envelopes": {
+              "count": 2435,
+              "mean": 12.16,
+              "median": 7.49,
+              "std": 31.61,
+              "min": -173.29,
+              "max": 279.36
+            },
+            "Fasteners": {
+              "count": 2420,
+              "mean": 4.76,
+              "median": 3.7,
+              "std": 14.18,
+              "min": -121.3,
+              "max": 127.26
+            },
+            "Furnishings": {
+              "count": 3170,
+              "mean": 14.82,
+              "median": 9.45,
+              "std": 56.17,
+              "min": -446.4,
+              "max": 561.96
+            },
+            "Labels": {
+              "count": 2606,
+              "mean": 5.76,
+              "median": 3.96,
+              "std": 16.19,
+              "min": -63.54,
+              "max": 385.38
+            },
+            "Machines": {
+              "count": 1486,
+              "mean": 39.61,
+              "median": 28.38,
+              "std": 347.49,
+              "min": -6599.98,
+              "max": 2799.98
+            },
+            "Paper": {
+              "count": 3538,
+              "mean": 16.73,
+              "median": 9.63,
+              "std": 32.31,
+              "min": -191.47,
+              "max": 352.3
+            },
+            "Phones": {
+              "count": 3357,
+              "mean": 64.56,
+              "median": 30.72,
+              "std": 251.67,
+              "min": -4088.38,
+              "max": 2939.31
+            },
+            "Storage": {
+              "count": 5059,
+              "mean": 21.44,
+              "median": 8.37,
+              "std": 93.92,
+              "min": -800.06,
+              "max": 802.17
+            },
+            "Supplies": {
+              "count": 2425,
+              "mean": 9.31,
+              "median": 8.28,
+              "std": 44.85,
+              "min": -1049.34,
+              "max": 327.51
+            },
+            "Tables": {
+              "count": 861,
+              "mean": -74.43,
+              "median": -34.65,
+              "std": 402.97,
+              "min": -2750.28,
+              "max": 2071.44
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 103.91551183097657,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": -0.6398935946435372,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Copiers",
+            "underprivileged_group": "Tables",
+            "privileged_mean": 116.31468654071075,
+            "underprivileged_mean": -74.42902288037166,
+            "interpretation": "Ratio of -0.64 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 3.7815685643344237,
+            "max_cv": 13.073398055604928,
+            "min_cv": -5.414204662379371,
+            "cv_by_group": {
+              "Accessories": 3.0076475823449917,
+              "Appliances": 3.748271277040024,
+              "Art": 2.7130574077127774,
+              "Binders": 13.073398055604928,
+              "Bookcases": 3.616095410460842,
+              "Chairs": 4.426598054855914,
+              "Copiers": 3.1388388272488275,
+              "Envelopes": 2.6001137911236167,
+              "Fasteners": 2.977384770590071,
+              "Furnishings": 3.7908496363740487,
+              "Labels": 2.810932877381324,
+              "Machines": 8.771719268813763,
+              "Paper": 1.930559636622765,
+              "Phones": 3.8983758417727215,
+              "Storage": 4.380870947995072,
+              "Supplies": 4.816156870122887,
+              "Tables": -5.414204662379371
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "Accessories": {
+              "count": 3075,
+              "mean": 27.16,
+              "median": 12.13,
+              "std": 47.48,
+              "min": 0.04,
+              "max": 933.57
+            },
+            "Appliances": {
+              "count": 1755,
+              "mean": 61.71,
+              "median": 24.33,
+              "std": 99.56,
+              "min": 0.01,
+              "max": 804.54
+            },
+            "Art": {
+              "count": 4883,
+              "mean": 8.46,
+              "median": 4.48,
+              "std": 12.48,
+              "min": 0.02,
+              "max": 179.84
+            },
+            "Binders": {
+              "count": 6152,
+              "mean": 7.83,
+              "median": 2.65,
+              "std": 28.12,
+              "min": 0.0,
+              "max": 867.69
+            },
+            "Bookcases": {
+              "count": 2411,
+              "mean": 64.49,
+              "median": 38.15,
+              "std": 77.65,
+              "min": 0.33,
+              "max": 658.35
+            },
+            "Chairs": {
+              "count": 3434,
+              "mean": 47.82,
+              "median": 24.25,
+              "std": 74.61,
+              "min": 0.07,
+              "max": 923.63
+            },
+            "Copiers": {
+              "count": 2223,
+              "mean": 71.75,
+              "median": 42.67,
+              "std": 87.34,
+              "min": 0.19,
+              "max": 903.04
+            },
+            "Envelopes": {
+              "count": 2435,
+              "mean": 7.62,
+              "median": 4.26,
+              "std": 10.02,
+              "min": 0.01,
+              "max": 104.12
+            },
+            "Fasteners": {
+              "count": 2420,
+              "mean": 3.74,
+              "median": 2.34,
+              "std": 4.65,
+              "min": 0.01,
+              "max": 87.09
+            },
+            "Furnishings": {
+              "count": 3170,
+              "mean": 12.85,
+              "median": 6.61,
+              "std": 18.3,
+              "min": 0.04,
+              "max": 206.61
+            },
+            "Labels": {
+              "count": 2606,
+              "mean": 3.09,
+              "median": 1.86,
+              "std": 4.33,
+              "min": 0.02,
+              "max": 77.93
+            },
+            "Machines": {
+              "count": 1486,
+              "mean": 53.25,
+              "median": 25.89,
+              "std": 79.97,
+              "min": 0.1,
+              "max": 699.55
+            },
+            "Paper": {
+              "count": 3538,
+              "mean": 7.54,
+              "median": 4.04,
+              "std": 10.29,
+              "min": 0.0,
+              "max": 141.52
+            },
+            "Phones": {
+              "count": 3357,
+              "mean": 55.08,
+              "median": 24.23,
+              "std": 90.0,
+              "min": 0.05,
+              "max": 915.49
+            },
+            "Storage": {
+              "count": 5059,
+              "mean": 23.83,
+              "median": 10.35,
+              "std": 38.95,
+              "min": 0.04,
+              "max": 506.49
+            },
+            "Supplies": {
+              "count": 2425,
+              "mean": 10.23,
+              "median": 5.76,
+              "std": 24.22,
+              "min": 0.05,
+              "max": 846.54
+            },
+            "Tables": {
+              "count": 861,
+              "mean": 92.75,
+              "median": 56.38,
+              "std": 113.66,
+              "min": 0.25,
+              "max": 878.38
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 671.7113087986613,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.03334336165820947,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Tables",
+            "underprivileged_group": "Labels",
+            "privileged_mean": 92.75423228803717,
+            "underprivileged_mean": 3.0927379125095933,
+            "interpretation": "Ratio of 0.03 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.6187786742357195,
+            "max_cv": 3.590515339756898,
+            "min_cv": 1.2040357588421287,
+            "cv_by_group": {
+              "Accessories": 1.7480589029273295,
+              "Appliances": 1.613409917972641,
+              "Art": 1.4760870741221772,
+              "Binders": 3.590515339756898,
+              "Bookcases": 1.2040357588421287,
+              "Chairs": 1.5600817709698518,
+              "Copiers": 1.2172948685035032,
+              "Envelopes": 1.3156358283175609,
+              "Fasteners": 1.242683677694098,
+              "Furnishings": 1.423810829986407,
+              "Labels": 1.398881385801892,
+              "Machines": 1.5017423223373347,
+              "Paper": 1.3657746103120214,
+              "Phones": 1.6340522315816295,
+              "Storage": 1.6347075111944174,
+              "Supplies": 2.367113264167611,
+              "Tables": 1.2253521675197296
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    },
+    "Order Priority": {
+      "representation_bias": {
+        "representation_by_group": {
+          "Medium": {
+            "count": 29433,
+            "percentage": 57.385455254435556,
+            "under_represented": false
+          },
+          "High": {
+            "count": 15501,
+            "percentage": 30.22226554883993,
+            "under_represented": false
+          },
+          "Critical": {
+            "count": 3932,
+            "percentage": 7.666211737180737,
+            "under_represented": true
+          },
+          "Low": {
+            "count": 2424,
+            "percentage": 4.726067459543771,
+            "under_represented": true
+          }
+        },
+        "under_represented_groups": [
+          "Critical",
+          "Low"
+        ],
+        "has_representation_bias": true,
+        "interpretation": "2 group(s) under-represented (< 10%)"
+      },
+      "metrics": {
+        "Postal Code": {
+          "group_statistics": {
+            "Critical": {
+              "count": 783,
+              "mean": 54771.96,
+              "median": 53209.0,
+              "std": 31689.51,
+              "min": 1841.0,
+              "max": 98115.0
+            },
+            "High": {
+              "count": 3069,
+              "mean": 55597.52,
+              "median": 58103.0,
+              "std": 32393.22,
+              "min": 1453.0,
+              "max": 99207.0
+            },
+            "Low": {
+              "count": 432,
+              "mean": 58667.25,
+              "median": 62001.0,
+              "std": 31652.3,
+              "min": 1841.0,
+              "max": 99301.0
+            },
+            "Medium": {
+              "count": 5710,
+              "mean": 54765.88,
+              "median": 55407.0,
+              "std": 31956.92,
+              "min": 1040.0,
+              "max": 99301.0
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": NaN,
+            "p_value": NaN,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9335000218924447,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Low",
+            "underprivileged_group": "Medium",
+            "privileged_mean": 58667.25,
+            "underprivileged_mean": 54765.87915936953,
+            "interpretation": "Ratio of 0.93 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 0.5710626906697148,
+            "max_cv": 0.5835188272089536,
+            "min_cv": 0.5395224443022865,
+            "cv_by_group": {
+              "Critical": 0.5785716974445729,
+              "High": 0.5826377937230462,
+              "Low": 0.5395224443022865,
+              "Medium": 0.5835188272089536
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Sales": {
+          "group_statistics": {
+            "Critical": {
+              "count": 3932,
+              "mean": 250.82,
+              "median": 84.9,
+              "std": 473.28,
+              "min": 1.19,
+              "max": 8749.95
+            },
+            "High": {
+              "count": 15501,
+              "mean": 245.63,
+              "median": 84.98,
+              "std": 460.59,
+              "min": 0.85,
+              "max": 11199.97
+            },
+            "Low": {
+              "count": 2424,
+              "mean": 234.25,
+              "median": 83.53,
+              "std": 440.49,
+              "min": 1.63,
+              "max": 7958.58
+            },
+            "Medium": {
+              "count": 29433,
+              "mean": 247.37,
+              "median": 85.29,
+              "std": 506.59,
+              "min": 0.44,
+              "max": 22638.48
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 0.6606560098568577,
+            "p_value": 0.5761616863209242,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9339325199465867,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Critical",
+            "underprivileged_group": "Low",
+            "privileged_mean": 250.8228544710071,
+            "underprivileged_mean": 234.25162053630365,
+            "interpretation": "Ratio of 0.93 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.9225754911845825,
+            "max_cv": 2.047869624185799,
+            "min_cv": 1.875117836700373,
+            "cv_by_group": {
+              "Critical": 1.886890719945338,
+              "High": 1.875117836700373,
+              "Low": 1.88042378390682,
+              "Medium": 2.047869624185799
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Discount": {
+          "group_statistics": {
+            "Critical": {
+              "count": 3932,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "High": {
+              "count": 15501,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.85
+            },
+            "Low": {
+              "count": 2424,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            },
+            "Medium": {
+              "count": 29433,
+              "mean": 0.14,
+              "median": 0.0,
+              "std": 0.21,
+              "min": 0.0,
+              "max": 0.8
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 1.320680096388999,
+            "p_value": 0.26560490588902846,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.9507224234207706,
+            "passes_80_percent_rule": true,
+            "privileged_group": "Medium",
+            "underprivileged_group": "Critical",
+            "privileged_mean": 0.14359161485407537,
+            "underprivileged_mean": 0.13651576805696847,
+            "interpretation": "Ratio of 0.95 passes the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.4937664818263465,
+            "max_cv": 1.5266602148840838,
+            "min_cv": 1.4797844818645245,
+            "cv_by_group": {
+              "Critical": 1.5266602148840838,
+              "High": 1.486630794459145,
+              "Low": 1.4819904360976324,
+              "Medium": 1.4797844818645245
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Profit": {
+          "group_statistics": {
+            "Critical": {
+              "count": 3932,
+              "mean": 31.59,
+              "median": 9.72,
+              "std": 171.03,
+              "min": -4088.38,
+              "max": 2799.98
+            },
+            "High": {
+              "count": 15501,
+              "mean": 27.12,
+              "median": 9.18,
+              "std": 162.44,
+              "min": -3839.99,
+              "max": 3919.99
+            },
+            "Low": {
+              "count": 2424,
+              "mean": 24.2,
+              "median": 9.0,
+              "std": 204.28,
+              "min": -6599.98,
+              "max": 3979.08
+            },
+            "Medium": {
+              "count": 29433,
+              "mean": 29.36,
+              "median": 9.24,
+              "std": 178.11,
+              "min": -3701.89,
+              "max": 8399.98
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 1.4615142970343122,
+            "p_value": 0.22283640166560595,
+            "significant_difference": false,
+            "interpretation": "No significant difference between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.7659248318206872,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Critical",
+            "underprivileged_group": "Low",
+            "privileged_mean": 31.59312418107833,
+            "underprivileged_mean": 24.197958325082507,
+            "interpretation": "Ratio of 0.77 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 6.477858831264613,
+            "max_cv": 8.442073385142901,
+            "min_cv": 5.413379540886411,
+            "cv_by_group": {
+              "Critical": 5.413379540886411,
+              "High": 5.989854255885848,
+              "Low": 8.442073385142901,
+              "Medium": 6.066128143143291
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        },
+        "Shipping Cost": {
+          "group_statistics": {
+            "Critical": {
+              "count": 3932,
+              "mean": 59.72,
+              "median": 20.11,
+              "std": 106.17,
+              "min": 0.19,
+              "max": 933.57
+            },
+            "High": {
+              "count": 15501,
+              "mean": 32.87,
+              "median": 10.52,
+              "std": 64.5,
+              "min": 0.0,
+              "max": 878.38
+            },
+            "Low": {
+              "count": 2424,
+              "mean": 27.08,
+              "median": 9.14,
+              "std": 53.51,
+              "min": 0.13,
+              "max": 867.69
+            },
+            "Medium": {
+              "count": 29433,
+              "mean": 18.44,
+              "median": 5.8,
+              "std": 39.44,
+              "min": 0.0,
+              "max": 915.49
+            }
+          },
+          "statistical_parity_test": {
+            "f_statistic": 728.2682583222323,
+            "p_value": 0.0,
+            "significant_difference": true,
+            "interpretation": "Significant difference detected between groups"
+          },
+          "disparate_impact": {
+            "ratio": 0.30880669665322036,
+            "passes_80_percent_rule": false,
+            "privileged_group": "Critical",
+            "underprivileged_group": "Medium",
+            "privileged_mean": 59.72124500508647,
+            "underprivileged_mean": 18.44232039003839,
+            "interpretation": "Ratio of 0.31 fails the 80% rule"
+          },
+          "coefficient_of_variation": {
+            "mean_cv": 1.96357134457205,
+            "max_cv": 2.138309512031164,
+            "min_cv": 1.7776862260995265,
+            "cv_by_group": {
+              "Critical": 1.7776862260995265,
+              "High": 1.962155661049826,
+              "Low": 1.9761339791076842,
+              "Medium": 2.138309512031164
+            },
+            "interpretation": "Low CV indicates consistent performance across groups"
+          }
+        }
+      }
+    }
+  },
+  "summary": {
+    "status": "completed",
+    "total_tests": 35,
+    "bias_flags": 24,
+    "bias_flag_percentage": 68.57142857142857,
+    "overall_assessment": "\u26a0\u26a0\u26a0 Significant bias detected - immediate action required",
+    "recommendations": [
+      "Review groups with disparate impact ratios below 0.8",
+      "Consider data augmentation for under-represented groups",
+      "Investigate root causes of statistical differences",
+      "Implement fairness constraints in downstream models",
+      "Document bias mitigation strategies"
+    ]
+  },
+  "protected_attributes": [
+    "Ship Mode",
+    "Segment",
+    "Market",
+    "Region",
+    "Category",
+    "Sub-Category",
+    "Order Priority"
+  ],
+  "metrics_analyzed": [
+    "Postal Code",
+    "Sales",
+    "Discount",
+    "Profit",
+    "Shipping Cost"
+  ]
+}

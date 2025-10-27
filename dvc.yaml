@@ -1,0 +1,65 @@
+# DVC Pipeline for Data-Pipeline Project
+
+stages:
+  ingest:
+    cmd: python scripts/acquire_data.py
+    deps:
+      - scripts/acquire_data.py
+      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\data\raw\orders.csv
+    outs:
+      - data/raw/walmart_raw.csv
+
+  validate:
+    cmd: python scripts/validate.py
+    deps:
+      - data/raw/walmart_raw.csv
+      - scripts/validate.py
+      - config/data_validation_rules.yaml
+    outs:
+      - data/validated/walmart_validated.csv
+    metrics:
+      - data/reports/validation/validation_metrics.json:
+          cache: false
+
+  bias_analysis:
+    cmd: python scripts/bias_analysis.py
+    deps:
+      - data/validated/walmart_validated.csv
+      - scripts/bias_analysis.py
+      - config/bias_config.yaml
+    metrics:
+      - data/reports/bias/bias_metrics.json:
+          cache: false
+
+  preprocess:
+    cmd: python scripts/preprocess.py
+    deps:
+      - data/validated/walmart_validated.csv
+      - scripts/preprocess.py
+      - config/cleaning_config.yaml
+    outs:
+      - data/processed/walmart_cleaned.csv
+    metrics:
+      - data/reports/cleaning/cleaning_metrics.json:
+          cache: false
+
+  schema_generation:
+    cmd: python scripts/schema_stats.py
+    deps:
+      - data/processed/walmart_cleaned.csv
+      - scripts/schema_stats.py
+      - config/schema_config.yaml
+    outs:
+      - data/schemas/walmart_retail_schema.json
+
+  anomaly_detection:
+    cmd: python scripts/anomaly_detect.py
+    deps:
+      - data/processed/walmart_cleaned.csv
+      - scripts/anomaly_detect.py
+      - config/anomaly_config.yaml
+    outs:
+      - data/processed/walmart_with_anomaly_flags.csv
+    metrics:
+      - data/reports/anomaly/anomaly_metrics.json:
+          cache: false
