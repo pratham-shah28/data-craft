@@ -1,0 +1,6 @@
+outs:
+- md5: b1caa8ab346df18ca8a13b6000bf3015
+  size: 12042148
+  isexec: true
+  hash: md5
+  path: orders_validated.csv

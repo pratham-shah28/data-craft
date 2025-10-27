@@ -1,0 +1,115 @@
+services:
+  # Main ML Pipeline Service
+  data-pipeline:
+    build: .
+    container_name: data-pipeline
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      - ./scripts:/app/scripts
+      - ./dags:/app/dags
+      # Mount your GCP key - UPDATE THIS PATH
+      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\gcp\service-account.json:/app/gcp-key.json:ro
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
+      - PYTHONUNBUFFERED=1
+      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCS_BUCKET_NAME=isha-retail-data
+    networks:
+      - ml-network
+
+  # Airflow PostgreSQL Database
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+    restart: always
+    networks:
+      - ml-network
+
+  # Airflow Webserver
+  airflow-webserver:
+    build: .
+    container_name: airflow-webserver
+    depends_on:
+      - postgres
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      - ./scripts:/app/scripts
+      - ./dags:/app/dags
+      - ./airflow-logs:/app/airflow/logs
+      # Mount your GCP key - UPDATE THIS PATH
+      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\gcp\service-account.json:/app/gcp-key.json:ro
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/app/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__SECRET_KEY=change-this-to-random-string
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
+      - PYTHONPATH=/app
+      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCS_BUCKET_NAME=isha-retail-data
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      airflow db init &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+      airflow webserver
+      "
+    restart: always
+    networks:
+      - ml-network
+
+  # Airflow Scheduler
+  airflow-scheduler:
+    build: .
+    container_name: airflow-scheduler
+    depends_on:
+      - postgres
+      - airflow-webserver
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+      - ./scripts:/app/scripts
+      - ./dags:/app/dags
+      - ./airflow-logs:/app/airflow/logs
+      # Mount your GCP key - UPDATE THIS PATH
+      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\gcp\service-account.json:/app/gcp-key.json:ro
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/app/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
+      - PYTHONPATH=/app
+      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCS_BUCKET_NAME=isha-retail-data
+    command: airflow scheduler
+    restart: always
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
+    driver: bridge
+
+volumes:
+  postgres-db-volume:

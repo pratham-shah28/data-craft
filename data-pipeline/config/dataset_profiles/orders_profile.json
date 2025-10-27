@@ -1,0 +1,394 @@
+{
+  "dataset_name": "orders",
+  "timestamp": "2025-10-27T05:27:14.561758",
+  "shape": {
+    "rows": 51290,
+    "columns": 24
+  },
+  "memory_usage_mb": 59.24814319610596,
+  "columns": {
+    "Row ID": {
+      "detected_type": "identifier",
+      "pandas_dtype": "int64",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 51290,
+      "unique_percentage": 100.0
+    },
+    "Order ID": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 25035,
+      "unique_percentage": 48.81068434392669,
+      "top_values": {
+        "CA-2014-100111": 14,
+        "NI-2014-8880": 13,
+        "TO-2014-9950": 13,
+        "IN-2012-41261": 13,
+        "IN-2013-42311": 13
+      }
+    },
+    "Order date": {
+      "detected_type": "datetime",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 1430,
+      "unique_percentage": 2.78806784948333,
+      "min_date": "2019-01-01 00:00:00",
+      "max_date": "2022-12-31 00:00:00"
+    },
+    "ship date ": {
+      "detected_type": "datetime",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 1464,
+      "unique_percentage": 2.854357574575941,
+      "min_date": "2019-01-03 00:00:00",
+      "max_date": "2023-01-07 00:00:00"
+    },
+    "Ship Mode": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 4,
+      "unique_percentage": 0.007798791187365959,
+      "top_values": {
+        "Standard Class": 30775,
+        "Second Class": 10309,
+        "First Class": 7505,
+        "Same Day": 2701
+      }
+    },
+    "Customer ID": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 1590,
+      "unique_percentage": 3.1000194969779686,
+      "top_values": {
+        "PO-18850": 97,
+        "BE-11335": 94,
+        "JG-15805": 90,
+        "SW-20755": 89,
+        "EM-13960": 85
+      }
+    },
+    "Customer Name": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 795,
+      "unique_percentage": 1.5500097484889843,
+      "top_values": {
+        "Muhammed Yedwab": 108,
+        "Steven Ward": 106,
+        "Gary Hwang": 102,
+        "Patrick O'Brill": 102,
+        "Bill Eplett": 102
+      }
+    },
+    "Segment": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 3,
+      "unique_percentage": 0.005849093390524468,
+      "top_values": {
+        "Consumer": 26518,
+        "Corporate": 15429,
+        "Home Office": 9343
+      }
+    },
+    "City": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 3636,
+      "unique_percentage": 7.089101189315657,
+      "top_values": {
+        "New York City": 915,
+        "Los Angeles": 747,
+        "Philadelphia": 537,
+        "San Francisco": 510,
+        "Santo Domingo": 443
+      }
+    },
+    "State": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 1094,
+      "unique_percentage": 2.1329693897445896,
+      "top_values": {
+        "California": 2001,
+        "England": 1499,
+        "New York": 1128,
+        "Texas": 985,
+        "Ile-de-France": 981
+      }
+    },
+    "Country": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 147,
+      "unique_percentage": 0.286605576135699,
+      "top_values": {
+        "United States": 9994,
+        "Australia": 2837,
+        "France": 2827,
+        "Mexico": 2644,
+        "Germany": 2065
+      }
+    },
+    "Postal Code": {
+      "detected_type": "continuous_numeric",
+      "pandas_dtype": "float64",
+      "null_count": 41296,
+      "null_percentage": 80.51472021836615,
+      "unique_count": 631,
+      "unique_percentage": 1.2302593098069798,
+      "min": 1040.0,
+      "max": 99301.0,
+      "mean": 55190.3794276566,
+      "median": 56430.5,
+      "std": 32063.69335036448
+    },
+    "Market": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 7,
+      "unique_percentage": 0.013647884577890426,
+      "top_values": {
+        "APAC": 11002,
+        "LATAM": 10294,
+        "EU": 10000,
+        "US": 9994,
+        "EMEA": 5029
+      }
+    },
+    "Region": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 13,
+      "unique_percentage": 0.025346071358939362,
+      "top_values": {
+        "Central": 11117,
+        "South": 6645,
+        "EMEA": 5029,
+        "North": 4785,
+        "Africa": 4587
+      }
+    },
+    "Product ID": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 10292,
+      "unique_percentage": 20.066289725092613,
+      "top_values": {
+        "OFF-AR-10003651": 35,
+        "OFF-AR-10003829": 31,
+        "OFF-BI-10003708": 30,
+        "OFF-BI-10002799": 30,
+        "FUR-CH-10003354": 28
+      }
+    },
+    "Category": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 3,
+      "unique_percentage": 0.005849093390524468,
+      "top_values": {
+        "Office Supplies": 31273,
+        "Technology": 10141,
+        "Furniture": 9876
+      }
+    },
+    "Sub-Category": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 17,
+      "unique_percentage": 0.033144862546305325,
+      "top_values": {
+        "Binders": 6152,
+        "Storage": 5059,
+        "Art": 4883,
+        "Paper": 3538,
+        "Chairs": 3434
+      }
+    },
+    "Product Name": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 3788,
+      "unique_percentage": 7.385455254435562,
+      "top_values": {
+        "Staples": 227,
+        "Cardinal Index Tab, Clear": 92,
+        "Eldon File Cart, Single Width": 90,
+        "Rogers File Cart, Single Width": 84,
+        "Ibico Index Tab, Clear": 83
+      }
+    },
+    "Sales": {
+      "detected_type": "continuous_numeric",
+      "pandas_dtype": "float64",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 22995,
+      "unique_percentage": 44.83330083837006,
+      "min": 0.444,
+      "max": 22638.48,
+      "mean": 246.49058120257362,
+      "median": 85.053,
+      "std": 487.5653605385642
+    },
+    "Quantity": {
+      "detected_type": "categorical",
+      "pandas_dtype": "int64",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 14,
+      "unique_percentage": 0.02729576915578085,
+      "top_values": {
+        "2": 12748,
+        "3": 9682,
+        "1": 8963,
+        "4": 6385,
+        "5": 4882
+      }
+    },
+    "Discount": {
+      "detected_type": "continuous_numeric",
+      "pandas_dtype": "float64",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 27,
+      "unique_percentage": 0.05264184051472022,
+      "min": 0.0,
+      "max": 0.85,
+      "mean": 0.14290754533047378,
+      "median": 0.0,
+      "std": 0.21227993168586598
+    },
+    "Profit": {
+      "detected_type": "continuous_numeric",
+      "pandas_dtype": "float64",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 24575,
+      "unique_percentage": 47.913823357379606,
+      "min": -6599.978,
+      "max": 8399.976,
+      "mean": 28.61098247767596,
+      "median": 9.24,
+      "std": 174.34097190003288
+    },
+    "Shipping Cost": {
+      "detected_type": "continuous_numeric",
+      "pandas_dtype": "float64",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 16877,
+      "unique_percentage": 32.90504971729382,
+      "min": 0.002,
+      "max": 933.57,
+      "mean": 26.3758179645155,
+      "median": 7.79,
+      "std": 57.29680954115876
+    },
+    "Order Priority": {
+      "detected_type": "categorical",
+      "pandas_dtype": "object",
+      "null_count": 0,
+      "null_percentage": 0.0,
+      "unique_count": 4,
+      "unique_percentage": 0.007798791187365959,
+      "top_values": {
+        "Medium": 29433,
+        "High": 15501,
+        "Critical": 3932,
+        "Low": 2424
+      }
+    }
+  },
+  "column_types": {
+    "identifier": [
+      "Row ID"
+    ],
+    "categorical": [
+      "Order ID",
+      "Ship Mode",
+      "Customer ID",
+      "Customer Name",
+      "Segment",
+      "City",
+      "State",
+      "Country",
+      "Market",
+      "Region",
+      "Product ID",
+      "Category",
+      "Sub-Category",
+      "Product Name",
+      "Quantity",
+      "Order Priority"
+    ],
+    "datetime": [
+      "Order date",
+      "ship date "
+    ],
+    "continuous_numeric": [
+      "Postal Code",
+      "Sales",
+      "Discount",
+      "Profit",
+      "Shipping Cost"
+    ]
+  },
+  "protected_attributes": [
+    "Ship Mode",
+    "Segment",
+    "Market",
+    "Region",
+    "Category",
+    "Sub-Category",
+    "Order Priority"
+  ],
+  "recommended_metrics": [
+    "Postal Code",
+    "Sales",
+    "Discount",
+    "Profit",
+    "Shipping Cost"
+  ],
+  "data_quality": {
+    "total_nulls": 41296,
+    "null_percentage": 3.3547800090985893,
+    "duplicate_rows": 0,
+    "duplicate_percentage": 0.0
+  }
+}

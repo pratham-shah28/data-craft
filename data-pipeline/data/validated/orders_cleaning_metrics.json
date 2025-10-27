@@ -1,0 +1,137 @@
+{
+  "timestamp": "2025-10-27T05:27:22.643640",
+  "dataset_name": "orders",
+  "operations": [
+    {
+      "operation": "normalize_column_names",
+      "changed_names": {
+        "Row ID": "row_id",
+        "Order ID": "order_id",
+        "Order date": "order_date",
+        "ship date ": "ship_date",
+        "Ship Mode": "ship_mode",
+        "Customer ID": "customer_id",
+        "Customer Name": "customer_name",
+        "Segment": "segment",
+        "City": "city",
+        "State": "state",
+        "Country": "country",
+        "Postal Code": "postal_code",
+        "Market": "market",
+        "Region": "region",
+        "Product ID": "product_id",
+        "Category": "category",
+        "Sub-Category": "sub_category",
+        "Product Name": "product_name",
+        "Sales": "sales",
+        "Quantity": "quantity",
+        "Discount": "discount",
+        "Profit": "profit",
+        "Shipping Cost": "shipping_cost",
+        "Order Priority": "order_priority"
+      }
+    },
+    {
+      "operation": "standardize_data_types",
+      "conversions": {
+        "datetime": [
+          "order_date"
+        ],
+        "numeric": [
+          "postal_code",
+          "sales",
+          "discount",
+          "profit",
+          "shipping_cost"
+        ],
+        "categorical": [
+          "order_id",
+          "ship_mode",
+          "customer_id",
+          "customer_name",
+          "segment",
+          "city",
+          "state",
+          "country",
+          "market",
+          "region",
+          "product_id",
+          "category",
+          "sub_category",
+          "product_name",
+          "quantity",
+          "order_priority"
+        ],
+        "text": []
+      }
+    },
+    {
+      "operation": "remove_duplicates",
+      "duplicates_removed": 0,
+      "rows_remaining": 51290
+    },
+    {
+      "operation": "handle_outliers",
+      "method": "iqr",
+      "threshold": 3,
+      "outliers_capped": {
+        "postal_code": {
+          "count": 9994,
+          "percentage": 19.485279781633846,
+          "method": "iqr",
+          "lower_bound": 56430.5,
+          "upper_bound": 56430.5
+        },
+        "sales": {
+          "count": 3010,
+          "percentage": 5.8685903684928835,
+          "method": "iqr",
+          "lower_bound": -630.1251,
+          "upper_bound": 911.936925
+        },
+        "discount": {
+          "count": 2,
+          "percentage": 0.0038993955936829795,
+          "method": "iqr",
+          "lower_bound": -0.6000000000000001,
+          "upper_bound": 0.8
+        },
+        "profit": {
+          "count": 5920,
+          "percentage": 11.542210957301618,
+          "method": "iqr",
+          "lower_bound": -110.43,
+          "upper_bound": 147.24
+        },
+        "shipping_cost": {
+          "count": 3415,
+          "percentage": 6.658217976213687,
+          "method": "iqr",
+          "lower_bound": -62.91,
+          "upper_bound": 89.97
+        }
+      }
+    },
+    {
+      "operation": "remove_constant_columns",
+      "columns_removed": [
+        "postal_code"
+      ]
+    }
+  ],
+  "summary": {
+    "initial_rows": 51290,
+    "initial_columns": 24,
+    "final_rows": 51290,
+    "final_columns": 23,
+    "rows_removed": 0,
+    "columns_removed": 1,
+    "rows_retained_percentage": 100.0,
+    "data_quality_score": 100.0
+  },
+  "quality_metrics": {
+    "null_percentage": 0.0,
+    "duplicate_percentage": 0.0,
+    "completeness_score": 100.0
+  }
+}
