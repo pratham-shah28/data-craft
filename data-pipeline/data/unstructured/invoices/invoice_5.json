@@ -1,0 +1,63 @@
+{
+  "fname": "invoice_5.pdf",
+  "0_expected": {
+    "customer_name": "ALD AUTOMOTIVE PVT LTD",
+    "customer_tax_id": "27AAFCA0924K1ZR",
+    "customer_address": {
+      "street": null,
+      "city": null,
+      "state": "Maharashtra",
+      "postal_code": null,
+      "country": "India"
+    },
+    "shipping_address": null,
+    "purchase_order": null,
+    "invoice_id": "GT\\5153",
+    "invoice_date": "2019-02-27",
+    "due_date": null,
+    "vendor_name": "DILIP TYRES",
+    "vendor_address": {
+      "street": "Pushparaj Chowk",
+      "city": "Sangli",
+      "state": "Maharashtra",
+      "postal_code": null,
+      "country": "India"
+    },
+    "vendor_tax_id": "27AAEPH8682F1ZI",
+    "remittance_address": null,
+    "subtotal": {
+      "currency_code": "INR",
+      "amount": 2287.5
+    },
+    "total_discount": null,
+    "total_tax": {
+      "currency_code": "INR",
+      "amount": 640.5
+    },
+    "invoice_total": {
+      "currency_code": "INR",
+      "amount": 2928.0
+    },
+    "payment_term": null,
+    "items": [
+      {
+        "product_code": "40111090",
+        "description": "165.80R/14 ASSURANCE DP T/L TYRES",
+        "quantity": 1,
+        "tax": {
+          "currency_code": "INR",
+          "amount": 640.5
+        },
+        "unit_price": {
+          "currency_code": "INR",
+          "amount": 2287.5
+        },
+        "total": {
+          "currency_code": "INR",
+          "amount": 2928.0
+        }
+      }
+    ],
+    "customer_signature": null
+  }
+}
