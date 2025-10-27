@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-27T05:27:26.542529",
+  "timestamp": "2025-10-27T18:38:59.610171",
   "dataset_name": "orders",
   "analysis": {
     "Ship Mode": {
@@ -1108,7 +1108,7 @@
           },
           "statistical_parity_test": {
             "f_statistic": 97.96104603299906,
-            "p_value": 5.278005070444385e-123,
+            "p_value": 5.2780050704443856e-123,
             "significant_difference": true,
             "interpretation": "Significant difference detected between groups"
           },
@@ -1900,7 +1900,7 @@
           },
           "statistical_parity_test": {
             "f_statistic": 45.03170252635364,
-            "p_value": 2.1707550389789433e-107,
+            "p_value": 2.170755038978943e-107,
             "significant_difference": true,
             "interpretation": "Significant difference detected between groups"
           },

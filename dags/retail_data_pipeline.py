@@ -2,6 +2,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
+from airflow.operators.email import EmailOperator
+from airflow.operators.python import BranchPythonOperator
+
 from datetime import datetime, timedelta
 import sys
 from pathlib import Path
@@ -23,13 +26,37 @@ config = load_config()
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'email': ['your-email@example.com'],
+    'email': ['ishas2505@gmail.com','sakseneshivi@gmail.com'],
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 2,
     'retry_delay': timedelta(minutes=5),
     'execution_timeout': timedelta(hours=2),
 }
+
+# Email alert t
+email_alert = EmailOperator(
+    task_id='email_alert',
+    to='ishas2505@gmail.com',
+    subject='⚠ Data Anomaly Detected in ML Pipeline',
+    html_content="""
+    <h3>Data Anomaly Alert</h3>
+    <p>An anomaly was detected during data validation or cleaning.</p>
+    <p>Please check the Airflow logs for details.</p>
+    """,
+)
+
+success_email = EmailOperator(
+    task_id='success_email',
+    to='ishas2505@gmail.com',
+    subject='✅ ML Data Pipeline Completed Successfully',
+    html_content="""
+    <h3>ML Data Pipeline Completed Successfully</h3>
+    <p>All tasks in the DAG <b>ml_data_pipeline</b> ran successfully.</p>
+    <p>Summary report generated. Check Airflow logs or the 'reports/' folder for details.</p>
+    """,
+)
+
 
 def run_acquisition(**context):
     """Task 1: Data Acquisition"""
@@ -77,7 +104,9 @@ def run_validation(**context):
         
         # Check if validation passed
         if not report['overall_valid']:
-            logger.warning("⚠ Validation failed, but continuing pipeline")
+            logger.warning("⚠ Validation failed — triggering anomaly alert email")
+            # Trigger email task manually
+            context['ti'].xcom_push(key='anomaly_detected', value=True)
         else:
             logger.info("✓ Validation passed")
         
@@ -102,6 +131,10 @@ def run_cleaning(**context):
         raise ValueError("Dataset name not found from acquisition task")
     
     logger.info(f"Starting cleaning for dataset: {dataset_name}")
+    null_percentage = (cleaned_df.isnull().sum().sum() / (len(cleaned_df) * len(cleaned_df.columns))) * 100
+    if null_percentage > 0.15:  #  threshold
+        logger.warning(f"⚠ High missing values detected: {null_percentage:.2f}% — triggering email alert")
+        context['ti'].xcom_push(key='anomaly_detected', value=True)
     
     try:
         cleaner = DataCleaner(dataset_name)
@@ -240,6 +273,18 @@ def generate_summary_report(**context):
     
     return summary
 
+def check_anomaly(**context):
+    """Branch: send email only if anomaly flag is set"""
+    if context['ti'].xcom_pull(key='anomaly_detected', task_ids=['validate_data', 'clean_data']):
+        return 'email_alert'
+    return 'summary_task'
+
+check_anomaly_task = BranchPythonOperator(
+    task_id='check_anomaly',
+    python_callable=check_anomaly,
+    provide_context=True,
+)
+
 # Create the DAG
 with DAG(
     'ml_data_pipeline',
@@ -341,4 +386,8 @@ with DAG(
     dvc_add_task >> dvc_push_task >> git_commit_task
     
     # Both paths converge at summary
-    [git_commit_task, gcp_upload_task] >> summary_task
+    [git_commit_task, gcp_upload_task] >> summary_task >> success_email
+
+    # Link the anomaly check
+    [bias_task, gcp_upload_task, git_commit_task] >> check_anomaly_task
+    check_anomaly_task >> [email_alert, summary_task]

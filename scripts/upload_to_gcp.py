@@ -18,10 +18,13 @@ from utils import (
     ensure_dir
 )
 
-logger = setup_logging("gcp_upload")
+def _get_logger():
+    """Get or create logger (lazy initialization)"""
+    return setup_logging("gcp_upload")
 
 def initialize_gcs_client():
     """Initialize Google Cloud Storage client"""
+    logger = _get_logger()
     try:
         validate_gcp_credentials()
         credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
@@ -43,6 +46,7 @@ def initialize_gcs_client():
 
 def upload_file_to_gcs(client, bucket_name, source_file, destination_blob_name):
     """Upload a file to Google Cloud Storage"""
+    logger = _get_logger()
     try:
         bucket = client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
@@ -80,6 +84,7 @@ def upload_file_to_gcs(client, bucket_name, source_file, destination_blob_name):
 
 def upload_dataset_metadata(client, bucket_name, dataset_name, metadata):
     """Upload dataset metadata to GCS"""
+    logger = _get_logger()
     try:
         metadata_blob_name = f"metadata/{dataset_name}_metadata.json"
         
@@ -99,6 +104,7 @@ def upload_dataset_metadata(client, bucket_name, dataset_name, metadata):
 
 def generate_dataset_metadata(dataset_name, config):
     """Generate comprehensive metadata for the dataset"""
+    logger = _get_logger()
     metadata = {
         "dataset_name": dataset_name,
         "upload_timestamp": datetime.now().isoformat(),
@@ -170,6 +176,7 @@ def upload_to_gcs(dataset_name, include_raw=False, include_reports=True):
     Returns:
         dict: Upload summary
     """
+    logger = _get_logger()
     config = load_config()
     bucket_name = config['gcp']['bucket_name']
     
@@ -271,6 +278,7 @@ def upload_to_gcs(dataset_name, include_raw=False, include_reports=True):
 
 def download_from_gcs(dataset_name, stage='processed', destination_path=None):
     """Download dataset from GCS"""
+    logger = _get_logger()
     config = load_config()
     bucket_name = config['gcp']['bucket_name']
     
@@ -310,6 +318,7 @@ def download_from_gcs(dataset_name, stage='processed', destination_path=None):
 
 def list_gcs_datasets(bucket_name=None):
     """List all datasets in GCS bucket"""
+    logger = _get_logger()
     if bucket_name is None:
         config = load_config()
         bucket_name = config['gcp']['bucket_name']
