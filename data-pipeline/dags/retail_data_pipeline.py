@@ -2,6 +2,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
+from airflow.operators.email import EmailOperator
+from airflow.operators.python import BranchPythonOperator
+
 from datetime import datetime, timedelta
 import sys
 from pathlib import Path
@@ -23,7 +26,7 @@ config = load_config()
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'email': ['your-email@example.com'],
+    'email': ['ishas2505@gmail.com','sakseneshivi@gmail.com'],
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 2,
@@ -77,7 +80,9 @@ def run_validation(**context):
         
         # Check if validation passed
         if not report['overall_valid']:
-            logger.warning("⚠ Validation failed, but continuing pipeline")
+            logger.warning("⚠ Validation failed — triggering anomaly alert email")
+            # Trigger email task manually
+            context['ti'].xcom_push(key='anomaly_detected', value=True)
         else:
             logger.info("✓ Validation passed")
         
@@ -102,11 +107,14 @@ def run_cleaning(**context):
         raise ValueError("Dataset name not found from acquisition task")
     
     logger.info(f"Starting cleaning for dataset: {dataset_name}")
-    
+
     try:
         cleaner = DataCleaner(dataset_name)
         cleaned_df = cleaner.clean_data()
-        
+        null_percentage = (cleaned_df.isnull().sum().sum() / (len(cleaned_df) * len(cleaned_df.columns))) * 100
+        if null_percentage > 0.15:  #  threshold
+            logger.warning(f"⚠ High missing values detected: {null_percentage:.2f}% — triggering email alert")
+            context['ti'].xcom_push(key='anomaly_detected', value=True)
         logger.info(f"✓ Cleaning complete. Final shape: {cleaned_df.shape}")
         
         return {
@@ -153,6 +161,39 @@ def run_bias_detection(**context):
     except Exception as e:
         logger.error(f"Bias detection failed: {str(e)}")
         raise
+
+def send_anomaly_email_if_needed(**context):
+    """Send email only if anomaly detected in validation or cleaning"""
+    logger = setup_logging("conditional_email")
+    
+    # Check if any anomaly was detected
+    anomaly_detected = False
+    for task_id in ['validate_data', 'clean_data']:
+        if context['ti'].xcom_pull(key='anomaly_detected', task_ids=task_id):
+            anomaly_detected = True
+            break
+    
+    if anomaly_detected:
+        logger.warning("⚠ Anomaly detected - sending alert email")
+        try:
+            from airflow.utils.email import send_email
+            send_email(
+                to='ishas2505@gmail.com',
+                subject='⚠ Data Anomaly Detected in ML Pipeline',
+                html_content=f"""
+                <h3>Data Anomaly Alert</h3>
+                <p>An anomaly was detected during data validation or cleaning.</p>
+                <p>Please check the Airflow logs for details.</p>
+                <p><strong>DAG Run:</strong> {context['dag_run'].run_id}</p>
+                <p><strong>Execution Date:</strong> {context['execution_date']}</p>
+                """,
+            )
+            logger.info("✓ Alert email sent successfully")
+        except Exception as e:
+            logger.error(f"Failed to send email: {str(e)}")
+            # Don't fail the task if email fails - just log it
+    else:
+        logger.info("✓ No anomalies detected - skipping email")
 
 def run_gcp_upload(**context):
     """Task 5: Upload to GCS"""
@@ -240,6 +281,31 @@ def generate_summary_report(**context):
     
     return summary
 
+def send_success_email(**context):
+    """Send success email after pipeline completion"""
+    logger = setup_logging("success_email")
+    
+    dataset_name = context['ti'].xcom_pull(key='dataset_name', task_ids='acquire_data')
+    
+    try:
+        from airflow.utils.email import send_email
+        send_email(
+            to='ishas2505@gmail.com',
+            subject='✅ ML Data Pipeline Completed Successfully',
+            html_content=f"""
+            <h3>ML Data Pipeline Completed Successfully</h3>
+            <p>All tasks in the DAG <b>ml_data_pipeline</b> ran successfully.</p>
+            <p><strong>Dataset:</strong> {dataset_name}</p>
+            <p><strong>DAG Run:</strong> {context['dag_run'].run_id}</p>
+            <p><strong>Execution Date:</strong> {context['execution_date']}</p>
+            <p>Summary report generated. Check Airflow logs or the 'reports/' folder for details.</p>
+            """,
+        )
+        logger.info("✓ Success email sent")
+    except Exception as e:
+        logger.error(f"Failed to send success email: {str(e)}")
+        # Don't fail the task - pipeline already succeeded
+
 # Create the DAG
 with DAG(
     'ml_data_pipeline',
@@ -279,7 +345,12 @@ with DAG(
         python_callable=run_bias_detection,
         provide_context=True,
     )
-    
+    # Task 5: Check and send anomaly email if needed
+    check_and_alert_task = PythonOperator(
+        task_id='check_and_alert',
+        python_callable=send_anomaly_email_if_needed,
+        provide_context=True,
+    )
     # Task 5: DVC Tracking
     dvc_add_task = BashOperator(
         task_id='dvc_add_data',
@@ -308,6 +379,12 @@ with DAG(
         provide_context=True,
     )
     
+    success_email_task = PythonOperator(
+    task_id='success_email',
+    python_callable=send_success_email,
+    provide_context=True,
+    )
+    
     # Task 7: Git Commit (DVC metadata)
     git_commit_task = BashOperator(
         task_id='git_commit_dvc',
@@ -332,13 +409,18 @@ with DAG(
     
     # Define task dependencies
     # Linear flow with parallel branches
+    # Define task dependencies
+    # Define task dependencies - Clean linear flow
     acquire_task >> validate_task >> clean_task >> bias_task
     
-    # After bias detection, branch into two parallel paths
-    bias_task >> [dvc_add_task, gcp_upload_task]
+    # After bias detection, check for anomalies and send email if needed
+    bias_task >> check_and_alert_task
+    
+    # Then proceed with parallel DVC and GCP paths
+    check_and_alert_task >> [dvc_add_task, gcp_upload_task]
     
     # DVC path
     dvc_add_task >> dvc_push_task >> git_commit_task
     
     # Both paths converge at summary
-    [git_commit_task, gcp_upload_task] >> summary_task
+    [git_commit_task, gcp_upload_task] >> summary_task >> success_email_task
