@@ -25,7 +25,7 @@ A two-phase approach that combines automated data processing with AI-powered ins
 
 ---
 
-## 📊 Architecture Overview
+##  Architecture Overview
 
 ### System Flow
 
