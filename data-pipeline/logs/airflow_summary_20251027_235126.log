@@ -1,0 +1,10 @@
+2025-10-27 23:51:27 - airflow_summary - INFO - ✓ Pipeline summary saved to reports/orders_pipeline_summary_2025-10-27.json
+2025-10-27 23:51:27 - airflow_summary - INFO - ============================================================
+2025-10-27 23:51:27 - airflow_summary - INFO - PIPELINE EXECUTION SUMMARY
+2025-10-27 23:51:27 - airflow_summary - INFO - ============================================================
+2025-10-27 23:51:27 - airflow_summary - INFO - Dataset: orders
+2025-10-27 23:51:27 - airflow_summary - INFO - Validation: ⚠ Failed
+2025-10-27 23:51:27 - airflow_summary - INFO - Cleaning: 51290 rows, 23 columns
+2025-10-27 23:51:27 - airflow_summary - INFO - Bias Detection: 24 flags
+2025-10-27 23:51:27 - airflow_summary - INFO - GCP Upload: 6 files (23.02 MB)
+2025-10-27 23:51:27 - airflow_summary - INFO - ============================================================

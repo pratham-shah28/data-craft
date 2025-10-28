@@ -1,0 +1,10 @@
+2025-10-27 23:50:40 - schema_detector - INFO - Generating schema profile for: orders
+2025-10-27 23:50:42 - schema_detector - INFO - Detecting potential protected attributes...
+2025-10-27 23:50:42 - schema_detector - INFO - Detected potential demographic attribute: Ship Mode
+2025-10-27 23:50:42 - schema_detector - INFO - Detected protected attribute: Segment
+2025-10-27 23:50:42 - schema_detector - INFO - Detected potential demographic attribute: Market
+2025-10-27 23:50:42 - schema_detector - INFO - Detected protected attribute: Region
+2025-10-27 23:50:42 - schema_detector - INFO - Detected potential demographic attribute: Category
+2025-10-27 23:50:42 - schema_detector - INFO - Detected potential demographic attribute: Sub-Category
+2025-10-27 23:50:42 - schema_detector - INFO - Detected potential demographic attribute: Order Priority
+2025-10-27 23:50:42 - schema_detector - INFO - Schema profile saved to config/dataset_profiles/orders_profile.json
