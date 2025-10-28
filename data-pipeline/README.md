@@ -137,6 +137,47 @@ Example test:
 
 ---
 
+### **Data Cleaning Module (data_cleaning.py)**
+
+This module is responsible for applying a comprehensive set of cleaning operations to validated structured data. The objective is to ensure data consistency, completeness, and usability before downstream analytics or ML processing. The cleaning workflow is fully automated and integrated within the Airflow pipeline.
+
+The following operations are executed sequentially inside the `DataCleaner` class:
+
+| Operation | Function Name | Description |
+|----------|----------------|-------------|
+| Normalize Column Names | `normalize_column_names()` | Standardizes column names by converting to lowercase and replacing spaces/special characters with underscores to improve schema consistency. |
+| Standardize Data Types | `standardize_data_types()` | Converts each column to its appropriate type (datetime, numerical, categorical, text) based on the schema profile or intelligent auto-detection. |
+| Handle Missing Values | `handle_missing_values()` | Ensures completeness by detecting missing entries and filling them using schema-aware strategies: identifiers dropped if missing, categorical → mode or “Unknown”, continuous → median, discrete numeric → mode. |
+| Remove Duplicates | `remove_duplicates()` | Identifies duplicate records and removes them to maintain accuracy and data integrity. |
+| Outlier Treatment | `handle_outliers()` | Detects outliers using configurable methods (IQR/Z-score) and caps values to reduce noise while preserving structure. |
+| Remove Constant Columns | `remove_constant_columns()` | Removes columns with only one unique value since they provide no analytical value. |
+
+---
+
+#### ✅ Outputs Produced
+
+Upon successful processing, the module generates the following artifacts:
+
+- `data/validated/<dataset_name>_cleaned.csv`  
+- `data/validated/<dataset_name>_cleaning_metrics.json`
+
+The metrics JSON file stores:
+- Cleaning summary (rows/columns before vs. after)
+- Data quality score
+- Missing data statistics
+- Outlier handling details
+- List of transformations applied
+
+---
+
+#### 🔗 Integration Within Pipeline
+
+This cleaning stage is executed as a PythonOperator task in the Airflow DAG. It uses schema profiles from the validation step and ensures that every run produces reproducible, high-quality data outputs. Metrics are logged for monitoring and future audit needs.
+
+---
+
+This module plays a crucial role in improving data quality, increasing confidence in downstream analytics, and maintaining strong data governance throughout the pipeline.
+
 ## Key Features
 
 | Feature | Description |
