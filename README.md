@@ -4,7 +4,7 @@
 
 ---
 
-## 🎯 Project Vision
+##  Project Vision
 
 **DataCraft** is an AI-powered platform designed to democratize data insights within organizations by enabling both technical and non-technical users to extract actionable insights from structured and unstructured data through natural language queries.
 
@@ -118,7 +118,7 @@ The data pipeline automates the journey from raw data ingestion to clean, valida
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 mlops-project/
@@ -163,7 +163,7 @@ mlops-project/
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -236,7 +236,7 @@ dvc push               # Push versioned data
 
 ---
 
-## 📋 Dataset Information
+##  Dataset Information
 
 ### Structured Data: Walmart Retail Dataset
 - **Source:** [GitHub - Walmart eCommerce Analysis](https://github.com/virajbhutada/walmart-ecommerce-retail-analysis/tree/main/data)
@@ -252,35 +252,35 @@ dvc push               # Push versioned data
 
 ---
 
-## 🔬 Key Features
+##  Key Features
 
 ### Data Quality Assurance
-✅ Automated schema detection and validation  
-✅ Missing value detection with smart imputation  
-✅ Duplicate record identification  
-✅ Outlier detection (IQR/Z-score methods)  
-✅ Data quality scoring  
+ Automated schema detection and validation  
+ Missing value detection with smart imputation  
+ Duplicate record identification  
+ Outlier detection (IQR/Z-score methods)  
+ Data quality scoring  
 
 ### Bias Detection & Fairness
-✅ Auto-detection of protected attributes  
-✅ Statistical parity testing (ANOVA)  
-✅ Disparate impact ratio (80% rule)  
-✅ Representation bias detection  
-✅ Actionable bias mitigation recommendations  
+ Auto-detection of protected attributes  
+ Statistical parity testing (ANOVA)  
+ Disparate impact ratio (80% rule)  
+ Representation bias detection  
+ Actionable bias mitigation recommendations  
 
 ### MLOps Best Practices
-✅ Full data lineage (DVC)  
-✅ Reproducible pipelines  
-✅ Apache Airflow orchestration  
-✅ Cloud-native (GCP)  
-✅ Email notifications  
-✅ Comprehensive logging  
-✅ Docker containerization  
-✅ Unit testing  
+ Full data lineage (DVC)  
+ Reproducible pipelines  
+ Apache Airflow orchestration  
+ Cloud-native (GCP)  
+ Email notifications  
+ Comprehensive logging  
+ Docker containerization  
+ Unit testing  
 
 ---
 
-## 📊 Metrics & Business Goals
+##  Metrics & Business Goals
 
 ### Key Metrics
 - **Dashboard Generation Time** - Time from raw data to insights
@@ -297,7 +297,7 @@ dvc push               # Push versioned data
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
@@ -306,13 +306,12 @@ dvc push               # Push versioned data
 | Cloud | Google Cloud Platform | Scalable storage (GCS) |
 | Version Control | DVC + Git | Data and metadata versioning |
 | Data Processing | Pandas, NumPy | Data manipulation |
-| Fairness | Fairlearn | Bias detection algorithms |
 | Containerization | Docker + Compose | Reproducible environments |
 | Testing | Pytest | Unit and integration tests |
 
 ---
 
-## 📈 Monitoring & Observability
+##  Monitoring & Observability
 
 ### Email Notifications
 
@@ -344,7 +343,7 @@ Access `http://localhost:8080` for:
 
 ---
 
-## 🧪 Testing
+##  Testing
 
 ```bash
 # Run all tests
@@ -367,7 +366,7 @@ Test files:
 ---
 
 
-## 🚨 Known Challenges & Mitigations
+##  Known Challenges & Mitigations
 
 | Challenge | Mitigation Strategy |
 |-----------|-------------------|
@@ -380,13 +379,13 @@ Test files:
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
 
 ---
 
-## 👥 Team
+##  Team
 
 - **Isha Singh** 
 - **Shivie Saksenaa** 
@@ -397,7 +396,7 @@ This project is licensed under the MIT License.
 
 ---
 
-## 🔗 Resources
+##  Resources
 
 - **Repository:** [github.com/pratham-shah28/mlops-project](https://github.com/pratham-shah28/mlops-project)
 - **Documentation:** See individual module READMEs in subdirectories
