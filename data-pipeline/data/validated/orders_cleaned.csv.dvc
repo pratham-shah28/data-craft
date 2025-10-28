@@ -1,6 +1,5 @@
 outs:
 - md5: 34466d58a79b9c88d0977944d92dca31
   size: 11972399
-  isexec: true
   hash: md5
   path: orders_cleaned.csv

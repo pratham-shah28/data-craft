@@ -1,0 +1,30 @@
+2025-10-28 04:11:30 - data_cleaning - INFO - Starting data cleaning for: orders
+2025-10-28 04:11:31 - data_cleaning - INFO - Initial data shape: (51290, 24)
+2025-10-28 04:11:31 - data_cleaning - INFO - Normalizing column names...
+2025-10-28 04:11:31 - data_cleaning - INFO - Normalized 24 column names
+2025-10-28 04:11:31 - data_cleaning - INFO - Standardizing data types...
+2025-10-28 04:11:31 - data_cleaning - INFO - Standardized data types: 22 columns
+2025-10-28 04:11:31 - data_cleaning - INFO - Handling missing values...
+2025-10-28 04:11:31 - data_cleaning - INFO - Filled missing values in continuous column: postal_code
+2025-10-28 04:11:31 - data_cleaning - INFO - Removing duplicates...
+2025-10-28 04:11:31 - data_cleaning - INFO - Removed 0 duplicate rows
+2025-10-28 04:11:31 - data_cleaning - INFO - Handling outliers...
+2025-10-28 04:11:31 - data_cleaning - INFO - Capped 9994 outliers in postal_code using iqr method
+2025-10-28 04:11:31 - data_cleaning - INFO - Capped 3010 outliers in sales using iqr method
+2025-10-28 04:11:31 - data_cleaning - INFO - Capped 2 outliers in discount using iqr method
+2025-10-28 04:11:31 - data_cleaning - INFO - Capped 5920 outliers in profit using iqr method
+2025-10-28 04:11:31 - data_cleaning - INFO - Capped 3415 outliers in shipping_cost using iqr method
+2025-10-28 04:11:31 - data_cleaning - INFO - Checking for constant columns...
+2025-10-28 04:11:31 - data_cleaning - WARNING - Removed 1 constant columns: ['postal_code']
+2025-10-28 04:11:31 - data_cleaning - INFO - Final data shape: (51290, 23)
+2025-10-28 04:11:33 - data_cleaning - INFO - Cleaned data saved to data/validated/orders_cleaned.csv
+2025-10-28 04:11:33 - data_cleaning - INFO - Cleaning metrics saved to data/validated/orders_cleaning_metrics.json
+2025-10-28 04:11:33 - data_cleaning - INFO - ============================================================
+2025-10-28 04:11:33 - data_cleaning - INFO - DATA CLEANING SUMMARY
+2025-10-28 04:11:33 - data_cleaning - INFO - ============================================================
+2025-10-28 04:11:33 - data_cleaning - INFO - Rows: 51290 → 51290 (100.0% retained)
+2025-10-28 04:11:33 - data_cleaning - INFO - Columns: 24 → 23
+2025-10-28 04:11:33 - data_cleaning - INFO - Data Quality Score: 100.0%
+2025-10-28 04:11:33 - data_cleaning - INFO - Completeness: 100.0%
+2025-10-28 04:11:33 - data_cleaning - INFO - ============================================================
+2025-10-28 04:11:33 - data_cleaning - INFO - ✓ Data cleaning completed successfully

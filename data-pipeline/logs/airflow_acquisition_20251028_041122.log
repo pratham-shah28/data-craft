@@ -1,0 +1,2 @@
+2025-10-28 04:11:22 - airflow_acquisition - INFO - Starting data acquisition from: auto-detect
+2025-10-28 04:11:24 - airflow_acquisition - INFO - ✓ Acquisition complete. Dataset: orders

@@ -17,6 +17,13 @@ services:
       - PYTHONUNBUFFERED=1
       - GCP_PROJECT_ID=datacraft-data-pipeline
       - GCS_BUCKET_NAME=isha-retail-data
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_STARTTLS=True
+      - AIRFLOW__SMTP__SMTP_SSL=False
+      - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
+      - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
     networks:
       - ml-network
 
@@ -64,6 +71,13 @@ services:
       - PYTHONPATH=/app
       - GCP_PROJECT_ID=datacraft-data-pipeline
       - GCS_BUCKET_NAME=isha-retail-data
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_STARTTLS=True
+      - AIRFLOW__SMTP__SMTP_SSL=False
+      - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
+      - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
     ports:
       - "8080:8080"
     command: >
@@ -102,6 +116,13 @@ services:
       - PYTHONPATH=/app
       - GCP_PROJECT_ID=datacraft-data-pipeline
       - GCS_BUCKET_NAME=isha-retail-data
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_STARTTLS=True
+      - AIRFLOW__SMTP__SMTP_SSL=False
+      - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
+      - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
     command: airflow scheduler
     restart: always
     networks:

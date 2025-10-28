@@ -1,0 +1,2 @@
+2025-10-28 04:11:45 - gcp_upload - INFO - Uploading data/validated/orders_cleaned.csv to gs://isha-retail-data/data/validated/orders_validated.csv
+2025-10-28 04:11:55 - gcp_upload - INFO - Successfully uploaded 11.42 MB

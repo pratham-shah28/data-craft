@@ -1,0 +1,2 @@
+2025-10-28 04:11:36 - airflow_bias - INFO - Starting bias detection for dataset: orders
+2025-10-28 04:11:38 - airflow_bias - INFO - ✓ Bias detection complete: 24 flags in 35 tests
