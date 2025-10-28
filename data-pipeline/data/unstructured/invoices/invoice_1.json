@@ -1,0 +1,83 @@
+{
+  "fname": "invoice_1.pdf",
+  "0_expected": {
+    "customer_name": "Sharp Consulting",
+    "customer_tax_id": null,
+    "customer_address": {
+      "street": "73 Regal Way",
+      "city": "Leeds",
+      "state": null,
+      "postal_code": "LS1 5AB",
+      "country": "UK"
+    },
+    "shipping_address": null,
+    "purchase_order": "15931",
+    "invoice_id": "3847193",
+    "invoice_date": "2024-05-16",
+    "due_date": "2024-05-24",
+    "vendor_name": "NEXGEN",
+    "vendor_address": null,
+    "vendor_tax_id": null,
+    "remittance_address": null,
+    "subtotal": {
+      "currency_code": "GBP",
+      "amount": 293.52
+    },
+    "total_discount": null,
+    "total_tax": null,
+    "invoice_total": {
+      "currency_code": "GBP",
+      "amount": 293.52
+    },
+    "payment_term": null,
+    "items": [
+      {
+        "product_code": "MA197",
+        "description": "STRETCHWRAP ROLL",
+        "quantity": 5,
+        "tax": null,
+        "unit_price": {
+          "currency_code": "GBP",
+          "amount": 16.62
+        },
+        "total": {
+          "currency_code": "GBP",
+          "amount": 83.1
+        }
+      },
+      {
+        "product_code": "ST4086",
+        "description": "BALLPOINT PEN MED.",
+        "quantity": 10,
+        "tax": null,
+        "unit_price": {
+          "currency_code": "GBP",
+          "amount": 2.49
+        },
+        "total": {
+          "currency_code": "GBP",
+          "amount": 24.9
+        }
+      },
+      {
+        "product_code": "JF9912413BF",
+        "description": "BUBBLE FILM ROLL CL.",
+        "quantity": 12,
+        "tax": null,
+        "unit_price": {
+          "currency_code": "GBP",
+          "amount": 15.46
+        },
+        "total": {
+          "currency_code": "GBP",
+          "amount": 185.52
+        }
+      }
+    ],
+    "customer_signature": {
+      "signatory": "Sarah H",
+      "date": null,
+      "has_written_signature": true
+    }
+  }
+}
