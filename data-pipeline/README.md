@@ -1,4 +1,4 @@
-# Data Pipelines
+# Data Pipeline
 
 Here we implement a dual-pipeline architecture to handle both unstructured and structured data. The first pipeline focuses on transforming document-based data, such as PDFs, into a machine-readable format. The second pipeline follows a traditional ETL flow for structured datasets, where data is cleaned, validated, version-controlled, and prepared for downstream analytics.
 
