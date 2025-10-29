@@ -3,6 +3,7 @@ services:
   data-pipeline:
     build: .
     container_name: data-pipeline
+    command: python /app/scripts/fetch_data.py
     volumes:
       - ./data:/app/data
       - ./config:/app/config
