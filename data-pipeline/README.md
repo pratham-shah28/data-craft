@@ -166,7 +166,7 @@ Enable the DAG in the UI and manually trigger a run or let the scheduler execute
 
 ---
 
-### Run individual components
+### Running for unstructured data
 For unstrucutred data, only the script for fetching the data is required which is executed inside our docker container. Extraction of structured data would eventually be handled by LLM 
 
 You can run it manually using the following: 
@@ -345,7 +345,7 @@ This module discovers, reads, and standardizes **structured** datasets (CSV/Exce
 
 ---
 
-#### ▶️ Example Usage
+#### ▶ Example Usage
 ```bash
 # Auto-detect a file under data/raw/
 python scripts/data_acquisition.py
