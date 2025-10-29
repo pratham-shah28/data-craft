@@ -225,6 +225,7 @@ This directory contains 42 unit tests covering the essential components of the d
 - **test_bias_detection.py** (6 tests) - Tests bias detection and fairness metrics
 - **test_schema_detector.py** (7 tests) - Tests automatic schema detection and type inference
 - **test_utils.py** (11 tests) - Tests utility helper functions
+- **test_pdf_conversion.py** (1 test) - Testing conversion from PDF to Image which is not used at the moment but will be used for the next phase
 
 
 ### Run All Tests
@@ -350,9 +351,10 @@ This module discovers, reads, and standardizes **structured** datasets (CSV/Exce
 python scripts/data_acquisition.py
 ```
 
-# Or specify a concrete source file
+Or specify a concrete source file
+```bash
 python scripts/data_acquisition.py data/raw/retail_uk.csv
-
+```
 
 ### **Data Cleaning Module (data_cleaning.py)**
 
@@ -471,7 +473,7 @@ This module handles authenticated interactions with **Google Cloud Storage (GCS)
 
 ---
 
-#### 📦 Inputs & Dependencies
+####  Inputs & Dependencies
 
 - **Config keys (config.yaml):**
   - `gcp.project_id`
@@ -490,14 +492,14 @@ This module handles authenticated interactions with **Google Cloud Storage (GCS)
 
 ---
 
-#### 🔐 Authentication
+####  Authentication
 
 - `initialize_gcs_client()`  
   Validates credentials via `validate_gcp_credentials()`, loads the service account JSON from `GOOGLE_APPLICATION_CREDENTIALS`, and returns an authenticated `storage.Client(project_id)` instance.
 
 ---
 
-#### 🚀 Core Operations
+####  Core Operations
 
 | Operation | Function | What it does | Inputs | Outputs |
 |---|---|---|---|---|
