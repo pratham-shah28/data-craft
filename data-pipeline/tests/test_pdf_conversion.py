@@ -13,18 +13,18 @@ def test_pdf_conversion():
 
     images, metadata = pdf_to_base64_images(str(pdf_path), output_json=True)
 
-    # ✅ Validate metadata fields
+    #  Validate metadata fields
     assert metadata["page_count"] > 0
     assert isinstance(images, list)
 
-    # ✅ Validate image_url structure
+    #  Validate image_url structure
     first_img = images[0]
     assert "type" in first_img
     assert first_img["type"] == "image_url"
     assert "image_url" in first_img
     assert first_img["image_url"]["url"].startswith("data:image/png;base64,")
 
-    print("✅ PDF to base64 conversion test passed!")
+    print(" PDF to base64 conversion test passed!")
 
 if __name__ == "__main__":
     test_pdf_conversion()
