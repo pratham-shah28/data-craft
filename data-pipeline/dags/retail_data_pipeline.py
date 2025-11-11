@@ -9,8 +9,9 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 
-# Add scripts directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+# ✅ UPDATED: Use unified Docker paths
+sys.path.insert(0, '/opt/airflow/data-pipeline/scripts')
+sys.path.insert(0, '/opt/airflow/shared')
 
 from data_acquisition import acquire_data
 from data_validation import DataValidator
@@ -22,11 +23,11 @@ from utils import load_config, setup_logging
 # Load configuration
 config = load_config()
 
-# Default arguments for the DAG
+# ✅ UPDATED: Changed email address
 default_args = {
-    'owner': 'airflow',
+    'owner': 'datacraft-team',  # Updated owner
     'depends_on_past': False,
-    'email': ['ishas2505@gmail.com','sakseneshivi@gmail.com'],
+    'email': ['mlops0242@gmail.com'],  # Updated email
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 2,
@@ -260,8 +261,8 @@ def generate_summary_report(**context):
     
     # Save summary report
     import json
-    summary_path = Path("reports") / f"{dataset_name}_pipeline_summary_{context['ds']}.json"
-    summary_path.parent.mkdir(exist_ok=True)
+    summary_path = Path("/opt/airflow/outputs/data-pipeline") / f"{dataset_name}_pipeline_summary_{context['ds']}.json"
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
     
     with open(summary_path, 'w') as f:
         json.dump(summary, f, indent=2)
@@ -290,7 +291,7 @@ def send_success_email(**context):
     try:
         from airflow.utils.email import send_email
         send_email(
-            to='ishas2505@gmail.com',
+            to='mlops0242@gmail.com', 
             subject='✅ ML Data Pipeline Completed Successfully',
             html_content=f"""
             <h3>ML Data Pipeline Completed Successfully</h3>
@@ -308,7 +309,7 @@ def send_success_email(**context):
 
 # Create the DAG
 with DAG(
-    'ml_data_pipeline',
+    'data_pipeline_dag',
     default_args=default_args,
     description='End-to-end ML data pipeline: acquisition → validation → cleaning → bias detection → GCP upload',
     schedule_interval=None,  # Triggered manually

@@ -1,0 +1,107 @@
+services:
+  # PostgreSQL for Airflow metadata
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+    restart: always
+    networks:
+      - mlops-network
+
+  # Airflow Webserver
+  airflow-webserver:
+    build: .
+    container_name: airflow-webserver
+    depends_on:
+      - postgres
+    volumes:
+      # Unified DAGs folder (contains both pipelines)
+      - ./data-pipeline/dags:/opt/airflow/dags/data-pipeline
+      - ./model-training/dags:/opt/airflow/dags/model-training
+
+      # Scripts, configs, and shared resources
+      - ./data-pipeline/scripts:/opt/airflow/data-pipeline/scripts
+      - ./data-pipeline/config:/opt/airflow/data-pipeline/config
+      - ./model-training/scripts:/opt/airflow/model-training/scripts
+      - ./model-training/data:/opt/airflow/model-training/data
+      - ./shared:/opt/airflow/shared
+      - ./gcp:/opt/airflow/gcp
+      - ./logs:/opt/airflow/logs
+      - ./outputs:/opt/airflow/outputs
+      - ./airflow-logs:/opt/airflow/airflow-logs
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__SECRET_KEY=unified-mlops-secret-key-change-this
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json
+      - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
+      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCS_BUCKET_NAME=isha-retail-data
+
+      # Email configuration
+      - AIRFLOW__EMAIL__EMAIL_BACKEND=airflow.utils.email.send_email_smtp
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      airflow db init &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+      airflow webserver
+      "
+    restart: always
+    networks:
+      - mlops-network
+
+  # Airflow Scheduler
+  airflow-scheduler:
+    build: .
+    container_name: airflow-scheduler
+    depends_on:
+      - postgres
+      - airflow-webserver
+    volumes:
+      # Unified DAGs folder (same as webserver)
+      - ./data-pipeline/dags:/opt/airflow/dags/data-pipeline
+      - ./model-training/dags:/opt/airflow/dags/model-training
+
+      # Shared folders
+      - ./data-pipeline/scripts:/opt/airflow/data-pipeline/scripts
+      - ./data-pipeline/config:/opt/airflow/data-pipeline/config
+      - ./model-training/scripts:/opt/airflow/model-training/scripts
+      - ./model-training/data:/opt/airflow/model-training/data
+      - ./shared:/opt/airflow/shared
+      - ./gcp:/opt/airflow/gcp
+      - ./logs:/opt/airflow/logs
+      - ./outputs:/opt/airflow/outputs
+      - ./airflow-logs:/opt/airflow/airflow-logs
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json
+      - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
+      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCS_BUCKET_NAME=isha-retail-data
+    command: airflow scheduler
+    restart: always
+    networks:
+      - mlops-network
+
+networks:
+  mlops-network:
+    driver: bridge
+
+volumes:
+  postgres-db-volume:

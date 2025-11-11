@@ -8,7 +8,90 @@ import logging
 from pathlib import Path
 from typing import Optional
 from google.cloud import storage, bigquery
+from datetime import datetime
 
+def setup_logging(log_name):
+    """
+    Setup logging configuration for pipeline components
+    ✅ FIXED: Works in both Docker and local environments
+    
+    Args:
+        log_name (str): Name of the logger (used for log file naming)
+    
+    Returns:
+        logging.Logger: Configured logger instance
+    """
+    import sys
+    import os
+    from pathlib import Path
+    from datetime import datetime
+    import logging
+    
+    # ✅ FIXED: Determine log directory based on environment
+    if os.environ.get('AIRFLOW_HOME'):
+        # Running in Docker/Airflow - use shared logs folder
+        log_dir = Path("/opt/airflow/logs")
+    else:
+        # Running locally - determine project root
+        current_file = Path(__file__).resolve()
+        
+        if current_file.parent.name == 'scripts':
+            project_root = current_file.parent.parent
+        else:
+            project_root = current_file.parent
+        
+        log_dir = project_root / "logs"
+    
+    # Create logs directory (with error handling for permissions)
+    try:
+        log_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        # Fallback to /tmp if we can't write to the main logs folder
+        log_dir = Path("/tmp/airflow-logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
+        print(f"Warning: Using fallback log directory: {log_dir}")
+    
+    # Create unique log file with timestamp
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_file = log_dir / f"{log_name}_{timestamp}.log"
+    
+    # Create logger
+    logger = logging.getLogger(log_name)
+    logger.setLevel(logging.INFO)
+    
+    # Prevent duplicate handlers
+    if logger.handlers:
+        logger.handlers.clear()
+    
+    # Detailed formatter for file logs
+    detailed_formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    
+    # Simple formatter for console
+    simple_formatter = logging.Formatter(
+        '%(levelname)s - %(message)s'
+    )
+    
+    # File handler - save everything to file
+    try:
+        file_handler = logging.FileHandler(log_file, encoding='utf-8', mode='w')
+        file_handler.setLevel(logging.DEBUG)
+        file_handler.setFormatter(detailed_formatter)
+        logger.addHandler(file_handler)
+        logger.debug(f"Log file created: {log_file}")
+    except Exception as e:
+        print(f"Warning: Could not create log file: {e}")
+        # Continue without file logging - console logging will still work
+    
+    # Console handler - only important messages
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(simple_formatter)
+    logger.addHandler(console_handler)
+    
+    return logger
 
 def setup_gcp_credentials(
     service_account_path: Optional[str] = None,
