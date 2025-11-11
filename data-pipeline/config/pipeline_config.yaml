@@ -6,8 +6,8 @@ data:
   supported_formats: ["csv", "xlsx", "json", "parquet", "txt"]
   
 gcp:
-  bucket_name: "isha-retail-data"
-  project_id: "datacraft-data-pipeline"
+  bucket_name: "shivie-datacraft-mlops"
+  project_id: "clean-equinox-472523-c4"
   credentials_path: "gcp/service-account.json"
   cleaned_data_path: "cleaned_data/"
 

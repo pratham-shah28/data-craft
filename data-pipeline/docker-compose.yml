@@ -1,9 +1,12 @@
+version: '3.8' #Added version for compatibility
 services:
   # Main ML Pipeline Service
   data-pipeline:
     build: .
     container_name: data-pipeline
-    command: python /app/scripts/fetch_data.py
+    command: tail -f /dev/null  # Keeps the container running
+    env_file:
+    - .env  
     volumes:
       - ./data:/app/data
       - ./config:/app/config
@@ -11,20 +14,19 @@ services:
       - ./reports:/app/reports
       - ./scripts:/app/scripts
       - ./dags:/app/dags
-      # Mount your GCP key - UPDATE THIS PATH
-      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\gcp\service-account.json:/app/gcp-key.json:ro
-    environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
-      - PYTHONUNBUFFERED=1
-      - GCP_PROJECT_ID=datacraft-data-pipeline
-      - GCS_BUCKET_NAME=isha-retail-data
-      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
-      - AIRFLOW__SMTP__SMTP_STARTTLS=True
-      - AIRFLOW__SMTP__SMTP_SSL=False
-      - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
-      - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
-      - AIRFLOW__SMTP__SMTP_PORT=587
-      - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
+      # Mount your GCP key - UPDATE THIS PATH -update: shivie : this can work on windows and mac - 
+      - ./gcp/service-account.json:/app/gcp-key.json:ro
+    #environment:
+      #- GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
+      #- PYTHONUNBUFFERED=1
+      #- GCP_PROJECT_ID=clean-equinox-472523-c4
+      #- GCS_BUCKET_NAME=shivie-datacraft-bucket
+      #- AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      #- AIRFLOW__SMTP__SMTP_STARTTLS=True
+      #- AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
+      #- AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
+      #- AIRFLOW__SMTP__SMTP_PORT=587
+      #- AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
     networks:
       - ml-network
 
@@ -52,6 +54,8 @@ services:
     container_name: airflow-webserver
     depends_on:
       - postgres
+    env_file:
+    - .env  
     volumes:
       - ./data:/app/data
       - ./config:/app/config
@@ -61,24 +65,24 @@ services:
       - ./dags:/app/dags
       - ./airflow-logs:/app/airflow/logs
       # Mount your GCP key - UPDATE THIS PATH
-      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\gcp\service-account.json:/app/gcp-key.json:ro
-    environment:
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
-      - AIRFLOW__CORE__DAGS_FOLDER=/app/dags
-      - AIRFLOW__CORE__LOAD_EXAMPLES=False
-      - AIRFLOW__WEBSERVER__SECRET_KEY=change-this-to-random-string
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
-      - PYTHONPATH=/app
-      - GCP_PROJECT_ID=datacraft-data-pipeline
-      - GCS_BUCKET_NAME=isha-retail-data
-      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
-      - AIRFLOW__SMTP__SMTP_STARTTLS=True
-      - AIRFLOW__SMTP__SMTP_SSL=False
-      - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
-      - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
-      - AIRFLOW__SMTP__SMTP_PORT=587
-      - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
+      - ./gcp/service-account.json:/app/gcp-key.json:ro
+    # environment:
+    #   - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    #   - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    #   - AIRFLOW__CORE__DAGS_FOLDER=/app/dags
+    #   - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    #   - AIRFLOW__WEBSERVER__SECRET_KEY=change-this-to-random-string
+    #   - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
+    #   - PYTHONPATH=/app
+    #   - GCP_PROJECT_ID=clean-equinox-472523-c4
+    #   - GCS_BUCKET_NAME=shivie-datacraft-bucket
+    #   - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+    #   - AIRFLOW__SMTP__SMTP_STARTTLS=True
+    #   - AIRFLOW__SMTP__SMTP_SSL=False
+    #   - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
+    #   - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
+    #   - AIRFLOW__SMTP__SMTP_PORT=587
+    #   - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
     ports:
       - "8080:8080"
     command: >
@@ -98,6 +102,8 @@ services:
     depends_on:
       - postgres
       - airflow-webserver
+    env_file:             
+      - .env 
     volumes:
       - ./data:/app/data
       - ./config:/app/config
@@ -107,23 +113,23 @@ services:
       - ./dags:/app/dags
       - ./airflow-logs:/app/airflow/logs
       # Mount your GCP key - UPDATE THIS PATH
-      - C:\Users\ishas\Desktop\mlops-project\Data-Pipeline\gcp\service-account.json:/app/gcp-key.json:ro
-    environment:
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
-      - AIRFLOW__CORE__DAGS_FOLDER=/app/dags
-      - AIRFLOW__CORE__LOAD_EXAMPLES=False
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
-      - PYTHONPATH=/app
-      - GCP_PROJECT_ID=datacraft-data-pipeline
-      - GCS_BUCKET_NAME=isha-retail-data
-      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
-      - AIRFLOW__SMTP__SMTP_STARTTLS=True
-      - AIRFLOW__SMTP__SMTP_SSL=False
-      - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
-      - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
-      - AIRFLOW__SMTP__SMTP_PORT=587
-      - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
+      - ./gcp/service-account.json:/app/gcp-key.json:ro
+    # environment:
+    #   - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    #   - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    #   - AIRFLOW__CORE__DAGS_FOLDER=/app/dags
+    #   - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    #   - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json
+    #   - PYTHONPATH=/app
+    #   - GCP_PROJECT_ID=clean-equinox-472523-c4
+    #   - GCS_BUCKET_NAME=shivie-datacraft-bucket
+    #   - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+    #   - AIRFLOW__SMTP__SMTP_STARTTLS=True
+    #   - AIRFLOW__SMTP__SMTP_SSL=False
+    #   - AIRFLOW__SMTP__SMTP_USER=ishas2505@gmail.com
+    #   - AIRFLOW__SMTP__SMTP_PASSWORD=<your_app_password_here>
+    #   - AIRFLOW__SMTP__SMTP_PORT=587
+    #   - AIRFLOW__SMTP__SMTP_MAIL_FROM=ishas2505@gmail.com
     command: airflow scheduler
     restart: always
     networks:
