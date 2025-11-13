@@ -1,4 +1,4 @@
-version: '3.8' #Added version for compatibility
+#version: '3.8' #Added version for compatibility
 services:
   # Main ML Pipeline Service
   data-pipeline:
