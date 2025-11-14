@@ -84,50 +84,9 @@ save_best_model_responses → generate_final_summary
 
 ---
 
-## 📊 **What Happens**
+## 📊 **Model Pipeline DAG**
 
-### **Phase 1: Data Setup** (1-2 min)
-- Loads orders data to BigQuery
-- Generates metadata (column info, statistics)
-- Reads 30 queries from `user_queries.txt`
-
-### **Phase 2: Multi-Model Processing** (3-5 min)
-- **gemini-2.5-flash** processes all 30 queries
-- **gemini-2.5-pro** processes all 30 queries
-- Total: 60 SQL queries generated
-
-### **Phase 3: Evaluation** (1 min)
-- Tests SQL syntax validity
-- Tests SQL executability
-- Checks format compliance
-- **Checks intent matching** (does SQL answer the question?)
-- Measures response time
-
-### **Phase 4: Bias Detection** (30 sec)
-- Checks visualization type distribution
-- Checks query pattern distribution
-- Checks column usage fairness
-- Checks sentiment in explanations
-
-### **Phase 5: Model Selection** (10 sec)
-- Calculates composite scores
-- Ranks models
-- Selects best model
-
-### **Phase 6: Query Execution & Validation** 
-- Executes best model's SQL on BigQuery
-- Gets actual results
-- Validates results are correct
-- Generates natural language answers
-
-### **Phase 7: Save Results** (30 sec)
-- Saves only best model's responses
-- Includes execution results and answers
-- Uploads to GCS
-
-### **Phase 8: Summary** (10 sec)
-- Generates pipeline summary
-- Reports accuracy metrics
+<img width="1547" height="222" alt="image" src="https://github.com/user-attachments/assets/ba4a09e5-0ed2-421e-84a8-25f351da0e5d" />
 
 ---
 
