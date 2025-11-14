@@ -13,6 +13,7 @@ from pathlib import Path
 import logging
 from datetime import datetime
 import sys
+import re
 
 sys.path.insert(0, str(Path(__file__).parent))
 from utils import setup_logging
@@ -102,6 +103,7 @@ class QueryExecutor:
         try:
             # Step 1: Prepare SQL for BigQuery
             sql_bq = self._prepare_sql_for_bigquery(sql_query, table_name)
+            self.logger.info(f"Prepared SQL: {sql_bq[:100]}...")
             
             # Step 2: Execute SQL
             df_result, execution_time = self._execute_sql(sql_bq)
@@ -134,6 +136,9 @@ class QueryExecutor:
                 result["natural_language_answer"] = nl_answer
                 
                 self.logger.info(f"✓ Generated answer: {nl_answer[:100]}...")
+            else:
+                result["natural_language_answer"] = "Results failed validation checks"
+                self.logger.warning("⚠ Results failed validation")
             
         except Exception as e:
             result["execution_status"] = "failed"
@@ -150,8 +155,25 @@ class QueryExecutor:
         """Convert generic SQL to BigQuery-specific SQL"""
         # Replace 'dataset' with actual table reference
         bq_table = f"`{self.project_id}.{self.dataset_id}.{table_name}`"
-        sql_bq = sql.replace('FROM dataset', f'FROM {bq_table}')
-        sql_bq = sql_bq.replace('from dataset', f'from {bq_table}')
+        
+        # Handle different case variations and spacing
+        # Replace "FROM dataset" (with various spacing/newlines)
+        sql_bq = re.sub(
+            r'FROM\s+dataset\b',
+            f'FROM {bq_table}',
+            sql,
+            flags=re.IGNORECASE
+        )
+        
+        # Also handle "from dataset" with different whitespace
+        sql_bq = re.sub(
+            r'from\s+dataset\b',
+            f'from {bq_table}',
+            sql_bq,
+            flags=re.IGNORECASE
+        )
+        
+        self.logger.info(f"Converted SQL for BigQuery table: {bq_table}")
         
         return sql_bq
     
@@ -436,10 +458,35 @@ class QueryExecutor:
                 return f"The total is ${value:,.2f}"
             elif 'count' in col.lower():
                 return f"The count is {int(value):,}"
+            elif 'discount' in col.lower():
+                return f"The average discount is {value:.2%}"
             else:
-                return f"The {col} is {value:,.2f}"
+                return f"The {col.replace('_', ' ')} is {value:,.2f}"
         
-        # Multiple rows with aggregations
+        # Multiple rows with aggregations (e.g., average per category)
+        if len(df) > 1:
+            cat_cols = df.select_dtypes(include=['object']).columns
+            
+            if len(cat_cols) > 0 and len(numeric_cols) > 0:
+                category_col = cat_cols[0]
+                value_col = numeric_cols[0]
+                
+                # Create summary of top items
+                top_items = []
+                for idx in range(min(3, len(df))):
+                    cat = df[category_col].iloc[idx]
+                    val = df[value_col].iloc[idx]
+                    
+                    if 'discount' in value_col.lower():
+                        top_items.append(f"{cat} ({val:.1%})")
+                    elif any(kw in value_col.lower() for kw in ['sales', 'revenue', 'amount']):
+                        top_items.append(f"{cat} (${val:,.2f})")
+                    else:
+                        top_items.append(f"{cat} ({val:,.1f})")
+                
+                return f"Results by {category_col}: {', '.join(top_items)}. Total {len(df)} categories found."
+        
+        # Fallback
         col = numeric_cols[0]
         total = df[col].sum()
         avg = df[col].mean()

@@ -24,13 +24,11 @@ from data_loader import ModelDataLoader
 from feature_engineering import FeatureEngineer
 from metadata_manager import MetadataManager
 from prompts import build_prompt, FEW_SHOT_EXAMPLES
-
-# ✅ Import new evaluation modules
 from model_evaluator import ModelEvaluator
 from bias_detector import BiasDetector
 from model_selector import ModelSelector
 from response_saver import ResponseSaver
-from query_executor import QueryExecutor  
+from query_executor import QueryExecutor
 
 import vertexai
 from vertexai.generative_models import GenerativeModel, GenerationConfig
@@ -435,7 +433,7 @@ evaluate_models_task = PythonOperator(
 
 
 # ========================================
-# NEW PHASE: EXECUTE & VALIDATE BEST MODEL QUERIES
+# EXECUTE & VALIDATE BEST MODEL QUERIES
 # ========================================
 
 def execute_and_validate_best_model_queries(**context):
@@ -479,10 +477,17 @@ def execute_and_validate_best_model_queries(**context):
     # Execute and validate all queries
     print(f"\nExecuting {len(queries_to_execute)} queries from {best_model_name}...")
     
-    execution_results = executor.execute_batch_queries(
-        queries_and_sql=queries_to_execute,
-        table_name=f"{DATASET_NAME}_processed"
-    )
+    execution_results = []
+    for query_item in queries_to_execute:
+        result = executor.execute_and_validate(
+            user_query=query_item['user_query'],
+            sql_query=query_item['sql_query'],
+            table_name=f"{DATASET_NAME}_processed",
+            visualization=query_item['visualization']
+        )
+        # Add query number to result
+        result['query_number'] = query_item['query_number']
+        execution_results.append(result)
     
     # Save execution results
     results_file = executor.save_execution_results(
@@ -686,7 +691,7 @@ def save_best_model_responses(**context):
         key='selection_report'
     )
     
-    # NEW: Get execution results
+    # Get execution results
     execution_results = ti.xcom_pull(
         task_ids='execute_validate_queries',
         key='execution_results'
@@ -728,6 +733,7 @@ def save_best_model_responses(**context):
     # Initialize response saver
     saver = ResponseSaver(PROJECT_ID, BUCKET_NAME, BEST_MODEL_DIR)
     
+    # ✅ UPDATED: Save merged responses (with execution results)
     save_result = saver.save_best_model_responses(
         model_name=best_model_name,
         responses=merged_responses,
@@ -782,7 +788,7 @@ def generate_final_summary(**context):
     save_result = ti.xcom_pull(task_ids='save_best_model_responses', key='save_result')
     selection_report = ti.xcom_pull(task_ids='select_best_model', key='selection_report')
     
-    # ✅ NEW: Get accuracy metrics
+    # Get accuracy metrics
     accuracy_metrics = ti.xcom_pull(
         task_ids='execute_validate_queries',
         key='accuracy_metrics'
@@ -799,7 +805,7 @@ def generate_final_summary(**context):
             "performance": selection_report['best_model']['performance_score'],
             "bias": selection_report['best_model']['bias_score']
         },
-        "accuracy": accuracy_metrics,  # ✅ NEW
+        "accuracy": accuracy_metrics,  
         "outputs": {
             "local_directory": save_result['local_directory'],
             "files_saved": save_result['files_saved'],
@@ -865,7 +871,7 @@ process_queries_task >> [evaluate_models_task, detect_bias_task]
 # Phase 5: Model Selection (waits for both evaluation and bias)
 [evaluate_models_task, detect_bias_task] >> select_model_task
 
-# Phase 6: Execute & Validate Best Model Queries (NEW)
+# Phase 6: Execute & Validate Best Model Queries 
 select_model_task >> execute_validate_task
 
 # Phase 7: Save Best Model Responses
