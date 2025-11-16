@@ -1,4 +1,4 @@
 [core]
     remote = gcsremote
 ['remote "gcsremote"']
-    url = gs://isha-retail-data/dvcstore
+    url = gs://model-datacraft/dvcstore

@@ -31,7 +31,8 @@ services:
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
       - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
       - AIRFLOW_UID=50000
-      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCP_PROJECT_ID=datacraft-478300
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json 
     user: "50000:0"
     command: >
       bash -c "airflow db init &&
@@ -66,7 +67,8 @@ services:
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
       - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
       - AIRFLOW_UID=50000
-      - GCP_PROJECT_ID=datacraft-data-pipeline
+      - GCP_PROJECT_ID=datacraft-478300
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json 
     user: "50000:0"
     command: airflow scheduler
     depends_on:
