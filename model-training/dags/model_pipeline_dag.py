@@ -25,6 +25,10 @@ from prompts import build_prompt, FEW_SHOT_EXAMPLES
 import vertexai
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
+# MLflow tracking
+from mlflow_llm2_tracker import LLM2Tracker
+import time
+
 # Configuration
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "datacraft-data-pipeline")
 REGION = Variable.get("REGION", default_var="us-central1")
@@ -256,17 +260,15 @@ read_queries_task = PythonOperator(
 
 
 def process_all_queries(**context):
-    """STEP 5: Process queries"""
+    """STEP 5: Process queries with MLflow tracking"""
     ti = context['ti']
     
     print("\n" + "=" * 60)
-    print("STEP 5: PROCESSING QUERIES WITH GEMINI")
+    print("STEP 5: PROCESSING QUERIES WITH GEMINI + MLFLOW")
     print("=" * 60)
     
-    # Get queries from XCom
     queries = ti.xcom_pull(task_ids='read_user_queries', key='user_queries')
     
-    # Use existing MetadataManager to get context
     manager = MetadataManager(PROJECT_ID, DATASET_ID)
     metadata_result = manager.get_metadata(DATASET_NAME)
     
@@ -275,29 +277,38 @@ def process_all_queries(**context):
     
     llm_context = metadata_result['llm_context']
     
-    # Create output directory
     os.makedirs(OUTPUT_BASE_DIR, exist_ok=True)
     
-    # Process results storage
+    generation_config = {
+        "temperature": 0.2,
+        "top_p": 0.8,
+        "top_k": 40,
+        "max_output_tokens": 2048
+    }
+    
+    mlflow_tracker = LLM2Tracker(
+        dataset_name=DATASET_NAME,
+        model_name=MODEL_NAME,
+        generation_config=generation_config
+    )
+    
+    mlflow_tracker.start_run()
+    
     all_results = []
     
     print(f"\nProcessing {len(queries)} queries...")
     
-    # Process each query
     for idx, user_query in enumerate(queries, 1):
         print(f"\n[{idx}/{len(queries)}] {user_query}")
         
+        query_start_time = time.time()
+        
         try:
-            # Use EXISTING build_prompt function from prompts.py
             prompt = build_prompt(user_query, llm_context, FEW_SHOT_EXAMPLES)
             
-            # Call Gemini
             response_text = _call_gemini(prompt)
-            
-            # Parse response
             parsed = _parse_gemini_response(response_text)
             
-            # Save result
             query_folder = _save_query_result(
                 query_number=idx,
                 user_query=user_query,
@@ -305,7 +316,10 @@ def process_all_queries(**context):
                 raw_response=response_text
             )
             
-            print(f"  ✓ Saved to: {query_folder}")
+            query_time = time.time() - query_start_time
+            mlflow_tracker.log_query_processing(idx, success=True, response_time=query_time)
+            
+            print(f"  ✓ Saved to: {query_folder} ({query_time:.2f}s)")
             
             all_results.append({
                 "query_number": idx,
@@ -314,19 +328,23 @@ def process_all_queries(**context):
                 "visualization": parsed['visualization'],
                 "explanation": parsed['explanation'],
                 "output_folder": query_folder,
+                "response_time": query_time,
                 "status": "success"
             })
             
         except Exception as e:
+            query_time = time.time() - query_start_time
+            mlflow_tracker.log_query_processing(idx, success=False, response_time=query_time)
+            
             print(f"  ✗ Error: {str(e)}")
             all_results.append({
                 "query_number": idx,
                 "user_query": user_query,
                 "status": "failed",
-                "error": str(e)
+                "error": str(e),
+                "response_time": query_time
             })
     
-    # Save summary
     summary_file = os.path.join(OUTPUT_BASE_DIR, "summary.json")
     with open(summary_file, 'w') as f:
         json.dump({
@@ -338,8 +356,21 @@ def process_all_queries(**context):
         }, f, indent=2)
     
     success_count = sum(1 for r in all_results if r['status'] == 'success')
+    failed_count = len(queries) - success_count
+    
+    mlflow_tracker.log_final_metrics(
+        total_queries=len(queries),
+        successful_queries=success_count,
+        failed_queries=failed_count
+    )
+    
+    mlflow_tracker.log_artifacts(OUTPUT_BASE_DIR)
+    
+    mlflow_tracker.end_run(status="FINISHED")
+    
     print(f"\n{'='*60}")
     print(f"SUCCESS: {success_count}/{len(queries)}")
+    print(f"MLflow tracking complete")
     print(f"{'='*60}")
     
     ti.xcom_push(key='all_results', value=all_results)
@@ -348,7 +379,7 @@ def process_all_queries(**context):
     return {
         "total": len(queries),
         "successful": success_count,
-        "failed": len(queries) - success_count
+        "failed": failed_count
     }
 
 
