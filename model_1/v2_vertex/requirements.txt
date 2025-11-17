@@ -1,0 +1,19 @@
+# LLM1 Model v2 (Vertex AI) Requirements
+# For document extraction using Google Gemini on Vertex AI
+
+# Google Cloud & Vertex AI
+google-cloud-aiplatform>=1.38.0
+vertexai>=1.38.0
+
+# LangChain for output parsing
+langchain-core>=0.1.0
+
+# PDF processing (from data-pipeline)
+pdf2image>=1.16.0
+Pillow>=10.0.0
+
+# MLflow for experiment tracking (Task 7)
+mlflow>=2.9.0
+
+# Standard utilities
+python-dotenv>=1.0.0
