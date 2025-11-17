@@ -65,7 +65,7 @@ def main():
     vertex_ai.init(project=PROJECT, location=LOCATION)
     model = GenerativeModel(MODEL)
 
-    examples = build_examples_manifest(sample_path)
+    examples = build_examples_manifest(manifest_path=sample_path)
     examples = examples[:3]  # 3 exemplars
 
     parts = [Part.from_text(
