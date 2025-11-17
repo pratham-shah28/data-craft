@@ -17,23 +17,15 @@ from typing import Any, Dict, List
 # ------------------------------------------------------------
 HERE = Path(__file__).resolve()
 REPO_ROOT = HERE.parents[2]
-DATA_PIPELINE = REPO_ROOT / "data-pipeline"
+DATA_PIPELINE = REPO_ROOT / "data_pipeline"
 
 # Prefer the correct folder; fallback to common misspelling
 INVOICES_DIR = DATA_PIPELINE /"data"/ "unstructured" / "invoices"
-# if not INVOICES_DIR.exists():
-#     alt = DATA_PIPELINE / "data" /"unstrcutured" / "invoices"
-#     if alt.exists():
-#         INVOICES_DIR = alt
+
 
 SCRIPTS_DIR = DATA_PIPELINE / "scripts"
 PDF2IMAGE_PATH = SCRIPTS_DIR / "pdf_2_image.py"
 
-# if not INVOICES_DIR.exists():
-#     raise FileNotFoundError(f"Cannot find invoices directory at {INVOICES_DIR}")
-
-# if not PDF2IMAGE_PATH.exists():
-#     raise FileNotFoundError(f"Cannot find helper at {PDF2IMAGE_PATH}")
 
 # ------------------------------------------------------------
 # Import helper module from data-pipeline/scripts/pdf2image.py
