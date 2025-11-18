@@ -1,0 +1,11 @@
+gcp/
+
+.env
+
+.vscode/
+
+venv/
+
+logs/
+
+outputs/

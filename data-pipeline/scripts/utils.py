@@ -19,7 +19,7 @@ def detect_encoding(file_path):
 def setup_logging(log_name):
     """
     Setup logging configuration for pipeline components
-    Ensures logs are always created in project_root/logs/ directory
+    ✅ FIXED: Works in both Docker and local environments
     
     Args:
         log_name (str): Name of the logger (used for log file naming)
@@ -28,21 +28,34 @@ def setup_logging(log_name):
         logging.Logger: Configured logger instance
     """
     import sys
+    import os
     from pathlib import Path
+    from datetime import datetime
+    import logging
     
-    # Determine project root
-    # If running from scripts/, go up one level
-    # If running from project root, stay there
-    current_file = Path(__file__).resolve()
-    
-    if current_file.parent.name == 'scripts':
-        project_root = current_file.parent.parent
+    # ✅ FIXED: Determine log directory based on environment
+    if os.environ.get('AIRFLOW_HOME'):
+        # Running in Docker/Airflow - use shared logs folder
+        log_dir = Path("/opt/airflow/logs")
     else:
-        project_root = current_file.parent
+        # Running locally - determine project root
+        current_file = Path(__file__).resolve()
+        
+        if current_file.parent.name == 'scripts':
+            project_root = current_file.parent.parent
+        else:
+            project_root = current_file.parent
+        
+        log_dir = project_root / "logs"
     
-    # Create logs directory in project root
-    log_dir = project_root / "logs"
-    log_dir.mkdir(parents=True, exist_ok=True)
+    # Create logs directory (with error handling for permissions)
+    try:
+        log_dir.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        # Fallback to /tmp if we can't write to the main logs folder
+        log_dir = Path("/tmp/airflow-logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
+        print(f"Warning: Using fallback log directory: {log_dir}")
     
     # Create unique log file with timestamp
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -73,17 +86,16 @@ def setup_logging(log_name):
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(detailed_formatter)
         logger.addHandler(file_handler)
+        logger.debug(f"Log file created: {log_file}")
     except Exception as e:
         print(f"Warning: Could not create log file: {e}")
+        # Continue without file logging - console logging will still work
     
     # Console handler - only important messages
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(simple_formatter)
     logger.addHandler(console_handler)
-    
-    # First log message shows where logs are saved
-    logger.debug(f"Log file created: {log_file}")
     
     return logger
 

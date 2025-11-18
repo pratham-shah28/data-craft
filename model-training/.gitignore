@@ -1,0 +1,7 @@
+venv/
+
+gcp/
+
+scripts/__pycache__
+
+dags/__pycache__

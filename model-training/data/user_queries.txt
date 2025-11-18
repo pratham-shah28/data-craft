@@ -1,0 +1,30 @@
+What are the top 10 products by total sales?
+Show me the sales trend over the last year
+Which regions have the highest profit margins?
+List all orders from the last 30 days
+What is the average discount given per product category?
+Compare sales performance across different customer segments
+Show me products with profit less than $100
+What are the most popular product categories by order count?
+Display monthly revenue for the current year
+Which products have the highest return rate?
+Show me the distribution of order quantities
+What is the relationship between discount and profit?
+List customers who spent more than $10,000
+Show me sales by day of the week
+What are the bottom 5 performing products?
+Compare profit margins between East and West regions
+Show me all high-value orders above $5,000
+What is the average order value by customer segment?
+Display the sales funnel from order to delivery
+Which shipping modes are most commonly used?
+Show me products with zero sales in the last quarter
+What is the correlation between product price and sales volume?
+List all orders that were returned
+Show me year-over-year growth in revenue
+What are the peak sales months?
+Display customer lifetime value distribution
+Which product sub-categories are most profitable?
+Show me the geographic distribution of our customers
+What is the average time between order and ship date?
+Compare sales across different years
