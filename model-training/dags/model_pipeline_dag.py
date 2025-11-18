@@ -34,9 +34,9 @@ import vertexai
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
 # Configuration
-PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "datacraft-data-pipeline")
-REGION = Variable.get("REGION", default_var="us-central1")
-BUCKET_NAME = Variable.get("BUCKET_NAME", default_var="isha-retail-data")
+PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "datacraft-478300")
+REGION = Variable.get("REGION", default_var="us-east1")
+BUCKET_NAME = Variable.get("BUCKET_NAME", default_var="model-datacraft")
 DATASET_ID = Variable.get("BQ_DATASET", default_var="datacraft_ml")
 
 # ✅ Multiple models for evaluation
