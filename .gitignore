@@ -1,11 +1,122 @@
-gcp/
+# ------------------------------
+# PYTHON
+# ------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.pytorch
+*.pt
+*.h5
+*.onnx
+*.egg-info/
 
-.env
-
-.vscode/
-
+# ------------------------------
+# VENV / ENV
+# ------------------------------
 venv/
+.env/
+.env.development
+.env.production
+.env.local
+*.env
 
+# ------------------------------
+# AIRFLOW
+# ------------------------------
+airflow/
+airflow-logs/
 logs/
+data-pipeline/airflow-logs/
+model-training/airflow-logs/
+*/airflow-logs/*
+*/logs/*
 
-outputs/
+# Airflow SQLite DBs (local only)
+airflow.db
+airflow.sqlite
+unittests.cfg
+
+# ------------------------------
+# DAGS / OUTPUTS / TEMP
+# ------------------------------
+*.log
+*.out
+*.tmp
+*.temp
+*.swp
+
+# Do NOT track generated evaluation files
+model-training/outputs/
+model-training/evaluation/
+model-training/bias/
+model-training/best-model-responses/
+model-training/model-selection/
+model-training/logs/
+
+# ------------------------------
+# DATA / DVC
+# ------------------------------
+*.csv
+*.tsv
+*.parquet
+*.feather
+*.zip
+*.gz
+*.tar
+*.jsonl
+
+# local datasets
+data/
+data-pipeline/data/
+model-training/data/processed/
+model-training/data/intermediate/
+
+# DVC cache & internal
+.dvc/cache/
+.dvc/tmp/
+*.lock
+
+# ------------------------------
+# CREDENTIALS / TOKENS
+# ------------------------------
+*.json
+*.key
+*.pem
+*.p12
+gcp/service-account.json
+**/service-account.json
+
+# ------------------------------
+# DOCKER
+# ------------------------------
+docker-data/
+docker/volumes/
+docker-compose.override.yml
+*.dockerfile.backup
+
+# MariaDB/Postgres data dirs
+pgdata/
+mysql/
+db_data/
+
+# ------------------------------
+# VS CODE
+# ------------------------------
+.vscode/
+.settings/
+.idea/
+*.code-workspace
+
+# ------------------------------
+# MACOS
+# ------------------------------
+.DS_Store
+*.icloud
+
+# ------------------------------
+# JUPYTER
+# ------------------------------
+.ipynb_checkpoints/
+*.ipynb_checkpoint
