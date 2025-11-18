@@ -1,0 +1,78 @@
+# CI/CD Configuration for Model Training Pipeline
+# This file contains all configuration for the CI/CD automation
+
+gcp:
+  project_id: "datacraft-data-pipeline"
+  region: "us-central1"
+  bucket_name: "isha-retail-data"
+  dataset_id: "datacraft_ml"
+  artifact_registry_repo: "model-registry"
+  artifact_registry_location: "us-central1"
+
+# Model Validation Thresholds
+# These thresholds determine if a model passes quality gates
+validation:
+  thresholds:
+    min_composite_score: 70.0      # Minimum composite score (0-100)
+    min_performance_score: 75.0   # Minimum performance score (0-100)
+    max_bias_score: 40.0           # Maximum bias score (lower is better, 0-100)
+    min_success_rate: 80.0         # Minimum success rate percentage
+    min_overall_accuracy: 75.0     # Minimum overall accuracy percentage
+
+# Bias Detection Thresholds
+# These thresholds determine if bias is acceptable
+bias:
+  thresholds:
+    max_bias_score: 50.0          # Maximum overall bias score (0-100, lower is better)
+    max_severity: "MEDIUM"         # Maximum severity level (LOW, MEDIUM, HIGH)
+    max_individual_biases: 2       # Maximum number of individual bias types detected
+
+# Rollback Configuration
+# Controls when to rollback to previous model version
+rollback:
+  performance_degradation_threshold: 0.05  # 5% regression triggers rollback warning
+  auto_rollback_enabled: false              # Set to true for automatic rollback (not recommended)
+  min_improvement_required: 0.0            # Minimum improvement to accept new model
+
+# Email Notification Configuration
+# All notifications are sent via email (Slack disabled)
+notifications:
+  email:
+    enabled: true
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_env: "EMAIL_SENDER"                    # Environment variable name
+    sender_password_env: "EMAIL_SENDER_PASSWORD" # Environment variable name
+    recipients_env: "EMAIL_RECIPIENTS"            # Comma-separated list
+
+# Model Registry and Deployment Configuration
+deployment:
+  registry:
+    project_id: "datacraft-data-pipeline"
+    region: "us-central1"
+    repository: "model-registry"
+    format: "generic"  # Artifact Registry format
+  
+  vertex_ai:
+    project_id: "datacraft-data-pipeline"
+    region: "us-central1"
+    endpoint_name: "gemini-query-endpoint"
+    auto_deploy: false  # Set to true for automatic deployment (manual approval recommended)
+
+# Paths Configuration
+paths:
+  outputs_base: "outputs"
+  model_training_output: "outputs/model-training"
+  best_model_output: "outputs/best-model-responses"
+  evaluation_output: "outputs/evaluation"
+  bias_output: "outputs/bias"
+  selection_output: "outputs/model-selection"
+
+# Model Training Configuration
+training:
+  models_to_evaluate:
+    - "gemini-2.5-flash"
+    - "gemini-2.5-pro"
+  dataset_name: "orders"
+  queries_file: "model-training/data/user_queries.txt"
+
