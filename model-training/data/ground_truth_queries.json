@@ -1,0 +1,27 @@
+{
+  "queries": [
+    {
+      "id": 1,
+      "question": "What are total sales?",
+      "expected_sql_contains": ["SUM(sales)", "FROM"],
+      "expected_result_type": "aggregation",
+      "expected_row_count": 1,
+      "known_answer_range": [12000000, 13000000]
+    },
+    {
+      "id": 2,
+      "question": "Top 5 products by revenue",
+      "expected_sql_contains": ["ORDER BY", "DESC", "LIMIT 5"],
+      "expected_result_type": "ranking",
+      "expected_row_count": 5,
+      "must_include_columns": ["product_name", "sales"]
+    },
+    {
+      "id": 3,
+      "question": "How many orders in 2022?",
+      "expected_sql_contains": ["COUNT", "2022", "WHERE"],
+      "expected_result_type": "aggregation",
+      "known_answer": 9994
+    }
+  ]
+}

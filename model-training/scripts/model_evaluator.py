@@ -117,6 +117,18 @@ class ModelEvaluator:
                 'list', 'show', 'display', 'all', 'details', 'records'
             ]
         }
+    def _validate_against_ground_truth(self, sql_query, expected_criteria):
+        """Compare generated SQL against known correct patterns"""
+        score = 0
+    
+    # Check if required SQL elements are present
+        for required in expected_criteria.get('expected_sql_contains', []):
+            if required.upper() in sql_query.upper():
+                score += 1
+    
+        # Check result count matches
+        # Check answer is in expected range
+        return score / len(expected_criteria['expected_sql_contains'])
     
     def evaluate_model_responses(
         self,
@@ -441,7 +453,45 @@ class ModelEvaluator:
             score += value * weight
         
         return score
-    
+    #Sensitivity Analysis
+    #sensitivity means: How does changing prompt structure affect output?
+                        #does temperature (0.1 vs 0.9) impact SQL quality?
+                        #does context length affect accuracy?
+                        #how few-shot examples influence results?
+
+    def perform_sensitivity_analysis(self, model_name, test_queries):
+        """
+        Sensitivity analysis for LLM model
+        Tests how model responds to variations in:
+        - Temperature (0.2, 0.4, 0.6, 0.8)
+        - Prompt structure (minimal, standard, detailed)
+        - Context length (100, 500, 1000 tokens)
+        - Few-shot examples (0, 3, 5, 10 examples)
+        """
+        sensitivity_report = {
+            'temperature_sensitivity': {},
+            'prompt_sensitivity': {},
+            'context_sensitivity': {},
+            'example_sensitivity': {}
+        }
+        
+        # Test 1: Temperature sensitivity
+        for temp in [0.2, 0.4, 0.6, 0.8]:
+            # Run same queries with different temperature
+            # Measure consistency vs creativity
+            pass
+        
+        # Test 2: Prompt structure sensitivity
+        prompt_variations = ['minimal', 'standard', 'detailed']
+        for variation in prompt_variations:
+            # Test with different prompt styles
+            pass
+        
+        # Test 3: Context length sensitivity
+        # Test 4: Few-shot example sensitivity
+        
+        return sensitivity_report
+
     def save_evaluation_report(
         self,
         metrics: Dict,
