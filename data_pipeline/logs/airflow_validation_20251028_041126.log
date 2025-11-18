@@ -1,0 +1,2 @@
+2025-10-28 04:11:26 - airflow_validation - INFO - Starting validation for dataset: orders
+2025-10-28 04:11:28 - airflow_validation - WARNING - ⚠ Validation failed — triggering anomaly alert email

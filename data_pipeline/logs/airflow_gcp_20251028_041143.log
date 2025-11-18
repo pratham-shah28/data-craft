@@ -1,0 +1,2 @@
+2025-10-28 04:11:43 - airflow_gcp - INFO - Starting GCP upload for dataset: orders
+2025-10-28 04:11:57 - airflow_gcp - INFO - ✓ GCP upload complete: 6 files

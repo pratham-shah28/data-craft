@@ -1,0 +1,36 @@
+{
+  "pipeline_run": {
+    "dataset_name": "orders",
+    "execution_date": "2025-10-28 04:11:19.420484+00:00",
+    "dag_run_id": "manual__2025-10-28T04:11:19.420484+00:00"
+  },
+  "results": {
+    "acquisition": {
+      "status": "success",
+      "dataset_name": "orders",
+      "file_path": "data/raw/orders.csv"
+    },
+    "validation": {
+      "status": "success",
+      "overall_valid": false,
+      "dataset_name": "orders"
+    },
+    "cleaning": {
+      "status": "success",
+      "dataset_name": "orders",
+      "final_rows": 51290,
+      "final_columns": 23
+    },
+    "bias_detection": {
+      "status": "success",
+      "dataset_name": "orders",
+      "bias_flags": 24
+    },
+    "gcp_upload": {
+      "status": "success",
+      "dataset_name": "orders",
+      "files_uploaded": 6,
+      "total_size": "23.02 MB"
+    }
+  }
+}

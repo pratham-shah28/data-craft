@@ -1,0 +1,44 @@
+# Generic Pipeline Configuration
+data:
+  raw_path: "data/raw/"
+  processed_path: "data/processed/"
+  validated_path: "data/validated/"
+  supported_formats: ["csv", "xlsx", "json", "parquet", "txt"]
+  
+gcp:
+  bucket_name: "isha-retail-data"
+  project_id: "datacraft-data-pipeline"
+  credentials_path: "gcp/service-account.json"
+  cleaned_data_path: "cleaned_data/"
+
+validation:
+  null_threshold: 0.15          # Max 15% nulls allowed
+  duplicate_threshold: 0.05     # Max 5% duplicates allowed
+  min_rows: 10                  # Minimum rows required
+  min_columns: 2                # Minimum columns required
+  
+bias:
+  auto_detect_protected_attrs: true
+  confidence_threshold: 0.8      # For auto-detection
+  sensitive_keywords:            # Keywords that suggest protected attributes
+    - "gender"
+    - "age"
+    - "race"
+    - "ethnicity"
+    - "religion"
+    - "disability"
+    - "segment"
+    - "region"
+    - "income"
+    - "education"
+  
+cleaning:
+  auto_detect_types: true
+  drop_duplicates: true
+  handle_outliers: true
+  outlier_method: "iqr"         # IQR or zscore
+  outlier_threshold: 3
+  
+schema:
+  auto_generate: true
+  strict_validation: false       # If false, warn but don't fail on schema issues

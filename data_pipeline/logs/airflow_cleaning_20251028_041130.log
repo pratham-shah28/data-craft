@@ -1,0 +1,2 @@
+2025-10-28 04:11:30 - airflow_cleaning - INFO - Starting cleaning for dataset: orders
+2025-10-28 04:11:33 - airflow_cleaning - INFO - ✓ Cleaning complete. Final shape: (51290, 23)

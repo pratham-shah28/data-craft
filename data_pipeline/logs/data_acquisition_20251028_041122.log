@@ -1,0 +1,24 @@
+2025-10-28 04:11:22 - data_acquisition - INFO - Detected encoding: Windows-1252 (confidence: 73.00%)
+2025-10-28 04:11:22 - data_acquisition - INFO - ✓ Data loaded successfully: 51290 rows × 24 columns
+2025-10-28 04:11:22 - data_acquisition - INFO - ✓ Data already in destination: data/raw/orders.csv
+2025-10-28 04:11:22 - data_acquisition - INFO - Generating schema profile...
+2025-10-28 04:11:24 - data_acquisition - INFO - ============================================================
+2025-10-28 04:11:24 - data_acquisition - INFO - DATA ACQUISITION SUMMARY
+2025-10-28 04:11:24 - data_acquisition - INFO - ============================================================
+2025-10-28 04:11:24 - data_acquisition - INFO - Dataset: orders
+2025-10-28 04:11:24 - data_acquisition - INFO - Rows: 51,290
+2025-10-28 04:11:24 - data_acquisition - INFO - Columns: 24
+2025-10-28 04:11:24 - data_acquisition - INFO - Column types detected:
+2025-10-28 04:11:24 - data_acquisition - INFO -   - identifier: 1 columns
+2025-10-28 04:11:24 - data_acquisition - INFO -   - categorical: 16 columns
+2025-10-28 04:11:24 - data_acquisition - INFO -   - datetime: 2 columns
+2025-10-28 04:11:24 - data_acquisition - INFO -   - continuous_numeric: 5 columns
+2025-10-28 04:11:24 - data_acquisition - INFO - Protected attributes: 7
+2025-10-28 04:11:24 - data_acquisition - INFO - Schema profile: config/dataset_profiles/orders_profile.json
+2025-10-28 04:11:24 - data_acquisition - INFO - ============================================================
+2025-10-28 04:11:24 - data_acquisition - INFO - ✓ Data acquisition completed successfully!
+2025-10-28 04:11:24 - data_acquisition - INFO - 
+2025-10-28 04:11:24 - data_acquisition - INFO - 📌 Next steps:
+2025-10-28 04:11:24 - data_acquisition - INFO -   python scripts\data_validation.py orders
+2025-10-28 04:11:24 - data_acquisition - INFO -   python scripts\bias_detection.py orders
+2025-10-28 04:11:24 - data_acquisition - INFO -   python scripts\data_cleaning.py orders

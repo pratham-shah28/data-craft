@@ -1,0 +1,2 @@
+2025-10-28 04:11:55 - gcp_upload - INFO - Uploading data/validated/orders_cleaning_metrics.json to gs://isha-retail-data/reports/cleaning/orders_cleaning_report.json
+2025-10-28 04:11:56 - gcp_upload - INFO - Successfully uploaded 3.33 KB
