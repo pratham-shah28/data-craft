@@ -301,14 +301,19 @@ python model-training/ci-cd/scripts/run_training_pipeline.py --direct
 
 The pipeline automatically triggers on:
 
-1. **Push to `model-training/` directory** - Any changes to:
-   - Code files (`scripts/`, `dags/`)
-   - Configuration files (`config/`, `ci-cd/config/`)
-   - **Data files, including `data/user_queries.txt`** ⚠️ **Important**: Changes to user queries affect model evaluation, so the pipeline will retrain and re-evaluate models
-2. **Pull requests affecting `model-training/`** - Same paths as above
+1. **Changes to `model-training/data/user_queries.txt`** - The pipeline runs only when the user queries file is modified. This ensures:
+   - Models are re-evaluated with updated queries
+   - Training runs only when evaluation criteria change
+   - Avoids unnecessary runs when code/config changes
+2. **Pull requests affecting `user_queries.txt`** - Same as above
 3. **Manual trigger** (via GitHub Actions UI) - Can be triggered manually regardless of file changes
+4. **Workflow file changes** - Also triggers when the workflow file itself is modified (for testing)
 
-**Note**: Since `user_queries.txt` contains the evaluation queries, any changes to this file will trigger a full retraining and re-evaluation of all models. This ensures that model performance is always evaluated against the latest query set.
+**Note**: The pipeline is intentionally configured to run only when `user_queries.txt` changes. This is because:
+- User queries define the evaluation dataset
+- Changing queries requires re-evaluation of all models
+- Code/config changes don't require retraining unless queries change
+- This reduces unnecessary pipeline runs and costs
 
 ### Pipeline Steps
 

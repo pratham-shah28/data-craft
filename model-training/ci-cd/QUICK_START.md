@@ -84,10 +84,11 @@ python model-training/ci-cd/scripts/send_notifications.py success outputs/model-
 
 ### 4. Trigger Pipeline
 
-**Option A: Push code**
+**Option A: Update user queries**
 ```bash
-git add model-training/
-git commit -m "Update model training"
+# Edit model-training/data/user_queries.txt
+git add model-training/data/user_queries.txt
+git commit -m "Update user queries"
 git push
 ```
 
@@ -95,6 +96,8 @@ git push
 1. Go to GitHub → Actions
 2. Select "Model Training CI/CD Pipeline"
 3. Click "Run workflow"
+
+**Note**: The pipeline only runs automatically when `user_queries.txt` changes. For other changes, use manual trigger.
 
 ## ✅ Verification
 

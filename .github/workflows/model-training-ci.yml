@@ -3,13 +3,11 @@ name: Model Training CI/CD Pipeline
 on:
   push:
     paths:
-      - 'model-training/**'  # Includes all model-training code, scripts, configs, and data
-      - 'model-training/data/user_queries.txt'  # Explicitly trigger on query changes (affects evaluation)
-      - '.github/workflows/model-training-ci.yml'
+      - 'model-training/data/user_queries.txt'  # Only trigger when user queries change
+      - '.github/workflows/model-training-ci.yml'  # Also trigger when workflow itself changes
   pull_request:
     paths:
-      - 'model-training/**'  # Includes all model-training code, scripts, configs, and data
-      - 'model-training/data/user_queries.txt'  # Explicitly trigger on query changes (affects evaluation)
+      - 'model-training/data/user_queries.txt'  # Only trigger when user queries change
   workflow_dispatch:  # Allows manual triggering
 
 env:
