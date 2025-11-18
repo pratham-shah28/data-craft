@@ -122,8 +122,17 @@ class BiasDetector:
             if column_bias['biased']:
                 bias_report['biases'].append(column_bias)
                 bias_report['bias_detected'] = True
+
+        # 4. Demographic / Slice Bias (
+            demographic_bias = self._detect_demographic_bias(
+                responses,          # use ALL responses (need failures too)
+                dataset_metadata
+            )
+            if demographic_bias['biased']:
+                bias_report['biases'].append(demographic_bias)
+                bias_report['bias_detected'] = True
         
-        # 4. Sentiment Bias
+        # 5. Sentiment Bias
         sentiment_bias = self._detect_sentiment_bias(successful_responses)
         if sentiment_bias['biased']:
             bias_report['biases'].append(sentiment_bias)
@@ -531,3 +540,5 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
+    
+    
