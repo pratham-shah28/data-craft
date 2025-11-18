@@ -96,6 +96,41 @@ No model retraining required.
 
 ---
 
+## 🧪 Evaluation Logic
+
+For each document, we compute:
+
+- **Precision:** correct fields / all extracted fields  
+- **Recall:** correct fields / all ground-truth fields  
+- **F1 Score:** harmonic mean of precision and recall  
+- **Partial matches** (minor OCR or formatting differences)
+
+## 📁 Field-Level Metrics (Per Document)
+
+Evaluation outputs are stored at:
+``` bash
+eval_simple/<invoice_id>_eval.json
+```
+
+
+#### Example:
+
+```json
+{
+  "invoice": "invoice_6",
+  "precision": 0.85,
+  "recall": 1.0,
+  "f1": 0.92,
+
+  "correct_fields_count": 34,
+  "wrong_fields_count": 3,
+  "partial_matches_count": 3,
+  "missing_fields_count": 0,
+  "extra_fields_count": 2
+}
+```
+---
+
 ## 🔒 Notes
 - Compatible with any LLM (Gemini, GPT, Llama).
 - Vision models supported when input is images instead of text.
