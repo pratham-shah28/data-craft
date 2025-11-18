@@ -1,0 +1,29 @@
+# MLflow folder .gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# MLflow runs data (don't commit experiment runs)
+mlruns/*/
+!mlruns/.gitkeep
+
+# Environment files
+.env
+
+# OS files
+.DS_Store
+._.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.log
+*.tmp
+.pytest_cache/

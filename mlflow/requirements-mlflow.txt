@@ -1,0 +1,23 @@
+# MLflow Requirements
+# For experiment tracking and model versioning
+
+# Core MLflow
+mlflow==2.15.1
+
+# MLflow UI and Server
+Flask==3.0.0
+gunicorn==21.2.0
+
+# Database drivers (for future if needed)
+sqlalchemy==2.0.23
+
+# Visualization for MLflow UI
+matplotlib==3.8.2
+plotly==5.18.0
+
+# Cloud storage integration (optional - for GCS artifacts)
+google-cloud-storage==2.12.0
+
+# Utilities
+python-dotenv==1.0.0
+pyyaml==6.0.1
