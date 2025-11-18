@@ -10,7 +10,7 @@ from pathlib import Path
 
 # --- import pdf_to_base64_images from sibling folder ---
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
-sys.path.append(os.path.join(ROOT, "data_pipeline", "scripts"))
+sys.path.append(os.path.join(ROOT, "data-pipeline", "scripts"))
 from pdf_2_image import pdf_to_base64_images  
 # --- env config ---
 
@@ -44,7 +44,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run Gemini JSON extraction on a PDF.")
     parser.add_argument(
         "--sample-path", "-s",
-        default="/Users/prathamshah/Desktop/projects/mlops project/mlops-project/data_pipeline/data/unstructured/invoices",
+        default="/Users/prathamshah/Desktop/projects/mlops project/mlops-project/data-pipeline/data/unstructured/invoices",
         help="Document type (default: invoices)"
     )
     parser.add_argument(
@@ -55,7 +55,7 @@ def main():
 
     parser.add_argument(
         "--target-path", "-t",
-        default="/Users/prathamshah/Desktop/projects/mlops project/mlops-project/data_pipeline/data/unstructured/invoices/invoice_6.pdf",
+        default="/Users/prathamshah/Desktop/projects/mlops project/mlops-project/data-pipeline/data/unstructured/invoices/invoice_6.pdf",
         help="Document type (default: invoices)"
     )
     args = parser.parse_args()
