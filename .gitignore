@@ -54,7 +54,7 @@ model-training/bias/
 model-training/best-model-responses/
 model-training/model-selection/
 model-training/logs/
-
+outputs/
 # ------------------------------
 # DATA / DVC
 # ------------------------------

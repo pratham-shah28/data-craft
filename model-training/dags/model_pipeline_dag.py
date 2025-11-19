@@ -37,9 +37,9 @@ import vertexai
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
 # Configuration
-PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "datacraft-478300")
-REGION = Variable.get("REGION", default_var="us-east1")
-BUCKET_NAME = Variable.get("BUCKET_NAME", default_var="model-datacraft")
+PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "datacraft-data-pipeline")
+REGION = Variable.get("REGION", default_var="us-central1")
+BUCKET_NAME = Variable.get("BUCKET_NAME", default_var="isha-retail-data")
 DATASET_ID = Variable.get("BQ_DATASET", default_var="datacraft_ml")
 
 # ✅ Multiple models for evaluation
@@ -461,10 +461,6 @@ def detect_bias_in_all_models(**context):
     }
 
 
-# ========================================
-# PHASE 4.5: HYPERPARAMETER TUNING
-# ========================================
-
 def tune_hyperparameters(**context):
     """STEP 7.5: Tune hyperparameters for generation config"""
     ti = context['ti']
@@ -476,8 +472,14 @@ def tune_hyperparameters(**context):
     # Get sample queries
     queries = ti.xcom_pull(task_ids='read_user_queries', key='user_queries')
     
+    if not queries:
+        print("⚠ No queries found, using defaults")
+        default_params = {'temperature': 0.2, 'top_p': 0.9, 'top_k': 40}
+        ti.xcom_push(key='best_generation_params', value=default_params)
+        return {"status": "skipped", "error": "No queries", "default_params": default_params}
+    
     # Use subset for tuning (faster)
-    tuning_queries = queries[:20] if len(queries) > 20 else queries
+    tuning_queries = queries[:5] if len(queries) > 5 else queries
     
     print(f"Tuning with {len(tuning_queries)} queries...")
     
@@ -489,14 +491,22 @@ def tune_hyperparameters(**context):
             output_dir=HYPERPARAMETER_DIR
         )
         
-        # Get metadata
+        # Get metadata (llm_context is a STRING)
         llm_context = ti.xcom_pull(task_ids='generate_features', key='llm_context')
+        
+        if not llm_context:
+            raise ValueError("No LLM context found")
         
         # Run tuning
         best_params, tuning_results = tuner.tune_generation_params(
             validation_queries=tuning_queries,
             llm_context=llm_context
         )
+        
+        # ✅ FIX: Handle None case
+        if best_params is None:
+            print("⚠ No best params found (all scored 0), using defaults")
+            best_params = {'temperature': 0.2, 'top_p': 0.9, 'top_k': 40}
         
         # Save results
         tuning_file = tuner.save_tuning_report(best_params, tuning_results)
@@ -506,27 +516,32 @@ def tune_hyperparameters(**context):
         ti.xcom_push(key='tuning_report_file', value=tuning_file)
         
         print(f"\n✓ Best parameters:")
-        print(f"  Temperature: {best_params.get('temperature', 0.4)}")
+        print(f"  Temperature: {best_params.get('temperature', 0.2)}")
         print(f"  Top-p: {best_params.get('top_p', 0.9)}")
         print(f"  Top-k: {best_params.get('top_k', 40)}")
         
         return best_params
         
     except Exception as e:
-        print(f"⚠ Hyperparameter tuning skipped: {e}")
-        return {"status": "skipped", "error": str(e)}
+        print(f"⚠ Hyperparameter tuning failed: {e}")
+        import traceback
+        traceback.print_exc()
+        # Return default params
+        default_params = {'temperature': 0.2, 'top_p': 0.9, 'top_k': 40}
+        ti.xcom_push(key='best_generation_params', value=default_params)
+        return {"status": "failed", "error": str(e), "default_params": default_params}
 
 
 # ========================================
-# PHASE 4.5: SENSITIVITY ANALYSIS
+# PHASE 4.6: SENSITIVITY ANALYSIS
 # ========================================
 
 def run_sensitivity_analysis(**context):
-    """STEP 7.5: Run sensitivity analysis"""
+    """STEP 7.6: Run sensitivity analysis"""
     ti = context['ti']
     
     print("\n" + "=" * 60)
-    print("STEP 7.5: SENSITIVITY ANALYSIS")
+    print("STEP 7.6: SENSITIVITY ANALYSIS")
     print("=" * 60)
     
     # Get all model responses
@@ -535,12 +550,21 @@ def run_sensitivity_analysis(**context):
         key='all_model_responses'
     )
     
+    if not all_model_responses:
+        print("⚠ No model responses found")
+        empty_report = {"status": "skipped", "error": "No model responses"}
+        ti.xcom_push(key='sensitivity_reports', value=empty_report)
+        return empty_report
+    
     try:
         # Initialize analyzer
         analyzer = SensitivityAnalyzer(
             project_id=PROJECT_ID,
             output_dir=SENSITIVITY_DIR
         )
+        
+        # Get metadata (can be None)
+        metadata = ti.xcom_pull(task_ids='generate_features', key='metadata')
         
         # Run for each model
         all_sensitivity_reports = {}
@@ -550,16 +574,23 @@ def run_sensitivity_analysis(**context):
             print(f"SENSITIVITY ANALYSIS: {model_name}")
             print(f"{'='*60}")
             
+            # ✅ FIX: Check if responses is valid
+            if not responses or not isinstance(responses, list):
+                print(f"⚠ Invalid responses for {model_name}")
+                continue
+            
             sensitivity_report = analyzer.analyze_model_sensitivity(
                 model_name=model_name,
                 responses=responses,
-                metadata=ti.xcom_pull(task_ids='generate_features', key='metadata')
+                metadata=metadata or {}  # ✅ Provide empty dict if None
             )
             
             # Save report
             report_file = analyzer.save_sensitivity_report(sensitivity_report, model_name)
             
             all_sensitivity_reports[model_name] = sensitivity_report
+            
+            print(f"✓ Saved sensitivity report for {model_name}")
         
         # Store in XCom
         ti.xcom_push(key='sensitivity_reports', value=all_sensitivity_reports)
@@ -569,8 +600,12 @@ def run_sensitivity_analysis(**context):
         return all_sensitivity_reports
         
     except Exception as e:
-        print(f"⚠ Sensitivity analysis skipped: {e}")
-        return {"status": "skipped", "error": str(e)}
+        print(f"⚠ Sensitivity analysis failed: {e}")
+        import traceback
+        traceback.print_exc()
+        error_report = {"status": "failed", "error": str(e)}
+        ti.xcom_push(key='sensitivity_reports', value=error_report)
+        return error_report
 
 
 # ========================================
