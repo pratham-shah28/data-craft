@@ -6,9 +6,10 @@ from Levenshtein import ratio as similarity
 
 
 OUTPUT_FOLDER = Path(__file__).resolve().parent / "output"
-GROUND_TRUTH_FOLDER = Path(__file__).resolve().parents[2] / "data_pipeline" / "data" / "unstructured" / "invoices"
 
-SAVE_DIR = "eval_simple"
+GROUND_TRUTH_FOLDER = Path(__file__).resolve().parents[2] / "data-pipeline" / "data" / "unstructured" / "invoices"
+
+SAVE_DIR = Path(__file__).resolve().parent / "eval_simple"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 
