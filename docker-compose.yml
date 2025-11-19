@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: "3.8"
 
 services:
@@ -16,3 +17,93 @@ services:
 
       # Expose your DAG file to Airflow's DAGs folder
       - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project/model_1/v2_vertex/gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"
+=======
+version: '3.8'
+
+services:
+  airflow-webserver:
+    build: .
+    container_name: airflow-webserver
+    ports:
+      - "8080:8080"
+    volumes:
+      # ✅ FIXED: Mount DAG files to correct location
+      - ./data-pipeline/dags:/opt/airflow/dags/data-pipeline
+      - ./model-training/dags:/opt/airflow/dags/model-training
+      
+      # Scripts and data
+      - ./data-pipeline/scripts:/opt/airflow/data-pipeline/scripts
+      - ./data-pipeline/config:/opt/airflow/data-pipeline/config
+      - ./data-pipeline/data:/opt/airflow/data-pipeline/data
+      - ./model-training/scripts:/opt/airflow/model-training/scripts
+      - ./model-training/data:/opt/airflow/model-training/data
+      - ./shared:/opt/airflow/shared
+      
+      # Logs and outputs
+      - ./logs:/opt/airflow/logs
+      - ./outputs:/opt/airflow/outputs
+      - ./gcp:/opt/airflow/gcp
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
+      - AIRFLOW_UID=50000
+      - GCP_PROJECT_ID=datacraft-478300
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json 
+    user: "50000:0"
+    command: >
+      bash -c "airflow db init &&
+               airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+               airflow webserver"
+    depends_on:
+      - postgres
+
+  airflow-scheduler:
+    build: .
+    container_name: airflow-scheduler
+    volumes:
+      # ✅ FIXED: Same DAG mounts as webserver
+      - ./data-pipeline/dags:/opt/airflow/dags/data-pipeline
+      - ./model-training/dags:/opt/airflow/dags/model-training
+      
+      # Scripts and data
+      - ./data-pipeline/scripts:/opt/airflow/data-pipeline/scripts
+      - ./data-pipeline/config:/opt/airflow/data-pipeline/config
+      - ./data-pipeline/data:/opt/airflow/data-pipeline/data
+      - ./model-training/scripts:/opt/airflow/model-training/scripts
+      - ./model-training/data:/opt/airflow/model-training/data
+      - ./shared:/opt/airflow/shared
+      
+      # Logs and outputs
+      - ./logs:/opt/airflow/logs
+      - ./outputs:/opt/airflow/outputs
+      - ./gcp:/opt/airflow/gcp
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+      - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
+      - AIRFLOW_UID=50000
+      - GCP_PROJECT_ID=datacraft-478300
+      - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json 
+    user: "50000:0"
+    command: airflow scheduler
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    container_name: airflow-postgres
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+
+volumes:
+  postgres-db-volume:
+>>>>>>> main

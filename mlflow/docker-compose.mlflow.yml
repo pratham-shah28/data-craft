@@ -1,0 +1,36 @@
+# Docker Compose for MLflow UI Server
+# OPTIONAL - Run this if you want a containerized MLflow UI
+
+version: '3.8'
+
+services:
+  mlflow-ui:
+    image: python:3.9-slim
+    container_name: datacraft-mlflow-ui
+    working_dir: /mlflow
+    command: >
+      bash -c "
+      pip install mlflow==2.15.1 &&
+      mlflow ui --host 0.0.0.0 --port 5000 --backend-store-uri file:///mlflow/mlruns
+      "
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns:rw
+    environment:
+      - MLFLOW_TRACKING_URI=file:///mlflow/mlruns
+    networks:
+      - datacraft-network
+    restart: unless-stopped
+
+networks:
+  datacraft-network:
+    name: datacraft-network
+    driver: bridge
+
+# Usage:
+#   docker-compose -f docker-compose.mlflow.yml up -d
+#   Access UI at: http://localhost:5000
+#
+# Stop:
+#   docker-compose -f docker-compose.mlflow.yml down

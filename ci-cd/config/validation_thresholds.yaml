@@ -1,0 +1,19 @@
+# Model Validation Thresholds
+# Used by CI/CD pipeline to validate model performance
+
+validation_thresholds:
+  performance:
+    min_overall_score: 75.0
+    min_success_rate: 80.0
+    min_syntax_validity: 85.0
+    min_intent_matching: 70.0
+  
+  bias:
+    max_bias_score: 30.0
+    max_severity: "MEDIUM"  # Options: LOW, MEDIUM, HIGH
+  
+  execution:
+    min_execution_success_rate: 85.0
+    min_result_validity_rate: 80.0
+    min_overall_accuracy: 75.0
+

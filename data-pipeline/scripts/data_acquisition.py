@@ -62,25 +62,41 @@ def read_data_file(file_path):
     else:
         raise ValueError(f"Unsupported file format: {file_format}")
 
+def get_project_root():
+    """Determine project root based on environment (Docker vs local)"""
+    # Check if running in Docker
+    docker_root = Path("/opt/airflow/data-pipeline")
+    if docker_root.exists():
+        return docker_root
+    
+    # Fallback to local path (two levels up from scripts/)
+    return Path(__file__).parent.parent
+
 def find_data_files(config):
-    """Search for data files in multiple locations"""
+    """Search for data files in multiple locations (Docker-aware)"""
     logger = setup_logging("data_acquisition")
     supported_formats = config['data']['supported_formats']
-    project_root = Path(__file__).parent.parent  # Two levels up from scripts/
-    raw_path = Path(config['data']['raw_path'])
-
+    project_root = get_project_root()
+    
+    # Define search paths (Docker-compatible)
     search_locations = [
-    ('data/raw/', raw_path)
+        ('Docker data/raw/', project_root / 'data' / 'raw'),
+        ('Local data/raw/', Path('data/raw')),
+        ('Project root', project_root),
     ]
-
     
     for location_name, location_path in search_locations:
-        logger.info(f"Searching in {location_name}...")
+        if not location_path.exists():
+            logger.debug(f"Path does not exist: {location_path}")
+            continue
+            
+        logger.info(f"Searching in {location_name} ({location_path})...")
+        
         for fmt in supported_formats:
             potential_files = list(location_path.glob(f'*.{fmt}'))
             if potential_files:
                 found_file = potential_files[0]
-                logger.info(f"✓ Found: {found_file} in {location_name}")
+                logger.info(f"✓ Found: {found_file.name} in {location_name}")
                 return str(found_file)
     
     return None
@@ -98,13 +114,20 @@ def acquire_data(source_file=None):
     """
     logger = setup_logging("data_acquisition")
     config = load_config()
+    project_root = get_project_root()
     
     try:
         logger.info("Starting data acquisition...")
         logger.info("=" * 60)
+        logger.info(f"Project root: {project_root}")
         
-        # Ensure raw data directory exists
-        ensure_dir(config['data']['raw_path'])
+        # Determine raw data path (Docker-aware)
+        raw_path = project_root / 'data' / 'raw'
+        processed_path = project_root / 'data' / 'processed'
+        
+        # Ensure directories exist
+        ensure_dir(raw_path)
+        ensure_dir(processed_path)
         
         # If no source file specified, search for it
         if source_file is None:
@@ -112,15 +135,17 @@ def acquire_data(source_file=None):
             source_file = find_data_files(config)
         
         if source_file is None:
+            # Provide helpful error message with both Docker and local paths
             error_msg = (
                 "No data file found!\n\n"
                 "📋 Please either:\n"
                 "  1. Place your data file (CSV, Excel, JSON, Parquet) in:\n"
-                "     - Project root: C:\\Users\\ishas\\Desktop\\mlops-project\\Data-Pipeline\\\n"
-                "     - OR data/raw/ directory\n\n"
-                "  2. Specify the file path explicitly:\n"
-                "     python scripts\\data_acquisition.py path/to/your/file.csv\n\n"
-                f"  Supported formats: {', '.join(config['data']['supported_formats'])}"
+                f"     - Docker: /opt/airflow/data-pipeline/data/raw/\n"
+                f"     - Local: data/raw/ directory\n\n"
+                "  2. Specify the file path in DAG run config:\n"
+                "     {'source_file': 'path/to/your/file.csv'}\n\n"
+                f"  Supported formats: {', '.join(config['data']['supported_formats'])}\n\n"
+                f"  Current search path: {raw_path}"
             )
             raise FileNotFoundError(error_msg)
         
@@ -148,7 +173,7 @@ def acquire_data(source_file=None):
         logger.info(f"✓ Data loaded successfully: {df.shape[0]} rows × {df.shape[1]} columns")
         
         # Save to raw directory as CSV (standardized format)
-        destination = Path(config['data']['raw_path']) / f"{dataset_name}.csv"
+        destination = raw_path / f"{dataset_name}.csv"
         
         # Only copy if source is not already in the exact destination
         if source_path.resolve() != destination.resolve():
@@ -163,6 +188,10 @@ def acquire_data(source_file=None):
         detector = SchemaDetector()
         schema_profile = detector.generate_schema_profile(df, dataset_name)
         
+        # Save schema profile to config directory
+        config_dir = project_root / 'config' / 'dataset_profiles'
+        ensure_dir(config_dir)
+        
         logger.info("=" * 60)
         logger.info("DATA ACQUISITION SUMMARY")
         logger.info("=" * 60)
@@ -174,18 +203,15 @@ def acquire_data(source_file=None):
             if cols:
                 logger.info(f"  - {col_type}: {len(cols)} columns")
         logger.info(f"Protected attributes: {len(schema_profile['protected_attributes'])}")
-        logger.info(f"Schema profile: config/dataset_profiles/{dataset_name}_profile.json")
+        logger.info(f"Schema profile: {config_dir}/{dataset_name}_profile.json")
         logger.info("=" * 60)
         logger.info("✓ Data acquisition completed successfully!")
-        logger.info("")
-        logger.info("📌 Next steps:")
-        logger.info(f"  python scripts\\data_validation.py {dataset_name}")
-        logger.info(f"  python scripts\\bias_detection.py {dataset_name}")
-        logger.info(f"  python scripts\\data_cleaning.py {dataset_name}")
         
         return {
             "dataset_name": dataset_name,
             "file_path": str(destination),
+            "rows": len(df),
+            "columns": len(df.columns),
             "schema_profile": schema_profile
         }
         
