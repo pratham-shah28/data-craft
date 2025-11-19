@@ -1,0 +1,236 @@
+name: Model Training CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'model-training/**'
+      - 'ci-cd/**'
+      - '.github/workflows/model-training-ci-cd.yml'
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  PYTHON_VERSION: '3.9'
+  GCP_PROJECT_ID: 'datacraft-478300'
+
+jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch full history for commit SHA
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Get commit SHA
+        id: commit
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+  train:
+    name: Train and Evaluate Models
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Model Training Pipeline
+        env:
+          GCP_PROJECT_ID: ${{ env.GCP_PROJECT_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          python ci-cd/scripts/run_training_pipeline.py
+
+      - name: Upload training outputs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: training-outputs
+          path: |
+            outputs/model-training/**
+            outputs/evaluation/**
+            outputs/bias/**
+            outputs/model-selection/**
+            outputs/best-model-responses/**
+          retention-days: 7
+
+  validate:
+    name: Validate Model Performance
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Download training outputs
+        uses: actions/download-artifact@v3
+        with:
+          name: training-outputs
+
+      - name: Validate Model
+        id: validate
+        run: |
+          python ci-cd/scripts/validate_model.py || exit 1
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: validation-report
+          path: outputs/validation/*.json
+          retention-days: 7
+
+  detect_bias:
+    name: Detect Model Bias
+    needs: train
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Download training outputs
+        uses: actions/download-artifact@v3
+        with:
+          name: training-outputs
+
+      - name: Check Bias Reports
+        run: |
+          python ci-cd/scripts/check_bias.py || exit 1
+
+  compare_and_select:
+    name: Compare with Previous Model
+    needs: [validate, detect_bias]
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Download training outputs
+        uses: actions/download-artifact@v3
+        with:
+          name: training-outputs
+
+      - name: Compare Models and Check Rollback
+        id: compare
+        run: |
+          python ci-cd/scripts/rollback_manager.py
+
+  push_registry:
+    name: Push to Artifact Registry
+    needs: compare_and_select
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Get commit SHA
+        id: commit
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Download training outputs
+        uses: actions/download-artifact@v3
+        with:
+          name: training-outputs
+
+      - name: Push Model to Artifact Registry
+        run: |
+          python ci-cd/scripts/push_to_registry.py --commit-sha ${{ steps.commit.outputs.sha }}
+
+  notify:
+    name: Send Notifications
+    needs: [push_registry, validate, detect_bias, compare_and_select]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: outputs
+
+      - name: Send Email Notification
+        env:
+          EMAIL_SMTP_USER: ${{ secrets.EMAIL_SMTP_USER }}
+          EMAIL_SMTP_PASSWORD: ${{ secrets.EMAIL_SMTP_PASSWORD }}
+        run: |
+          python ci-cd/scripts/send_notification.py \
+            --status ${{ job.status }} \
+            --workflow-run-url ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
