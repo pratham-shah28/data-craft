@@ -26,7 +26,9 @@ mlops-project/
 │   │   ├── bias_detector.py          
 │   │   ├── model_selector.py         
 │   │   ├── response_saver.py          
-│   │   └── query_executor.py          
+│   │   └── query_executor.py
+│   │   └── hyperparameter_tuner.py
+│   │   └── senstivity_analysis.py         
 │   └── data/
 │       └── user_queries.txt           (test queries)
 └── docker-compose.yml                 
@@ -86,9 +88,24 @@ save_best_model_responses → generate_final_summary
 
 ## 📊 **Model Pipeline DAG**
 
-<img width="1547" height="222" alt="image" src="https://github.com/user-attachments/assets/ba4a09e5-0ed2-421e-84a8-25f351da0e5d" />
+<img width="1462" height="295" alt="image" src="https://github.com/user-attachments/assets/d1f2ea21-681b-4926-8adb-913992656df7" />
+
 
 ---
+
+## Pipeline Steps
+1. Load dataset into BigQuery.
+2. Generate and store metadata.
+3. Read user queries.
+4. Run all queries on both models.
+5. Evaluate SQL quality and response accuracy.
+6. Detect bias across model outputs.
+7. Tune hyperparameters for stability.
+8. Run sensitivity analysis.
+9. Select the best-performing model.
+10. Execute final SQL in BigQuery.
+11. Validate results and summaries.
+12. Save outputs and generate final report.
 
 ## 📁 **Where to Find Results**
 
