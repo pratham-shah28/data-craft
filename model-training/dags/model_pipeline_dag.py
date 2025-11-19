@@ -33,6 +33,10 @@ from query_executor import QueryExecutor
 from hyperparameter_tuner import HyperparameterTuner
 from sensitivity_analysis import SensitivityAnalyzer
 
+# ✅ MLflow Integration for Experiment Tracking
+sys.path.insert(0, '/opt/airflow/mlflow')
+from mlflow_integration import start_mlflow_experiment, log_to_mlflow
+
 import vertexai
 from vertexai.generative_models import GenerativeModel, GenerationConfig
 
@@ -79,6 +83,17 @@ dag = DAG(
     schedule_interval=None,
     catchup=False,
     tags=['model', 'gemini', 'evaluation', 'bias-detection', 'mlops', 'sensitivity', 'hyperparameter-tuning']
+)
+
+
+# ========================================
+# MLFLOW TRACKING
+# ========================================
+
+start_mlflow_task = PythonOperator(
+    task_id='start_mlflow_tracking',
+    python_callable=start_mlflow_experiment,
+    dag=dag
 )
 
 
@@ -1034,6 +1049,12 @@ summary_task = PythonOperator(
     dag=dag
 )
 
+log_mlflow_task = PythonOperator(
+    task_id='log_to_mlflow',
+    python_callable=log_to_mlflow,
+    dag=dag
+)
+
 
 # ========================================
 # TASK DEPENDENCIES
@@ -1068,4 +1089,7 @@ select_model_task >> execute_validate_task
 execute_validate_task >> save_responses_task
 
 # Phase 8: Final Summary
-save_responses_task >> summary_task
+save_responses_task >> summary_task >> log_mlflow_task
+
+# MLflow tracking spans entire pipeline
+start_mlflow_task >> load_data_task
