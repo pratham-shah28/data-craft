@@ -2,7 +2,7 @@
 """
 Bias Detection for Query & Visualization Models
 Detects potential biases in LLM-generated SQL queries and visualizations
-Focus areas: query complexity fairness, visualization type distribution, demographic representation
+Focus areas: query complexity fairness, visualization type distribution
 """
 
 import json
@@ -122,8 +122,8 @@ class BiasDetector:
             if column_bias['biased']:
                 bias_report['biases'].append(column_bias)
                 bias_report['bias_detected'] = True
-        
-        # 4. Sentiment Bias
+
+        # 5. Sentiment Bias
         sentiment_bias = self._detect_sentiment_bias(successful_responses)
         if sentiment_bias['biased']:
             bias_report['biases'].append(sentiment_bias)
@@ -531,3 +531,5 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
+    
+    

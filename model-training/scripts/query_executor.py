@@ -116,29 +116,29 @@ class QueryExecutor:
             
             self.logger.info(f"✓ Query executed: {len(df_result)} rows returned in {execution_time:.2f}s")
             
-            # Step 3: Validate results
+            # Step 3: Validate results - updated 
             validation = self._validate_results(
+                user_query=user_query,
+                df_result=df_result,
+                visualization=visualization 
+            )
+
+            result["validation_checks"] = validation
+            result["results_valid"] = validation["overall_valid"]
+
+            # Step 4: ALWAYS generate a natural-language answer
+            nl_answer = self._generate_natural_language_answer(
                 user_query=user_query,
                 df_result=df_result,
                 visualization=visualization
             )
-            
-            result["validation_checks"] = validation
-            result["results_valid"] = validation["overall_valid"]
-            
-            # Step 4: Generate natural language answer
+            result["natural_language_answer"] = nl_answer
+
             if validation["overall_valid"]:
-                nl_answer = self._generate_natural_language_answer(
-                    user_query=user_query,
-                    df_result=df_result,
-                    visualization=visualization
-                )
-                result["natural_language_answer"] = nl_answer
-                
                 self.logger.info(f"✓ Generated answer: {nl_answer[:100]}...")
             else:
-                result["natural_language_answer"] = "Results failed validation checks"
-                self.logger.warning("⚠ Results failed validation")
+                self.logger.warning("⚠ Results failed validation (soft) – returning answer anyway")
+
             
         except Exception as e:
             result["execution_status"] = "failed"

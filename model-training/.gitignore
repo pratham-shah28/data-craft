@@ -5,3 +5,4 @@ gcp/
 scripts/__pycache__
 
 dags/__pycache__
+.env
