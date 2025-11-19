@@ -1,0 +1,14 @@
+{
+  "invoice": "invoice_6",
+  "precision": 0.875,
+  "recall": 1.0,
+  "f1": 0.933,
+  "tp": 35,
+  "fp": 5,
+  "fn": 0,
+  "correct_fields_count": 35,
+  "wrong_fields_count": 3,
+  "partial_matches_count": 2,
+  "missing_fields_count": 0,
+  "extra_fields_count": 2
+}

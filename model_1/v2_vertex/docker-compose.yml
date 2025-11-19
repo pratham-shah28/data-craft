@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  airflow-webserver:
+    image: apache/airflow:2.9.0-python3.10
+    container_name: airflow-webserver
+    ports:
+      - "8081:8080"
+    command: webserver
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+    volumes:
+      # Mount your whole repo into EXACT same path in container
+      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project:/Users/prathamshah/Desktop/projects/mlops project/mlops-project"
+
+      # Mount ONLY your DAG file into the Airflow DAGs folder
+      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project/model_1/v2_vertex/gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"
+
+    depends_on:
+      - airflow-scheduler
+
+  airflow-scheduler:
+    image: apache/airflow:2.9.0-python3.10
+    container_name: airflow-scheduler
+    command: scheduler
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+    volumes:
+      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project:/Users/prathamshah/Desktop/projects/mlops project/mlops-project"
+      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project/model_1/v2_vertex/gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"

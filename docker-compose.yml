@@ -1,3 +1,23 @@
+<<<<<<< HEAD
+version: "3.8"
+
+services:
+  airflow:
+    image: apache/airflow:2.9.0-python3.10
+    container_name: airflow
+    command: standalone
+    environment:
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+    ports:
+      - "8081:8080"  # you already switched to 8081 on host
+    volumes:
+      # Mount your whole project at the SAME absolute path as on your Mac
+      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project:/Users/prathamshah/Desktop/projects/mlops project/mlops-project"
+
+      # Expose your DAG file to Airflow's DAGs folder
+      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project/model_1/v2_vertex/gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"
+=======
 version: '3.8'
 
 services:
@@ -86,3 +106,4 @@ services:
 
 volumes:
   postgres-db-volume:
+>>>>>>> main

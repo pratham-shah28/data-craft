@@ -1,0 +1,4 @@
+langchain-core
+google-cloud-aiplatform
+vertexai
+python-Levenshtein
