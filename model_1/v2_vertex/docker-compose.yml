@@ -10,13 +10,10 @@ services:
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - PROJECT_ROOT=/workspace
     volumes:
-      # Mount your whole repo into EXACT same path in container
-      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project:/Users/prathamshah/Desktop/projects/mlops project/mlops-project"
-
-      # Mount ONLY your DAG file into the Airflow DAGs folder
-      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project/model_1/v2_vertex/gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"
-
+      - "../../:/workspace"
+      - "./gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"
     depends_on:
       - airflow-scheduler
 
@@ -27,6 +24,7 @@ services:
     environment:
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - PROJECT_ROOT=/workspace
     volumes:
-      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project:/Users/prathamshah/Desktop/projects/mlops project/mlops-project"
-      - "/Users/prathamshah/Desktop/projects/mlops project/mlops-project/model_1/v2_vertex/gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"
+      - "../../:/workspace"
+      - "./gemini_extraction_dag.py:/opt/airflow/dags/gemini_extraction_dag.py"

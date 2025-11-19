@@ -11,3 +11,4 @@ pdf2image
 
 pydantic>=2.0
 python-multipart
+python-Levenshtein
