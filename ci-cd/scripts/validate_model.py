@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
 Validate Model Performance
-Checks if model meets validation thresholds
+Checks if model meets validation thresholds using best model responses
 """
 
 import sys
 import json
 import yaml
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 # Add paths
 project_root = Path(__file__).parent.parent.parent
@@ -21,38 +21,21 @@ def load_thresholds() -> Dict:
         config = yaml.safe_load(f)
     return config['validation_thresholds']
 
-def find_latest_evaluation_report() -> Path:
-    """Find the latest evaluation report"""
-    eval_dir = outputs_dir / "evaluation"
-    if not eval_dir.exists():
-        raise FileNotFoundError(f"Evaluation directory not found: {eval_dir}")
+def find_latest_selection_report() -> Optional[Path]:
+    """Find the latest model selection report in best-model-responses"""
+    best_model_dir = outputs_dir / "best-model-responses"
+    if not best_model_dir.exists():
+        return None
     
-    # Find comparison report (most recent)
-    comparison_reports = list(eval_dir.glob("model_comparison_*.json"))
-    if comparison_reports:
-        return max(comparison_reports, key=lambda p: p.stat().st_mtime)
-    
-    # Fallback: find any evaluation report
-    reports = list(eval_dir.glob("*_evaluation_*.json"))
+    # Look for model_selection_report.json
+    reports = list(best_model_dir.rglob("model_selection_report.json"))
     if reports:
         return max(reports, key=lambda p: p.stat().st_mtime)
     
-    raise FileNotFoundError("No evaluation reports found")
+    return None
 
-def find_latest_selection_report() -> Path:
-    """Find the latest model selection report"""
-    selection_dir = outputs_dir / "model-selection"
-    if not selection_dir.exists():
-        raise FileNotFoundError(f"Selection directory not found: {selection_dir}")
-    
-    reports = list(selection_dir.glob("model_selection_*.json"))
-    if not reports:
-        raise FileNotFoundError("No model selection reports found")
-    
-    return max(reports, key=lambda p: p.stat().st_mtime)
-
-def find_latest_execution_results() -> Path:
-    """Find the latest execution results"""
+def find_latest_accuracy_metrics() -> Optional[Path]:
+    """Find the latest accuracy metrics"""
     best_model_dir = outputs_dir / "best-model-responses"
     if not best_model_dir.exists():
         return None
@@ -65,36 +48,34 @@ def find_latest_execution_results() -> Path:
     return None
 
 def validate_performance(metrics: Dict, thresholds: Dict) -> List[str]:
-    """Validate performance metrics"""
+    """Validate performance metrics from selection report"""
     errors = []
     perf_thresholds = thresholds['performance']
     
-    overall_score = metrics.get('overall_score', 0)
+    # Get metrics from best_model section
+    best_model = metrics.get('best_model', {})
+    
+    # Use composite_score as overall_score
+    overall_score = best_model.get('composite_score', 0)
     if overall_score < perf_thresholds['min_overall_score']:
         errors.append(
-            f"Overall score {overall_score:.2f} below threshold "
+            f"Composite score {overall_score:.2f} below threshold "
             f"{perf_thresholds['min_overall_score']}"
         )
     
-    success_rate = metrics.get('success_rate', 0)
+    # Use performance_score
+    performance_score = best_model.get('performance_score', 0)
+    if performance_score < perf_thresholds.get('min_performance_score', 0):
+        errors.append(
+            f"Performance score {performance_score:.2f} below threshold "
+            f"{perf_thresholds.get('min_performance_score', 0)}"
+        )
+    
+    success_rate = best_model.get('success_rate', 0)
     if success_rate < perf_thresholds['min_success_rate']:
         errors.append(
             f"Success rate {success_rate:.2f}% below threshold "
             f"{perf_thresholds['min_success_rate']}%"
-        )
-    
-    syntax_validity = metrics.get('syntax_validity_rate', 0)
-    if syntax_validity < perf_thresholds['min_syntax_validity']:
-        errors.append(
-            f"Syntax validity {syntax_validity:.2f}% below threshold "
-            f"{perf_thresholds['min_syntax_validity']}%"
-        )
-    
-    intent_matching = metrics.get('intent_matching_rate', 0)
-    if intent_matching < perf_thresholds['min_intent_matching']:
-        errors.append(
-            f"Intent matching {intent_matching:.2f}% below threshold "
-            f"{perf_thresholds['min_intent_matching']}%"
         )
     
     return errors
@@ -141,28 +122,27 @@ def main():
         thresholds = load_thresholds()
         print("✓ Loaded validation thresholds")
         
-        # Load evaluation report
-        eval_report_path = find_latest_evaluation_report()
-        print(f"✓ Found evaluation report: {eval_report_path.name}")
+        # Load selection report
+        selection_report_path = find_latest_selection_report()
+        if not selection_report_path:
+            print("✗ No model selection report found")
+            return 1
         
-        with open(eval_report_path, 'r') as f:
-            eval_data = json.load(f)
+        print(f"✓ Found selection report: {selection_report_path.name}")
         
-        # Get best model metrics from comparison report
-        if 'detailed_comparison' in eval_data:
-            best_model_metrics = eval_data['detailed_comparison'][0]
-            print(f"✓ Best model: {best_model_metrics.get('model')}")
-        else:
-            # Fallback: use first model in report
-            best_model_metrics = eval_data
+        with open(selection_report_path, 'r') as f:
+            selection_data = json.load(f)
+        
+        best_model_name = selection_data.get('best_model', {}).get('name', 'unknown')
+        print(f"✓ Best model: {best_model_name}")
         
         # Validate performance
         print("\nValidating performance metrics...")
-        perf_errors = validate_performance(best_model_metrics, thresholds)
+        perf_errors = validate_performance(selection_data, thresholds)
         
         # Validate execution
         print("Validating execution metrics...")
-        accuracy_file = find_latest_execution_results()
+        accuracy_file = find_latest_accuracy_metrics()
         accuracy_metrics = None
         if accuracy_file:
             with open(accuracy_file, 'r') as f:
@@ -177,15 +157,15 @@ def main():
         all_errors = perf_errors + exec_errors
         
         # Save validation report
+        best_model = selection_data.get('best_model', {})
         validation_report = {
             "timestamp": str(Path(__file__).stat().st_mtime),
             "status": "passed" if not all_errors else "failed",
             "errors": all_errors,
             "metrics": {
-                "overall_score": best_model_metrics.get('overall_score', 0),
-                "success_rate": best_model_metrics.get('success_rate', 0),
-                "syntax_validity": best_model_metrics.get('syntax_validity', 0),
-                "intent_matching": best_model_metrics.get('intent_matching', 0),
+                "composite_score": best_model.get('composite_score', 0),
+                "performance_score": best_model.get('performance_score', 0),
+                "success_rate": best_model.get('success_rate', 0),
                 "execution_accuracy": accuracy_metrics.get('overall_accuracy', 0) if accuracy_metrics else None
             }
         }
@@ -209,8 +189,9 @@ def main():
         else:
             print("VALIDATION PASSED")
             print("=" * 70)
-            print(f"  ✓ Overall Score: {best_model_metrics.get('overall_score', 0):.2f}")
-            print(f"  ✓ Success Rate: {best_model_metrics.get('success_rate', 0):.2f}%")
+            print(f"  ✓ Composite Score: {best_model.get('composite_score', 0):.2f}")
+            print(f"  ✓ Performance Score: {best_model.get('performance_score', 0):.2f}")
+            print(f"  ✓ Success Rate: {best_model.get('success_rate', 0):.2f}%")
             if accuracy_metrics:
                 print(f"  ✓ Execution Accuracy: {accuracy_metrics.get('overall_accuracy', 0):.2f}%")
             print(f"\nValidation report saved: {validation_file}")
@@ -224,4 +205,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

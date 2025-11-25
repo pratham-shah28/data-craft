@@ -33,9 +33,21 @@ from query_executor import QueryExecutor
 from hyperparameter_tuner import HyperparameterTuner
 from sensitivity_analysis import SensitivityAnalyzer
 
-# ✅ MLflow Integration for Experiment Tracking
-sys.path.insert(0, '/opt/airflow/mlflow')
-from mlflow_integration import start_mlflow_experiment, log_to_mlflow
+# ✅ MLflow Integration for Experiment Tracking (Optional)
+MLFLOW_AVAILABLE = False
+try:
+    sys.path.insert(0, '/opt/airflow/mlflow')
+    from mlflow_integration import start_mlflow_experiment, log_to_mlflow
+    MLFLOW_AVAILABLE = True
+except ImportError:
+    # MLflow not available - create stub functions
+    def start_mlflow_experiment(**context):
+        print("⚠ MLflow not available - skipping tracking")
+        return None
+    
+    def log_to_mlflow(**context):
+        print("⚠ MLflow not available - skipping logging")
+        return None
 
 import vertexai
 from vertexai.generative_models import GenerativeModel, GenerationConfig
@@ -87,14 +99,26 @@ dag = DAG(
 
 
 # ========================================
-# MLFLOW TRACKING
+# MLFLOW TRACKING (Optional)
 # ========================================
 
-start_mlflow_task = PythonOperator(
-    task_id='start_mlflow_tracking',
-    python_callable=start_mlflow_experiment,
-    dag=dag
-)
+# Only create MLflow tasks if MLflow is available
+if MLFLOW_AVAILABLE:
+    start_mlflow_task = PythonOperator(
+        task_id='start_mlflow_tracking',
+        python_callable=start_mlflow_experiment,
+        dag=dag
+    )
+    
+    log_mlflow_task = PythonOperator(
+        task_id='log_to_mlflow',
+        python_callable=log_to_mlflow,
+        dag=dag
+    )
+else:
+    # Create dummy tasks that do nothing
+    start_mlflow_task = None
+    log_mlflow_task = None
 
 
 # ========================================
@@ -1049,12 +1073,6 @@ summary_task = PythonOperator(
     dag=dag
 )
 
-log_mlflow_task = PythonOperator(
-    task_id='log_to_mlflow',
-    python_callable=log_to_mlflow,
-    dag=dag
-)
-
 
 # ========================================
 # TASK DEPENDENCIES
@@ -1089,7 +1107,11 @@ select_model_task >> execute_validate_task
 execute_validate_task >> save_responses_task
 
 # Phase 8: Final Summary
-save_responses_task >> summary_task >> log_mlflow_task
+if log_mlflow_task:
+    save_responses_task >> summary_task >> log_mlflow_task
+else:
+    save_responses_task >> summary_task
 
-# MLflow tracking spans entire pipeline
-start_mlflow_task >> load_data_task
+# MLflow tracking spans entire pipeline (if available)
+if start_mlflow_task:
+    start_mlflow_task >> load_data_task

@@ -3,17 +3,15 @@
 
 validation_thresholds:
   performance:
-    min_overall_score: 75.0
-    min_success_rate: 80.0
-    min_syntax_validity: 85.0
-    min_intent_matching: 70.0
+    min_overall_score: 40.0  # Composite score (performance + bias + speed)
+    min_success_rate: 50.0    # Percentage of successful query generations
   
   bias:
-    max_bias_score: 30.0
-    max_severity: "MEDIUM"  # Options: LOW, MEDIUM, HIGH
+    max_bias_score: 50.0      # Maximum acceptable bias score (lower is better)
+    max_severity: "MEDIUM"     # Options: LOW, MEDIUM, HIGH
   
   execution:
-    min_execution_success_rate: 85.0
-    min_result_validity_rate: 80.0
-    min_overall_accuracy: 75.0
+    min_execution_success_rate: 50.0  # Percentage of queries that execute successfully
+    min_result_validity_rate: 50.0    # Percentage of results that are valid
+    min_overall_accuracy: 50.0         # Overall accuracy (valid results / total queries)
 

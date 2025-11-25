@@ -1,123 +1,103 @@
 # CI/CD Pipeline for Model Training
 
-Complete guide for setting up and running the automated model training CI/CD pipeline.
+Automated CI/CD pipeline that triggers model training, validates quality, and deploys to production.
 
-## 📋 Table of Contents
+## Overview
 
-1. [Quick Setup](#quick-setup)
-2. [Configuration](#configuration)
-3. [Running the Pipeline](#running-the-pipeline)
-4. [Pipeline Stages](#pipeline-stages)
-5. [Troubleshooting](#troubleshooting)
-6. [Implementation Details](#implementation-details)
+This CI/CD pipeline automates the model training workflow:
 
----
+1. **Triggers Airflow DAG** when code changes (user queries, training code, configs)
+2. **Waits for DAG completion** (DAG trains models, evaluates, selects best)
+3. **Downloads outputs** from GCS (where DAG saves results)
+4. **Enforces quality thresholds** (performance, bias, execution accuracy)
+5. **Compares with production** (rollback protection)
+6. **Deploys to production** (if all checks pass, tagged with commit SHA)
+7. **Sends notifications** (email alerts to stakeholders)
 
-## Quick Setup
+## Architecture
 
-### Prerequisites
-
-- GitHub repository access
-- GCP account with project access
-- GCP service account with required permissions:
-  - BigQuery Data Editor
-  - Storage Admin
-  - Vertex AI User (only if using Vertex AI Model Registry - optional)
-- Email account for notifications
-
-**Note:** Vertex AI is optional. The pipeline works with GCS only, which is sufficient for version control and reproducibility.
-
-### Step 1: Configure Your Settings
-
-Edit `ci-cd/config/ci_cd_config.yaml` and update these values to match your setup:
-
-```yaml
-gcp:
-  project_id: "your-gcp-project-id"      # ← Update this
-  region: "your-region"                    # ← Update this
-  dataset_id: "your-bigquery-dataset"      # ← Update this
-  bucket_name: "your-gcs-bucket"           # ← Update this
-  vertex_ai:
-    enabled: false  # Optional: Set to true only if you need Vertex AI features
+```
+Developer Changes Code
+    ↓
+Push to GitHub
+    ↓
+CI/CD Detects Change
+    ↓
+Trigger Airflow DAG
+    ↓
+Wait for DAG Completion
+    ↓
+Download Best Model Responses from GCS
+    (DAG saves to: best_model_responses/{timestamp}_{model}/)
+    ↓
+Validate Quality Thresholds
+    (Uses: model_selection_report.json + accuracy_metrics.json)
+    ↓
+Compare with Production
+    (Uses: model_selection_report.json)
+    ↓
+Deploy to Production (if valid)
+    (Uploads to: models/{timestamp}_{commit}/)
+    ↓
+Send Notifications
 ```
 
-### Step 2: Configure Email Settings
+**Note:** CI/CD only uses best model responses saved by the DAG. No separate evaluation/bias reports needed.
 
-Edit `ci-cd/config/ci_cd_config.yaml` and update email settings:
-```yaml
-notifications:
-  email:
-    from_email: "your-email@gmail.com"  # ← Update this
-    to_email: "your-email@gmail.com"     # ← Update this
-```
+## Prerequisites
 
-### Step 3: Set GitHub Secrets
+### 1. GitHub Secrets
 
-Go to your GitHub repository → **Settings** → **Secrets and variables** → **Actions**
+Go to: **Repository → Settings → Secrets and variables → Actions**
 
 Add these secrets:
 
-- **`GCP_SA_KEY`**: Your GCP service account JSON (copy entire JSON content)
-- **`EMAIL_SMTP_USER`**: (Optional) Your email address (defaults to `from_email` in config)
-- **`EMAIL_SMTP_PASSWORD`**: **REQUIRED** - Your email app password (for Gmail, use app password)
+- **`GCP_SA_KEY`** (Required)
+  - Full JSON content of your GCP service account key
+  - Permissions: BigQuery Data Editor, Storage Admin
 
-### Step 4: Verify GCP Resources
+- **`EMAIL_SMTP_PASSWORD`** (Required for notifications)
+  - Email app password (for Gmail, generate app password)
+  - How to get: Google Account → Security → App Passwords
 
-Ensure these exist in your GCP project:
-- **BigQuery dataset** (name from `dataset_id` in config)
-- **GCS bucket** (name from `bucket_name` in config)
-- **Service account** has these roles:
-  - BigQuery Data Editor
-  - Storage Admin
-  - Vertex AI User (only if `vertex_ai.enabled: true` in config)
+- **`EMAIL_SMTP_USER`** (Optional)
+  - Your email address
+  - Defaults to `from_email` in config
 
-**Note:** Vertex AI is optional. If `vertex_ai.enabled: false`, you only need BigQuery Data Editor and Storage Admin roles.
+- **`AIRFLOW_URL`** (Required)
+  - Airflow base URL (e.g., `http://localhost:8080` or Cloud Composer URL)
 
-### Step 5: Trigger Pipeline
+- **`AIRFLOW_USERNAME`** (Required)
+  - Airflow username (default: `admin`)
 
-Push code to `main` branch:
-```bash
-git push origin main
-```
+- **`AIRFLOW_PASSWORD`** (Required)
+  - Airflow password (default: `admin`)
 
-The pipeline triggers automatically when files in `model-training/**` or `ci-cd/**` change.
+### 2. Configuration Files
 
----
-
-## Configuration
-
-### Config File: `ci-cd/config/ci_cd_config.yaml`
-
-All CI/CD settings are in this file. Update it to match your environment:
+Update `ci-cd/config/ci_cd_config.yaml`:
 
 ```yaml
 gcp:
-  project_id: "your-project-id"      # Your GCP project ID
-  region: "us-east1"                 # Your GCP region
-  dataset_id: "your_dataset"         # BigQuery dataset ID
-  bucket_name: "your-bucket"         # GCS bucket for model artifacts
-  vertex_ai:
-    enabled: false                   # Optional: Enable Vertex AI Model Registry
+  project_id: "your-gcp-project-id"
+  region: "us-east1"
+  dataset_id: "datacraft_ml"
+  bucket_name: "model-datacraft"
 
 notifications:
   email:
-    smtp_server: "smtp.gmail.com"
-    smtp_port: 587
     from_email: "your-email@gmail.com"
     to_email: "your-email@gmail.com"
 
 model_registry:
-  base_path: "models"                # Path in bucket for models
-  version_format: "timestamp_commit"
+  base_path: "models"
 
 rollback:
   enabled: true
   min_improvement_threshold: 0.0
 ```
 
-### Validation Thresholds: `ci-cd/config/validation_thresholds.yaml`
-
-Adjust these thresholds based on your requirements:
+Update `ci-cd/config/validation_thresholds.yaml`:
 
 ```yaml
 validation_thresholds:
@@ -137,263 +117,247 @@ validation_thresholds:
     min_overall_accuracy: 75.0
 ```
 
----
+### 3. GCP Resources
 
-## Running the Pipeline
+Ensure these exist:
+- BigQuery dataset: `datacraft_ml` (or as configured)
+- GCS bucket: `model-datacraft` (or as configured)
+- Service account with required permissions
 
-### Automatic Trigger
+## Pipeline Jobs
 
-The pipeline **automatically triggers** when you push to `main` branch and files in `model-training/**` or `ci-cd/**` change.
+### 1. Trigger DAG
+- Triggers Airflow DAG `model_pipeline_with_evaluation`
+- Waits for DAG completion (max 30 minutes)
+- Fails if DAG fails
 
-### Manual Trigger
+### 2. Download Outputs
+- Downloads latest best model responses from GCS
+- DAG saves to: `best_model_responses/{timestamp}_{model}/`
+- Extracts to `outputs/best-model-responses/` directory
+- Uploads as GitHub artifact
 
-1. Go to GitHub → **Actions** tab
-2. Select **Model Training CI/CD Pipeline**
-3. Click **Run workflow** → Select branch → **Run workflow**
+### 3. Validate
+- Reads `model_selection_report.json` for performance metrics
+- Reads `accuracy_metrics.json` for execution metrics
+- Checks performance thresholds (composite_score, success_rate)
+- Validates execution accuracy
+- Fails if thresholds not met
 
-### Local Testing
+### 4. Check Bias
+- Reads `model_selection_report.json` for bias_score
+- Validates bias thresholds
+- Fails if bias too high
 
-For local testing:
+### 5. Compare & Deploy
+- Reads `model_selection_report.json` for current model metrics
+- Compares with previous model from production registry
+- Blocks deployment if worse (rollback)
+- Promotes to production if better
+- Uploads to `models/{timestamp}_{commit}/` with commit SHA
 
-1. **Update config file**: Edit `ci-cd/config/ci_cd_config.yaml` with your settings
+### 6. Notify
+- Sends email notification
+- Includes pipeline status and metrics
+- Runs even on failure
 
-2. **Set required environment variables**:
+## When Pipeline Triggers
+
+Pipeline triggers on push to `main` branch when these files change:
+- `model-training/data/user_queries.txt` - User queries
+- `model-training/scripts/**` - Training code
+- `ci-cd/**` - CI/CD configuration
+- `.github/workflows/model-training-ci-cd.yml` - Workflow file
+
+You can also trigger manually via GitHub Actions UI.
+
+## Testing the Pipeline
+
+### Step 1: Local Testing (Optional)
+
+Test scripts locally before pushing:
+
 ```bash
-# GCP credentials
+# Set environment variables
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/service-account.json"
-
-# Email password (required for notifications)
+export GCP_PROJECT_ID="datacraft-478300"
 export EMAIL_SMTP_PASSWORD="your-app-password"
 
-# Optional: Override config values with env vars
-export GCP_PROJECT_ID="your-project-id"  # Overrides config
-export EMAIL_SMTP_USER="your-email@gmail.com"  # Overrides from_email in config
-```
+# Test downloading outputs (requires DAG to have run first)
+python ci-cd/scripts/download_outputs.py
 
-3. **Run scripts**:
-```bash
+# Test validation
 python ci-cd/scripts/validate_model.py
+
+# Test bias check
+python ci-cd/scripts/check_bias.py
+
+# Test rollback check
+python ci-cd/scripts/rollback_manager.py
+
+# Test notification
 python ci-cd/scripts/send_notification.py --status success
 ```
 
----
+### Step 2: Trigger Pipeline
 
-## Pipeline Stages
+1. **Make a change** to trigger the pipeline:
+   ```bash
+   # Edit user queries
+   echo "What are the top 5 products by sales?" >> model-training/data/user_queries.txt
+   
+   # Commit and push
+   git add model-training/data/user_queries.txt
+   git commit -m "Add new query"
+   git push origin main
+   ```
 
-The pipeline runs these stages sequentially:
+2. **Monitor pipeline** in GitHub Actions:
+   - Go to: **Repository → Actions**
+   - Click on the latest workflow run
+   - Watch each job execute
 
-1. **Setup** - Install dependencies, authenticate with GCP
-2. **Train** - Run model training pipeline
-3. **Validate** - Check model performance against thresholds
-4. **Detect Bias** - Run bias detection checks
-5. **Compare & Select** - Compare with previous model, check rollback
-6. **Push Registry** - Push model artifacts to GCS
-7. **Notify** - Send email notifications
+### Step 3: Verify Results
 
-### Success Criteria
+1. **Check GitHub Actions logs**:
+   - Each job should show detailed logs
+   - Look for "✓" success markers
+   - Check for any "✗" errors
 
-- ✅ All validation thresholds met
-- ✅ Bias score within acceptable range
-- ✅ New model performs better than previous (or rollback disabled)
-- ✅ Model artifacts uploaded to GCS
-- ✅ Email notification sent
+2. **Check GCS bucket**:
+   ```bash
+   gsutil ls -r gs://model-datacraft/models/
+   ```
+   - Should see new model version with timestamp and commit SHA
+   - Example: `models/20250115_120000_abc1234/`
 
----
+3. **Check email notification**:
+   - Should receive email with pipeline status
+   - Includes best model, scores, and metrics
+
+### Step 4: Test Rollback Scenario
+
+To test rollback protection:
+
+1. **First deployment** (should succeed):
+   - Push changes that improve model
+   - Pipeline should deploy
+
+2. **Second deployment** (should block):
+   - Push changes that make model worse
+   - Pipeline should block deployment
+   - Check logs for "DEPLOYMENT BLOCKED"
 
 ## Troubleshooting
 
-### Pipeline Not Triggering
+### DAG Not Triggering
 
-- **Check branch**: Must push to `main` branch
-- **Check file paths**: Only triggers when `model-training/**` or `ci-cd/**` files change
-- **Check workflow file**: Verify `.github/workflows/model-training-ci-cd.yml` exists
+**Issue:** `trigger_dag` job fails
 
-### Authentication Failures
+**Solutions:**
+- Check `AIRFLOW_URL` secret is correct
+- Check `AIRFLOW_USERNAME` and `AIRFLOW_PASSWORD` are correct
+- Verify Airflow is accessible from GitHub Actions
+- Check DAG ID matches: `model_pipeline_with_evaluation`
 
-- **Verify `GCP_SA_KEY` secret**: Must be valid JSON
-- **Check service account permissions**: Needs BigQuery Data Editor, Storage Admin
-- **Verify project ID**: Match `project_id` in config with your GCP project
+### DAG Timeout
 
-### Validation Failures
+**Issue:** DAG doesn't complete within 30 minutes
 
-- **Review validation report**: Download artifact from GitHub Actions
-- **Adjust thresholds**: Edit `validation_thresholds.yaml` if needed
-- **Check evaluation reports**: Ensure model training completed successfully
+**Solutions:**
+- Check Airflow logs for DAG execution
+- Verify DAG is running (not stuck)
+- Increase timeout in `trigger_dag.py` if needed
+
+### No Outputs Found
+
+**Issue:** `download_outputs` job fails
+
+**Solutions:**
+- Verify DAG completed successfully
+- Check GCS bucket has best model responses at `best_model_responses/`
+- Verify DAG uploaded outputs (check Airflow logs)
+
+### Validation Fails
+
+**Issue:** `validate` job fails
+
+**Solutions:**
+- Check validation report in `outputs/validation/validation_report.json`
+- Review which thresholds failed
+- Adjust thresholds in `validation_thresholds.yaml` if needed
+- Or improve model performance
+
+### Rollback Triggered
+
+**Issue:** Deployment blocked due to rollback
+
+**Solutions:**
+- This is expected if new model is worse
+- Check comparison report in `outputs/validation/model_comparison_report.json`
+- Improve model or adjust `min_improvement_threshold` in config
 
 ### Email Not Sending
 
-- **Verify `EMAIL_SMTP_PASSWORD` secret**: Must be set in GitHub Secrets (required)
-- **Check email config**: Verify `from_email` and `to_email` in `ci_cd_config.yaml`
-- **For Gmail**: Use app password (16 characters), not regular password
-- **For local testing**: Set `export EMAIL_SMTP_PASSWORD="your-app-password"`
-- **Optional `EMAIL_SMTP_USER`**: If not set, uses `from_email` from config
+**Issue:** No email notification received
 
-### Model Training Fails
+**Solutions:**
+- Check `EMAIL_SMTP_PASSWORD` secret is set
+- Verify email config in `ci_cd_config.yaml`
+- Check notification job logs for errors
+- For Gmail: Use app password, not regular password
 
-- **Check logs**: Review error messages in GitHub Actions
-- **Verify data pipeline**: Ensure data exists in BigQuery
-- **Check GCP resources**: Verify BigQuery dataset and GCS bucket exist
-
-### Model Registry Push Fails
-
-- **Check GCS upload**: Verify artifacts uploaded to GCS successfully
-  - Check GCS bucket: `gs://<bucket_name>/models/`
-  - Verify files exist with timestamp and commit SHA
-- **Check service account permissions**: Needs `Storage Admin` role for GCS
-- **Review logs**: Check for specific error messages in push step
-
-**If using Vertex AI (optional):**
-- **Check Vertex AI API**: Ensure Vertex AI API is enabled
-  ```bash
-  gcloud services enable aiplatform.googleapis.com
-  ```
-- **Check service account permissions**: Needs `Vertex AI User` role
-- **Note**: If Vertex AI fails, artifacts are still stored in GCS (which is sufficient)
-
----
-
-## Implementation Details
-
-### File Structure
+## Files Structure
 
 ```
 ci-cd/
 ├── config/
-│   ├── ci_cd_config.yaml          # Main configuration (UPDATE THIS)
-│   └── validation_thresholds.yaml # Performance thresholds
+│   ├── ci_cd_config.yaml          # CI/CD configuration
+│   └── validation_thresholds.yaml  # Quality thresholds
 ├── scripts/
-│   ├── run_training_pipeline.py   # Execute training
-│   ├── validate_model.py          # Validate performance
-│   ├── check_bias.py              # Check bias detection
-│   ├── rollback_manager.py        # Compare models & rollback
-│   ├── push_to_registry.py        # Push to GCS
-│   └── send_notification.py       # Email notifications
+│   ├── trigger_dag.py             # Trigger Airflow DAG
+│   ├── download_outputs.py        # Download from GCS
+│   ├── validate_model.py          # Enforce quality thresholds
+│   ├── check_bias.py              # Check bias thresholds
+│   ├── rollback_manager.py        # Compare with production
+│   ├── push_to_registry.py        # Deploy to production
+│   └── send_notification.py       # Send email notifications
 └── README.md                       # This file
 ```
 
-### How It Works
+## Key Concepts
 
-1. **Configuration**: All scripts read from `ci_cd_config.yaml` (env vars can override)
-2. **Reuses Existing Code**: Scripts use modules from `model-training/scripts/`
-3. **Outputs**: All results saved to `outputs/` directory
-4. **Fail Fast**: Pipeline stops if any validation step fails
+### Quality Gates
 
-### Scripts Overview
+CI/CD enforces minimum thresholds:
+- **Performance**: Overall score, success rate, syntax validity, intent matching
+- **Bias**: Bias score, severity level
+- **Execution**: Execution success rate, result validity, overall accuracy
 
-- **`run_training_pipeline.py`**: Executes the training pipeline (placeholder - extend as needed)
-- **`validate_model.py`**: Checks performance metrics against thresholds
-- **`check_bias.py`**: Validates bias scores are acceptable
-- **`rollback_manager.py`**: Compares new model with previous, blocks if worse
-- **`push_to_registry.py`**: Uploads artifacts to GCS (and optionally Vertex AI Model Registry if enabled)
-- **`send_notification.py`**: Sends email notifications with pipeline status
+If any threshold fails, deployment is blocked.
 
-### Environment Variables
+### Rollback Protection
 
-Scripts read from config file first, but environment variables can override:
+CI/CD compares new model with production:
+- **Better**: Deploys if new model score > production score
+- **Worse**: Blocks deployment if new model score < production score
+- **First deployment**: Always deploys (no previous model)
 
-**GCP Settings (optional overrides):**
-- `GCP_PROJECT_ID` - Overrides `gcp.project_id`
-- `REGION` - Overrides `gcp.region`
-- `BUCKET_NAME` - Overrides `gcp.bucket_name`
-- `BQ_DATASET` - Overrides `gcp.dataset_id`
-- `GOOGLE_APPLICATION_CREDENTIALS` - Path to service account JSON (required for local)
+### Version Control
 
-**Email Settings:**
-- `EMAIL_SMTP_USER` - Optional, defaults to `from_email` in config
-- `EMAIL_SMTP_PASSWORD` - **REQUIRED** (must be set as env var for security, not in config)
+Each deployment is tagged with:
+- **Timestamp**: `YYYYMMDD_HHMMSS`
+- **Commit SHA**: First 7 characters of git commit
 
-### GitHub Actions Workflow
-
-Location: `.github/workflows/model-training-ci-cd.yml`
-
-**Triggers:**
-- Push to `main` branch (when `model-training/**` or `ci-cd/**` files change)
-- Manual workflow dispatch
-
-**Jobs:**
-- Sequential execution with dependencies
-- Artifacts passed between jobs
-- Failures stop subsequent jobs
-
-### Model Registry
-
-The pipeline uses **GCS (Google Cloud Storage)** for model registry, which provides:
-- ✅ Version control (timestamp + commit SHA in paths)
-- ✅ Reproducibility (all artifacts stored with metadata)
-- ✅ Simple setup (no additional APIs required)
-
-**Model Storage:**
-```
-gs://<bucket_name>/<base_path>/<timestamp>_<commit-sha>/
-├── model-selection/
-│   └── model_selection_*.json
-├── evaluation/
-│   └── model_comparison_*.json
-├── bias/
-│   └── bias_comparison_*.json
-├── best-model-responses/
-│   └── **/*.json
-└── validation/
-    └── *.json
-```
-
-**Optional: Vertex AI Model Registry**
-
-If you enable `vertex_ai.enabled: true` in config, the pipeline will also register models in Vertex AI Model Registry for:
-- Advanced versioning features
-- Integration with Vertex AI services
-- Enhanced metadata management
-
-**Note:** Vertex AI is **optional**. GCS alone fulfills all project requirements for version control and reproducibility.
-
-### Rollback Mechanism
-
-- Compares new model's composite score with previous model
-- Blocks deployment if new model is worse (unless rollback disabled)
-- Previous model metadata loaded from GCS
-- Rollback threshold configurable in `ci_cd_config.yaml`
-
----
-
-## Quick Reference
-
-### Key Files
-- **Config**: `ci-cd/config/ci_cd_config.yaml` ← **Update this for your setup**
-- **Workflow**: `.github/workflows/model-training-ci-cd.yml`
-- **Thresholds**: `ci-cd/config/validation_thresholds.yaml`
-
-### Key Commands
-```bash
-# Push to trigger pipeline
-git push origin main
-
-# Test validation locally
-python ci-cd/scripts/validate_model.py
-
-# Test bias check locally
-python ci-cd/scripts/check_bias.py
-```
-
-### Important URLs
-- **GitHub Actions**: `https://github.com/<org>/<repo>/actions`
-- **GCP Console**: `https://console.cloud.google.com/`
-- **GCS Models**: `gs://<your-bucket>/models/`
-- **Vertex AI Model Registry** (optional): `https://console.cloud.google.com/vertex-ai/models`
-
----
+Example: `models/20250115_120000_abc1234/`
 
 ## Next Steps
 
-1. ✅ Update `ci-cd/config/ci_cd_config.yaml` with your GCP settings
-2. ✅ Set GitHub Secrets (`GCP_SA_KEY`, `EMAIL_SMTP_USER`, `EMAIL_SMTP_PASSWORD`)
-3. ✅ Verify GCP resources exist (BigQuery dataset, GCS bucket)
-4. ✅ Verify service account has required roles (Storage Admin, BigQuery Data Editor)
-5. ✅ (Optional) Enable Vertex AI API if using `vertex_ai.enabled: true`
-6. ✅ Push to `main` branch to trigger pipeline
-7. ✅ Monitor pipeline in GitHub Actions tab
-8. ✅ Check email for notifications
-9. ✅ Verify model artifacts in GCS: `gs://<your-bucket>/models/`
+1. **Configure secrets** in GitHub
+2. **Update config files** with your settings
+3. **Test locally** (optional)
+4. **Push changes** to trigger pipeline
+5. **Monitor execution** in GitHub Actions
+6. **Verify deployment** in GCS
 
----
-
-**Need Help?** Check the troubleshooting section above or review the script logs in GitHub Actions.
+For questions or issues, check the troubleshooting section above.

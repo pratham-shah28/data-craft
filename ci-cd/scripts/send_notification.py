@@ -34,14 +34,19 @@ def get_pipeline_summary() -> Dict:
         "metrics": {}
     }
     
-    # Try to load pipeline status
-    status_file = outputs_dir / "pipeline_status.json"
-    if status_file.exists():
-        with open(status_file, 'r') as f:
-            status_data = json.load(f)
-            summary["status"] = status_data.get("status", "unknown")
-            summary["best_model"] = status_data.get("best_model", "unknown")
-            summary["metrics"]["accuracy"] = status_data.get("accuracy", 0)
+    # Try to load model selection report
+    selection_dir = outputs_dir / "model-selection"
+    if selection_dir.exists():
+        reports = list(selection_dir.glob("model_selection_*.json"))
+        if reports:
+            latest = max(reports, key=lambda p: p.stat().st_mtime)
+            with open(latest, 'r') as f:
+                data = json.load(f)
+                best_model = data.get('best_model', {})
+                summary["best_model"] = best_model.get('name', 'unknown')
+                summary["metrics"]["composite_score"] = best_model.get('composite_score', 0)
+                summary["metrics"]["performance_score"] = best_model.get('performance_score', 0)
+                summary["metrics"]["bias_score"] = best_model.get('bias_score', 0)
     
     # Try to load validation report
     validation_file = outputs_dir / "validation" / "validation_report.json"
@@ -51,12 +56,21 @@ def get_pipeline_summary() -> Dict:
             summary["validation_status"] = validation_data.get("status", "unknown")
             summary["metrics"].update(validation_data.get("metrics", {}))
     
+    # Try to load accuracy metrics
+    accuracy_file = outputs_dir / "best-model-responses" / "**" / "accuracy_metrics.json"
+    accuracy_files = list(outputs_dir.glob("best-model-responses/**/accuracy_metrics.json"))
+    if accuracy_files:
+        latest = max(accuracy_files, key=lambda p: p.stat().st_mtime)
+        with open(latest, 'r') as f:
+            accuracy_data = json.load(f)
+            summary["metrics"]["overall_accuracy"] = accuracy_data.get('overall_accuracy', 0)
+    
     # Try to load push report
     push_file = outputs_dir / "validation" / "push_report.json"
     if push_file.exists():
         with open(push_file, 'r') as f:
             push_data = json.load(f)
-            summary["registry_path"] = push_data.get("package_path", "")
+            summary["registry_path"] = push_data.get("artifacts_gcs_uri", "")
     
     return summary
 

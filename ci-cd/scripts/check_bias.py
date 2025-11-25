@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 Check Bias Detection Results
-Validates that bias is within acceptable thresholds
+Validates that bias is within acceptable thresholds using best model responses
 """
 
 import sys
 import json
 import yaml
 from pathlib import Path
+from typing import Optional
 
 # Add paths
 project_root = Path(__file__).parent.parent.parent
@@ -20,17 +21,18 @@ def load_thresholds():
         config = yaml.safe_load(f)
     return config['validation_thresholds']['bias']
 
-def find_latest_bias_comparison() -> Path:
-    """Find the latest bias comparison report"""
-    bias_dir = outputs_dir / "bias"
-    if not bias_dir.exists():
-        raise FileNotFoundError(f"Bias directory not found: {bias_dir}")
+def find_latest_selection_report() -> Optional[Path]:
+    """Find the latest model selection report in best-model-responses"""
+    best_model_dir = outputs_dir / "best-model-responses"
+    if not best_model_dir.exists():
+        return None
     
-    reports = list(bias_dir.glob("bias_comparison_*.json"))
-    if not reports:
-        raise FileNotFoundError("No bias comparison reports found")
+    # Look for model_selection_report.json
+    reports = list(best_model_dir.rglob("model_selection_report.json"))
+    if reports:
+        return max(reports, key=lambda p: p.stat().st_mtime)
     
-    return max(reports, key=lambda p: p.stat().st_mtime)
+    return None
 
 def main():
     """Check bias detection results"""
@@ -42,75 +44,88 @@ def main():
         thresholds = load_thresholds()
         print("✓ Loaded bias thresholds")
         
-        bias_report_path = find_latest_bias_comparison()
-        print(f"✓ Found bias report: {bias_report_path.name}")
+        selection_report_path = find_latest_selection_report()
+        if not selection_report_path:
+            print("✗ No model selection report found")
+            return 1
         
-        with open(bias_report_path, 'r') as f:
-            bias_data = json.load(f)
+        print(f"✓ Found selection report: {selection_report_path.name}")
         
-        # Check best model (least biased)
-        if 'bias_comparison' in bias_data and bias_data['bias_comparison']:
-            best_model = bias_data['bias_comparison'][0]  # Sorted by bias score (ascending)
-            bias_score = best_model.get('bias_score', 100)
-            severity = best_model.get('severity', 'HIGH')
-            
-            print(f"\nBest Model: {best_model.get('model')}")
-            print(f"  Bias Score: {bias_score:.2f}/100")
-            print(f"  Severity: {severity}")
-            
-            errors = []
-            
-            # Check bias score threshold
-            if bias_score > thresholds['max_bias_score']:
-                errors.append(
-                    f"Bias score {bias_score:.2f} exceeds threshold "
-                    f"{thresholds['max_bias_score']}"
-                )
-            
-            # Check severity threshold
-            severity_levels = {'LOW': 1, 'MEDIUM': 2, 'HIGH': 3}
-            max_severity_level = severity_levels.get(thresholds['max_severity'], 2)
-            model_severity_level = severity_levels.get(severity, 3)
-            
-            if model_severity_level > max_severity_level:
-                errors.append(
-                    f"Bias severity '{severity}' exceeds threshold "
-                    f"'{thresholds['max_severity']}'"
-                )
-            
-            # Save check report
-            check_report = {
-                "status": "passed" if not errors else "failed",
-                "bias_score": bias_score,
-                "severity": severity,
-                "errors": errors,
-                "model": best_model.get('model')
-            }
-            
-            check_dir = outputs_dir / "validation"
-            check_dir.mkdir(parents=True, exist_ok=True)
-            check_file = check_dir / "bias_check_report.json"
-            
-            with open(check_file, 'w') as f:
-                json.dump(check_report, f, indent=2)
-            
-            print("\n" + "=" * 70)
-            if errors:
-                print("BIAS CHECK FAILED")
-                print("=" * 70)
-                for error in errors:
-                    print(f"  ✗ {error}")
-                print(f"\nReport saved: {check_file}")
-                return 1
-            else:
-                print("BIAS CHECK PASSED")
-                print("=" * 70)
-                print(f"  ✓ Bias score within acceptable range")
-                print(f"  ✓ Severity level acceptable")
-                print(f"\nReport saved: {check_file}")
-                return 0
+        with open(selection_report_path, 'r') as f:
+            selection_data = json.load(f)
+        
+        # Get best model info
+        best_model = selection_data.get('best_model', {})
+        if not best_model:
+            print("✗ No best model found in selection report")
+            return 1
+        
+        model_name = best_model.get('name', 'unknown')
+        bias_score = best_model.get('bias_score', 100)
+        
+        # Determine severity based on bias score (matching bias_detector.py logic)
+        # From bias_detector.py: _get_severity_rating method
+        if bias_score >= 60:
+            severity = 'HIGH'
+        elif bias_score >= 30:
+            severity = 'MEDIUM'
         else:
-            print("⚠ No bias comparison data found")
+            severity = 'LOW'
+        
+        print(f"\nBest Model: {model_name}")
+        print(f"  Bias Score: {bias_score:.2f}/100")
+        print(f"  Severity: {severity}")
+        
+        errors = []
+        
+        # Check bias score threshold
+        if bias_score > thresholds['max_bias_score']:
+            errors.append(
+                f"Bias score {bias_score:.2f} exceeds threshold "
+                f"{thresholds['max_bias_score']}"
+            )
+        
+        # Check severity threshold
+        severity_levels = {'LOW': 1, 'MEDIUM': 2, 'HIGH': 3}
+        max_severity_level = severity_levels.get(thresholds['max_severity'], 2)
+        model_severity_level = severity_levels.get(severity, 3)
+        
+        if model_severity_level > max_severity_level:
+            errors.append(
+                f"Bias severity '{severity}' exceeds threshold "
+                f"'{thresholds['max_severity']}'"
+            )
+        
+        # Save check report
+        check_report = {
+            "status": "passed" if not errors else "failed",
+            "bias_score": bias_score,
+            "severity": severity,
+            "errors": errors,
+            "model": model_name
+        }
+        
+        check_dir = outputs_dir / "validation"
+        check_dir.mkdir(parents=True, exist_ok=True)
+        check_file = check_dir / "bias_check_report.json"
+        
+        with open(check_file, 'w') as f:
+            json.dump(check_report, f, indent=2)
+        
+        print("\n" + "=" * 70)
+        if errors:
+            print("BIAS CHECK FAILED")
+            print("=" * 70)
+            for error in errors:
+                print(f"  ✗ {error}")
+            print(f"\nReport saved: {check_file}")
+            return 1
+        else:
+            print("BIAS CHECK PASSED")
+            print("=" * 70)
+            print(f"  ✓ Bias score within acceptable range")
+            print(f"  ✓ Severity level acceptable")
+            print(f"\nReport saved: {check_file}")
             return 0
             
     except Exception as e:
@@ -121,4 +136,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

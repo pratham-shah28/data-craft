@@ -73,6 +73,9 @@ data-pipeline/data/
 model-training/data/processed/
 model-training/data/intermediate/
 
+# Exception: Track user_queries.txt (required for CI/CD pipeline)
+!model-training/data/user_queries.txt
+
 # DVC cache & internal
 .dvc/cache/
 .dvc/tmp/

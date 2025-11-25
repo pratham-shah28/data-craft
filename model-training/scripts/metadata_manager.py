@@ -17,6 +17,33 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils import setup_logging, setup_gcp_credentials
 
 
+class BigQueryJSONEncoder(json.JSONEncoder):
+    """
+    Custom JSON encoder that rounds floats to prevent BigQuery PARSE_JSON errors.
+    BigQuery cannot round-trip some floating-point numbers through string representation.
+    """
+    def __init__(self, float_precision=6, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.float_precision = float_precision
+    
+    def encode(self, obj):
+        # Recursively round floats in the object
+        rounded_obj = self._round_floats(obj)
+        return super().encode(rounded_obj)
+    
+    def _round_floats(self, obj):
+        """Recursively round floats in nested structures"""
+        if isinstance(obj, float):
+            # Round to reasonable precision for BigQuery
+            return round(obj, self.float_precision)
+        elif isinstance(obj, dict):
+            return {k: self._round_floats(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [self._round_floats(item) for item in obj]
+        else:
+            return obj
+
+
 class MetadataManager:
     """
     Manage dataset metadata in BigQuery
@@ -138,10 +165,13 @@ class MetadataManager:
           VALUES (dataset_name, metadata, llm_context, row_count, column_count, created_at, updated_at)
         """
         
+        # Use custom encoder to round floats for BigQuery compatibility
+        metadata_json = json.dumps(metadata, cls=BigQueryJSONEncoder, float_precision=6)
+        
         job_config = bigquery.QueryJobConfig(
             query_parameters=[
                 bigquery.ScalarQueryParameter("dataset_name", "STRING", dataset_name),
-                bigquery.ScalarQueryParameter("metadata", "STRING", json.dumps(metadata)),
+                bigquery.ScalarQueryParameter("metadata", "STRING", metadata_json),
                 bigquery.ScalarQueryParameter("llm_context", "STRING", llm_context),
                 bigquery.ScalarQueryParameter("row_count", "INT64", metadata.get("row_count", 0)),
                 bigquery.ScalarQueryParameter("column_count", "INT64", metadata.get("column_count", 0)),

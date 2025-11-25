@@ -11,7 +11,7 @@ import numpy as np
 from typing import Dict, List, Tuple, Optional
 from pathlib import Path
 import logging
-from datetime import datetime
+from datetime import datetime, date
 import sys
 import re
 
@@ -19,6 +19,22 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils import setup_logging
 
 from google.cloud import bigquery
+
+
+class JSONEncoder(json.JSONEncoder):
+    """Custom JSON encoder for handling date, datetime, and numpy types"""
+    def default(self, obj):
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif pd.isna(obj):
+            return None
+        return super().default(obj)
 
 
 class QueryExecutor:
@@ -659,7 +675,7 @@ class QueryExecutor:
         }
         
         with open(result_file, 'w') as f:
-            json.dump(summary, f, indent=2)
+            json.dump(summary, f, indent=2, cls=JSONEncoder)
         
         self.logger.info(f"✓ Saved execution results: {result_file}")
         

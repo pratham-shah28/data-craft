@@ -1,39 +1,23 @@
 # CI/CD Configuration
 # Settings for model training pipeline automation
-# Update these values to match your GCP setup
 
 gcp:
-  project_id: "datacraft-478300"  # Your GCP project ID
+  project_id: "datacraft-479223"  # Your GCP project ID
   region: "us-east1"  # Your GCP region
   dataset_id: "datacraft_ml"  # BigQuery dataset ID
-  bucket_name: "model-datacraft"  # GCS bucket name for storing model artifacts
-  
-  # Vertex AI Model Registry (OPTIONAL - for advanced model management)
-  # Artifacts are always stored in GCS. Vertex AI adds extra versioning features.
-  # Set enabled: true only if you need Vertex AI integration
-  vertex_ai:
-    enabled: false  # Set to true to enable Vertex AI Model Registry (optional)
-  
-  # Artifact Registry (optional, for future use)
-  artifact_registry:
-    location: "us-east1"
-    repository: "model-registry"
-    enabled: false  # Set to true when ready to use Artifact Registry
+  bucket_name: "model-datacraft-sanskar"  # GCS bucket name for storing model artifacts
 
 notifications:
   email:
     smtp_server: "smtp.gmail.com"  # SMTP server address
     smtp_port: 587  # SMTP port (587 for TLS, 465 for SSL)
-    from_email: "mlops0242@gmail.com"  # Sender email (also used as SMTP user if EMAIL_SMTP_USER not set)
-    to_email: "mlops0242@gmail.com"  # Recipient email
+    from_email: "sharmasanskar360@gmail.com"  # Sender email
+    to_email: "sharmasanskar004@gmail.com"  # Recipient email
     use_tls: true  # Use TLS encryption
-    # Note: EMAIL_SMTP_PASSWORD must be set as environment variable
-    # For local: export EMAIL_SMTP_PASSWORD="your-app-password"
-    # For GitHub Actions: Set as secret EMAIL_SMTP_PASSWORD
+    # Note: EMAIL_SMTP_PASSWORD must be set as GitHub secret
 
 model_registry:
-  base_path: "models"  # Path within bucket for storing models
-  version_format: "timestamp_commit"  # timestamp_commit or semantic
+  base_path: "models"  # Path where CI/CD saves production models (with commit SHA)
 
 rollback:
   enabled: true
