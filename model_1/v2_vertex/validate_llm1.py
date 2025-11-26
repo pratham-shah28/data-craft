@@ -13,6 +13,7 @@ def find_ground_truth_root(start: Path) -> Path:
         candidate = parent / "data_pipeline"
         if candidate.exists():
             return candidate / "data" / "unstructured" / "invoices"
+        
         alt = parent / "data-pipeline"
         if alt.exists():
             return alt / "data" / "unstructured" / "invoices"
@@ -75,7 +76,7 @@ def simple_match(a, b):
     return False
 
 
-def evaluate_prediction(out_file: Path, truth_dir: Path):
+def evaluate_prediction(out_file: Path, truth_dir: Path | None, truth_file: Path | None = None):
     pred_json = load_json(out_file)
 
     origin_file = pred_json.get("origin_file")
@@ -84,9 +85,9 @@ def evaluate_prediction(out_file: Path, truth_dir: Path):
         return None
 
     base_name = extract_filename(origin_file)
-    truth_path = truth_dir / f"{base_name}.json"
+    truth_path = Path(truth_file) if truth_file else (truth_dir / f"{base_name}.json" if truth_dir else None)
 
-    if not truth_path.exists():
+    if not truth_path or not truth_path.exists():
         print(f"⚠ No ground truth for {base_name}. Skipping.")
         return None
 
@@ -151,6 +152,12 @@ def main():
         help="Specific prediction JSON file to evaluate. Defaults to all files in --output-dir.",
     )
     parser.add_argument(
+        "--ground-truth-file",
+        "-f",
+        default=str(GROUND_TRUTH_FOLDER / "invoice_6.json"),
+        help="Specific ground-truth JSON to compare against (overrides --ground-truth-dir). Defaults to invoice_6.json.",
+    )
+    parser.add_argument(
         "--output-dir",
         "-o",
         default=str(OUTPUT_FOLDER),
@@ -165,21 +172,28 @@ def main():
     args = parser.parse_args()
 
     output_dir = Path(args.output_dir).expanduser()
-    truth_dir = Path(args.ground_truth_dir).expanduser()
+    truth_dir = Path(args.ground_truth_dir).expanduser() if args.ground_truth_dir else None
 
     if args.prediction_file:
         files = [Path(args.prediction_file).expanduser()]
     else:
-        files = sorted(output_dir.glob("*.json"))
+        # Default to newest prediction JSON if none specified
+        files = sorted(output_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        files = files[:1] if files else []
+
+    truth_file = Path(args.ground_truth_file).expanduser() if args.ground_truth_file else None
 
     if not files:
         print("No prediction files found.")
+        return
+    if truth_file and not truth_file.exists():
+        print(f"Ground truth file not found: {truth_file}")
         return
 
     print("\n Running simplified validation (counts only)...\n")
 
     for out_file in files:
-        result = evaluate_prediction(out_file, truth_dir)
+        result = evaluate_prediction(out_file, truth_dir, truth_file=truth_file)
         if not result:
             continue
         report, base_name = result

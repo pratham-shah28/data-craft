@@ -20,16 +20,16 @@ WORKDIR /app
 # Copy project files
 # ----------------------------------------------------
 # requirements first to leverage Docker layer caching
-COPY requirements.txt .
+COPY model_1/v2_vertex/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# install Python deps
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy code + data dependencies needed by inference/Streamlit
+COPY data-pipeline /app/data-pipeline
+COPY model_1/v2_vertex /app/model_1/v2_vertex
 
-# copy ALL source code (including data_pipeline, inference.py, example_provider)
-COPY . .
-
-# ensure data_pipeline is importable
-ENV PYTHONPATH="/app:${PYTHONPATH}"
+# Ensure data_pipeline is importable
+ENV PYTHONPATH="/app/model_1/v2_vertex:/app/data-pipeline:${PYTHONPATH}"
+WORKDIR /app/model_1/v2_vertex
 
 # ----------------------------------------------------
 # Runtime arguments (optional defaults)
@@ -39,9 +39,16 @@ ENV VERTEX_LOCATION="us-central1"
 ENV VERTEX_MODEL="gemini-2.5-flash"
 ENV VERTEX_TEMPERATURE="0.0"
 ENV VERTEX_MAX_TOKENS="2048"
+ENV VERTEX_EXAMPLE_COUNT="3"
+ENV DOC_TYPE="invoices"
+ENV SAMPLE_PATH="/app/data-pipeline/data/unstructured/invoices"
+
+# Streamlit defaults
+ENV STREAMLIT_PORT="8501"
+EXPOSE 8501
 
 # ----------------------------------------------------
-# Command to run inference
+# Command to run Streamlit UI (default) or CLI inference
 # ----------------------------------------------------
-# You can overwrite this during `docker run`
-CMD ["python", "inference.py"]
+# Switch to CLI by setting APP_MODE=inference
+CMD ["sh", "-c", "if [ \"${APP_MODE:-streamlit}\" = \"streamlit\" ]; then streamlit run streamlit_app.py --server.port=${PORT:-$STREAMLIT_PORT} --server.address=0.0.0.0; else python inference.py; fi"]

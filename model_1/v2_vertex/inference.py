@@ -20,13 +20,13 @@ from pdf_2_image import pdf_to_base64_images  # noqa: E402
 
 
 def dataurl_to_part(url: str) -> Part:
-    """Convert base64 data URL → Gemini Part"""
+    """Convert base64 data URL → Gemini Part."""
     raw = base64.b64decode(url.split(",", 1)[1])
     return Part.from_data(raw, mime_type="image/png")
 
 
 def safe_json_parse(text: str):
-    """Parse model text safely into JSON"""
+    """Parse model text safely into JSON."""
     try:
         return JsonOutputParser().parse(text)
     except Exception:
@@ -34,10 +34,76 @@ def safe_json_parse(text: str):
         return json.loads(text[i:j + 1]) if i != -1 and j != -1 and j > i else {}
 
 
+def build_prompt_parts(
+    target_pdf: Path,
+    sample_path: Path,
+    max_examples: int,
+) -> list[Part]:
+    """Construct few-shot prompt Parts for the Gemini call."""
+    examples = build_examples_manifest(invoices_dir=sample_path)
+    if not examples:
+        raise RuntimeError(f"No example (PDF, JSON) pairs found under {sample_path}")
+
+    examples = examples[: max(1, max_examples)]
+
+    instructions = (
+        "You are an information extraction model. "
+        "Study the following examples (document images + JSON). "
+        "Then extract all information structured JSON for the new document below."
+    )
+    parts: list[Part] = [Part.from_text(instructions)]
+
+    for i, ex in enumerate(examples, 1):
+        parts.append(Part.from_text(f"Example {i}:"))
+        for img in ex["images"]:
+            parts.append(dataurl_to_part(img["image_url"]["url"]))
+        parts.append(Part.from_text(json.dumps(ex["expected_json"], indent=2)))
+
+    parts.append(Part.from_text("Now extract structured JSON for this new document:"))
+    images, _ = pdf_to_base64_images(str(target_pdf), output_json=False)
+    for img in images:
+        parts.append(dataurl_to_part(img["image_url"]["url"]))
+    parts.append(Part.from_text("Return ONLY valid JSON — no explanation or extra text."))
+    return parts
+
+
+def run_vertex_extraction(
+    target_pdf: Path,
+    sample_path: Path,
+    doc_type: str,
+    *,
+    max_examples: int,
+    temperature: float,
+    max_toks: int,
+    project: str | None = None,
+    location: str | None = None,
+    model_name: str | None = None,
+) -> dict:
+    """Shared inference helper used by CLI and Streamlit."""
+    project = project or os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("PROJECT_ID") or "mlops-472423"
+    location = location or os.environ.get("VERTEX_LOCATION", "us-central1")
+    model_name = model_name or os.environ.get("VERTEX_MODEL", "gemini-2.5-flash")
+
+    vertex_ai.init(project=project, location=location)
+    model = GenerativeModel(model_name)
+
+    parts = build_prompt_parts(target_pdf, sample_path, max_examples)
+    resp = model.generate_content(
+        parts,
+        generation_config=GenerationConfig(
+            temperature=temperature,
+            max_output_tokens=max_toks,
+            response_mime_type="application/json",
+        ),
+    )
+
+    parsed = safe_json_parse(resp.text or "{}")
+    parsed["document_type"] = doc_type
+    parsed["origin_file"] = str(target_pdf)
+    return parsed
+
+
 def main():
-    project = os.environ.get("GOOGLE_CLOUD_PROJECT") or os.environ.get("PROJECT_ID") or "mlops-472423"
-    location = os.environ.get("VERTEX_LOCATION", "us-central1")
-    model_name = os.environ.get("VERTEX_MODEL", "gemini-2.5-flash")
     temperature = float(os.environ.get("VERTEX_TEMPERATURE", "0.0"))
     max_toks = int(os.environ.get("VERTEX_MAX_TOKENS", "8192"))
 
@@ -93,45 +159,14 @@ def main():
     if not target_path.exists():
         raise FileNotFoundError(f"Target PDF not found: {target_path}")
 
-    vertex_ai.init(project=project, location=location)
-    model = GenerativeModel(model_name)
-
-    examples = build_examples_manifest(invoices_dir=sample_path)
-    if not examples:
-        raise RuntimeError(f"No example (PDF, JSON) pairs found under {sample_path}")
-    examples = examples[: max(1, args.max_examples)]
-
-    instructions = (
-        "You are an information extraction model. "
-        "Study the following examples (document images + JSON). "
-        "Then extract all information structured JSON for the new document below."
+    parsed = run_vertex_extraction(
+        target_pdf=target_path,
+        sample_path=sample_path,
+        doc_type=doc_type,
+        max_examples=max(1, args.max_examples),
+        temperature=temperature,
+        max_toks=max_toks,
     )
-    parts = [Part.from_text(instructions)]
-
-    for i, ex in enumerate(examples, 1):
-        parts.append(Part.from_text(f"Example {i}:"))
-        for img in ex["images"]:
-            parts.append(dataurl_to_part(img["image_url"]["url"]))
-        parts.append(Part.from_text(json.dumps(ex["expected_json"], indent=2)))
-
-    parts.append(Part.from_text("Now extract structured JSON for this new document:"))
-    images, _ = pdf_to_base64_images(str(target_path), output_json=False)
-    for img in images:
-        parts.append(dataurl_to_part(img["image_url"]["url"]))
-    parts.append(Part.from_text("Return ONLY valid JSON — no explanation or extra text."))
-
-    resp = model.generate_content(
-        parts,
-        generation_config=GenerationConfig(
-            temperature=temperature,
-            max_output_tokens=max_toks,
-            response_mime_type="application/json",
-        ),
-    )
-
-    parsed = safe_json_parse(resp.text or "{}")
-    parsed["document_type"] = doc_type
-    parsed["origin_file"] = str(target_path)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = output_dir / f"{doc_type}_output_{timestamp}.json"

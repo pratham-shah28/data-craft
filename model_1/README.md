@@ -10,6 +10,16 @@ This component implements an automated document-to-JSON extraction system using 
 The code is organized so that it can be run directly via Python or orchestrated via Airflow.
 
 ----------------------------------------------------------------------
+## Quick start (Streamlit + Docker)
+----------------------------------------------------------------------
+
+From the repo root:
+
+- Build and run the UI: `docker compose -f model_1/v2_vertex/docker-compose.streamlit.yml up --build`
+- Open http://localhost:8501, upload a PDF, and enter the document type. Few-shot examples default to `data-pipeline/data/unstructured/invoices` (override with `SAMPLE_PATH`).
+- To use the same image for CLI inference instead, set `APP_MODE=inference` or override the command with `python inference.py ...`.
+
+----------------------------------------------------------------------
 ## Folder structure
 ----------------------------------------------------------------------
 

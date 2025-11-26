@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  vertex-streamlit:
+    build:
+      context: ../..
+      dockerfile: model_1/v2_vertex/Dockerfile
+    image: vertex-streamlit:latest
+    container_name: vertex-streamlit
+    environment:
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-mlops-472423}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS:-/app/model_1/v2_vertex/key.json}
+      - VERTEX_LOCATION=${VERTEX_LOCATION:-us-central1}
+      - VERTEX_MODEL=${VERTEX_MODEL:-gemini-2.5-flash}
+      - VERTEX_TEMPERATURE=${VERTEX_TEMPERATURE:-0.0}
+      - VERTEX_MAX_TOKENS=${VERTEX_MAX_TOKENS:-2048}
+      - VERTEX_EXAMPLE_COUNT=${VERTEX_EXAMPLE_COUNT:-3}
+      - DOC_TYPE=${DOC_TYPE:-invoices}
+      - SAMPLE_PATH=${SAMPLE_PATH:-/app/data-pipeline/data/unstructured/invoices}
+      - APP_MODE=streamlit
+    working_dir: /app/model_1/v2_vertex
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../..:/app
+    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
