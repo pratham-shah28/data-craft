@@ -148,7 +148,7 @@ class DataValidator:
         
         try:
             # Load data
-            data_path = Path(self.config['data']['raw_path']) / f"{self.dataset_name}.csv"
+            data_path = f'/opt/airflow/data-pipeline/data/raw/{self.dataset_name}.csv'
             encoding, confidence = detect_encoding(data_path)
             df = pd.read_csv(data_path, encoding=encoding)
             self.logger.info(f"Loaded data: {df.shape}")

@@ -7,7 +7,7 @@ data:
   
 gcp:
   bucket_name: "model-datacraft"
-  project_id: "datacraft-478300"
+  project_id: "datacraft-data-pipeline"
   credentials_path: "gcp/service-account.json"
   cleaned_data_path: "cleaned_data/"
 

@@ -46,3 +46,6 @@ requests==2.31.0
 # TESTING
 # ========================================
 pytest==7.4.0
+
+streamlit
+plotly

@@ -31,7 +31,7 @@ services:
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
       - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
       - AIRFLOW_UID=50000
-      - GCP_PROJECT_ID=datacraft-478300
+      - GCP_PROJECT_ID=datacraft-data-pipeline
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json 
     user: "50000:0"
     command: >
@@ -67,7 +67,7 @@ services:
       - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
       - PYTHONPATH=/opt/airflow:/opt/airflow/data-pipeline/scripts:/opt/airflow/model-training/scripts:/opt/airflow/shared
       - AIRFLOW_UID=50000
-      - GCP_PROJECT_ID=datacraft-478300
+      - GCP_PROJECT_ID=datacraft-data-pipeline
       - GOOGLE_APPLICATION_CREDENTIALS=/opt/airflow/gcp/service-account.json 
     user: "50000:0"
     command: airflow scheduler
