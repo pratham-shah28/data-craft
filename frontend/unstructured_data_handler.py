@@ -16,12 +16,12 @@ from vertexai.generative_models import GenerativeModel, Part, GenerationConfig
 import logging
 
 # Add paths
-
+sys.path.insert(0, str(Path(__file__).parent.parent / 'data-pipeline' / 'scripts'))
+from pdf_2_image import pdf_to_base64_images
 
 # Add model_1 path
 sys.path.insert(0, str(Path(__file__).parent.parent / 'model_1' / 'v2_vertex'))
 from example_provider import build_examples_manifest
-from pdf_2_image import pdf_to_base64_images
 
 
 class UnstructuredDataHandler:
@@ -81,11 +81,15 @@ class UnstructuredDataHandler:
         self.logger.info(f"Extracting data from: {pdf_path}")
         
         # Build few-shot examples
+        examples = []
         if examples_dir and os.path.exists(examples_dir):
-            examples = build_examples_manifest(manifest_path=examples_dir)
-            examples = examples[:3]  # Use 3 examples
-        else:
-            examples = []
+            try:
+                examples = build_examples_manifest(manifest_path=examples_dir)
+                examples = examples[:3]  # Use 3 examples
+                self.logger.info(f"Loaded {len(examples)} examples from {examples_dir}")
+            except Exception as e:
+                self.logger.warning(f"Could not load examples: {str(e)}")
+                examples = []
         
         # Build prompt parts
         parts = [Part.from_text(
@@ -97,16 +101,45 @@ class UnstructuredDataHandler:
         # Add examples
         for i, ex in enumerate(examples, 1):
             parts.append(Part.from_text(f"Example {i}:"))
-            for img in ex["images"]:
-                parts.append(self.dataurl_to_part(img["image_url"]["url"]))
-            parts.append(Part.from_text(json.dumps(ex["expected_json"], indent=2)))
+            
+            # Handle images - check if it's the correct format
+            if 'images' in ex and isinstance(ex['images'], list):
+                for img in ex['images']:
+                    # Check if img is dict with correct structure
+                    if isinstance(img, dict):
+                        if 'image_url' in img and isinstance(img['image_url'], dict) and 'url' in img['image_url']:
+                            # Correct format: {"type": "image_url", "image_url": {"url": "data:..."}}
+                            parts.append(self.dataurl_to_part(img['image_url']['url']))
+                        elif 'url' in img:
+                            # Alternative format: {"url": "data:..."}
+                            parts.append(self.dataurl_to_part(img['url']))
+                    elif isinstance(img, str):
+                        # Direct string format
+                        parts.append(self.dataurl_to_part(img))
+            
+            # Add expected JSON
+            if 'expected_json' in ex:
+                parts.append(Part.from_text(json.dumps(ex['expected_json'], indent=2)))
         
         # Add target PDF
         parts.append(Part.from_text("Now extract structured JSON for this new document:"))
-        images, meta = pdf_to_base64_images(pdf_path, output_json=False)
         
-        for img in images:
-            parts.append(self.dataurl_to_part(img["image_url"]["url"]))
+        try:
+            images, meta = pdf_to_base64_images(pdf_path, output_json=False)
+        except Exception as e:
+            self.logger.error(f"Failed to convert PDF to images: {str(e)}")
+            raise
+        
+        # Add target document images
+        if isinstance(images, list):
+            for img in images:
+                if isinstance(img, dict):
+                    if 'image_url' in img and isinstance(img['image_url'], dict) and 'url' in img['image_url']:
+                        parts.append(self.dataurl_to_part(img['image_url']['url']))
+                    elif 'url' in img:
+                        parts.append(self.dataurl_to_part(img['url']))
+                elif isinstance(img, str):
+                    parts.append(self.dataurl_to_part(img))
         
         parts.append(Part.from_text("Return ONLY valid JSON — no explanation or extra text."))
         
@@ -128,7 +161,7 @@ class UnstructuredDataHandler:
                 'document_type': doc_type,
                 'origin_file': os.path.basename(pdf_path),
                 'extracted_at': datetime.now().isoformat(),
-                'page_count': meta.get('page_count', len(images))
+                'page_count': meta.get('page_count', len(images)) if isinstance(meta, dict) else len(images)
             }
             
             self.logger.info(f"Successfully extracted data from {pdf_path}")
@@ -268,11 +301,11 @@ class UnstructuredDataHandler:
             for col in df.columns
         ]
         
-        # Configure load job
+        # Configure load job - Use CSV format for dataframe
         job_config = bigquery.LoadJobConfig(
             write_disposition="WRITE_APPEND",  # Append to existing table
             autodetect=True,  # Auto-detect schema
-            source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+            source_format=bigquery.SourceFormat.CSV  # ✅ Use CSV format
         )
         
         # Load to BigQuery
