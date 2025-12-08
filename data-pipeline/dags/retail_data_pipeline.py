@@ -1,20 +1,24 @@
-from airflow import DAG
-from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
-from airflow.utils.dates import days_ago
+
 from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 
 # ✅ UPDATED: Use unified Docker paths
 sys.path.insert(0, '/opt/airflow/data-pipeline/scripts')
+
 sys.path.insert(0, '/opt/airflow/shared')
 
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
+from airflow.utils.dates import days_ago
 from data_acquisition import acquire_data
 from data_validation import DataValidator
 from data_cleaning import DataCleaner
 from bias_detection import BiasDetector
 from upload_to_gcp import upload_to_gcs
+from model_data_loader import ModelDataLoader
+
 from utils import load_config, setup_logging
 
 # Load configuration
@@ -220,6 +224,53 @@ def run_gcp_upload(**context):
         logger.error(f"GCP upload failed: {str(e)}")
         raise
 
+def run_bigquery_upload(**context):
+    """Task 6: Upload processed dataset to BigQuery as {dataset_name}_processed"""
+    logger = setup_logging("airflow_bigquery")
+
+    dataset_name = context['ti'].xcom_pull(key='dataset_name', task_ids='acquire_data')
+
+    if not dataset_name:
+        raise ValueError("Dataset name not found from acquisition task")
+
+    PROJECT_ID = config["gcp"]["project_id"]
+    BUCKET_NAME = config["gcp"]["bucket_name"]
+    DATASET_ID = config["gcp"].get("bigquery_dataset", "datacraft_ml")
+
+    logger.info(f"Starting BigQuery upload for dataset: {dataset_name}")
+
+    try:
+        loader = ModelDataLoader(
+            bucket_name=BUCKET_NAME,
+            project_id=PROJECT_ID,
+            dataset_id=DATASET_ID
+        )
+
+        # ✅ Load from GCS (validated = final clean data)
+        df = loader.load_processed_data_from_gcs(dataset_name, stage="validated")
+
+        # ✅ Upload as {dataset_name}_processed
+        table_id = loader.load_to_bigquery(
+            df=df,
+            dataset_name=dataset_name,
+            table_suffix="_processed"
+        )
+
+        logger.info(f"✓ BigQuery upload complete: {table_id}")
+
+        return {
+            "status": "success",
+            "dataset_name": dataset_name,
+            "table_id": table_id,
+            "rows": len(df),
+            "columns": len(df.columns)
+        }
+
+    except Exception as e:
+        logger.error(f"BigQuery upload failed: {str(e)}")
+        raise
+
+
 def generate_summary_report(**context):
     """Task 6: Generate pipeline summary report"""
     logger = setup_logging("airflow_summary")
@@ -365,6 +416,13 @@ with DAG(
         python_callable=run_gcp_upload,
         provide_context=True,
     )
+
+    bigquery_upload_task = PythonOperator(
+    task_id='upload_to_bigquery',
+    python_callable=run_bigquery_upload,
+    provide_context=True,
+    )
+
     
     # Success email
     success_email_task = PythonOperator(
@@ -399,9 +457,10 @@ with DAG(
     
     # Then proceed with parallel DVC and GCP paths
     check_and_alert_task >> [dvc_add_task, gcp_upload_task]
+    gcp_upload_task >> bigquery_upload_task
     
     # DVC path
     dvc_add_task >> dvc_push_task >> git_commit_task
     
     # Both paths converge at summary
-    [git_commit_task, gcp_upload_task] >> summary_task >> success_email_task
+    [git_commit_task, bigquery_upload_task] >> summary_task >> success_email_task

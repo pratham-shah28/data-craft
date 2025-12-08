@@ -6,7 +6,7 @@ data:
   supported_formats: ["csv", "xlsx", "json", "parquet", "txt"]
   
 gcp:
-  bucket_name: "model-datacraft"
+  bucket_name: "isha-retail-data"
   project_id: "datacraft-data-pipeline"
   credentials_path: "gcp/service-account.json"
   cleaned_data_path: "cleaned_data/"
