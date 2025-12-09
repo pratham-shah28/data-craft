@@ -606,7 +606,7 @@ def render_unstructured_overview():
 
 
 def render_structured_overview():
-    """Render structured dataset overview (existing code)"""
+    """Render structured dataset overview (with cache awareness)"""
     dataset_name = st.session_state.selected_dataset
     
     # Generate description if needed
@@ -615,13 +615,20 @@ def render_structured_overview():
             description_result = st.session_state.dataset_describer.generate_description(dataset_name)
             st.session_state.dataset_description = description_result
     
-    # Display (same as before)
+    # Display
     if st.session_state.dataset_description and st.session_state.dataset_description.get('status') == 'success':
         desc = st.session_state.dataset_description
         
+        # ✅ Show cache status
+        cache_badge = ""
+        if desc.get('from_cache'):
+            cache_badge = '<span style="background: #28a745; color: white; padding: 0.3rem 0.8rem; border-radius: 1rem; font-size: 0.85rem; margin-left: 1rem;">✓ Cached</span>'
+        else:
+            cache_badge = '<span style="background: #17a2b8; color: white; padding: 0.3rem 0.8rem; border-radius: 1rem; font-size: 0.85rem; margin-left: 1rem;">🆕 Fresh</span>'
+        
         st.markdown(f"""
         <div class="dataset-header">
-            <div class="dataset-title">📊 {dataset_name.title()} Dataset</div>
+            <div class="dataset-title">📊 {dataset_name.title()} Dataset {cache_badge}</div>
             <div class="dataset-overview">{desc['description']}</div>
         </div>
         """, unsafe_allow_html=True)
@@ -690,13 +697,19 @@ def render_structured_metrics_and_insights(desc):
     
     # Action buttons
     st.markdown("<br>", unsafe_allow_html=True)
-    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 2])
-    
+    col_btn1, col_btn2, col_btn3 = st.columns([1.5, 1, 2.5])
+
     with col_btn1:
         if st.button("🔄 Regenerate Description", use_container_width=True):
-            st.session_state.dataset_description = None
+            with st.spinner("Regenerating..."):
+                # Force regenerate by bypassing cache
+                description_result = st.session_state.dataset_describer.generate_description(
+                    st.session_state.selected_dataset, 
+                    force_regenerate=True
+                )
+                st.session_state.dataset_description = description_result
             st.rerun()
-    
+
     with col_btn2:
         if st.button("❓ Start Querying", type="primary", use_container_width=True):
             st.session_state.show_description = False
@@ -751,9 +764,51 @@ def render_query_interface():
 
 
 def display_query_results():
-    """Display query results (same for both data types)"""
+    """Display query results - handles success, info messages, and errors"""
     result = st.session_state.current_result
     
+    # ✅ HANDLE INFORMATIONAL MESSAGES (simplified - just show explanation)
+    if result.get('status') == 'info':
+        message = result.get('message', 'No message provided')
+        
+        # Display in a nice gradient box
+        st.markdown(f"""
+        <div style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        ">
+            <h3 style="margin-top: 0;">🤖 AI Assistant Says:</h3>
+            <p style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 0;">
+                {message}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Show example data questions
+        st.markdown("### 💡 Try asking questions like:")
+        
+        # Get sample queries from session state (generated in sidebar)
+        if st.session_state.sample_queries:
+            for idx, query_data in enumerate(st.session_state.sample_queries):
+                if st.button(
+                    f"💬 {query_data['query']}", 
+                    key=f"info_sample_{idx}", 
+                    use_container_width=True
+                ):
+                    st.session_state.example_query = query_data['query']
+                    st.session_state.show_description = False
+                    st.rerun()
+        else:
+            # Fallback if no sample queries are available yet
+            st.info("💡 Check the sidebar for sample queries you can try!")
+        
+        return
+    
+    # ✅ HANDLE SUCCESSFUL QUERIES (rest of your existing code)
     if result.get('status') == 'success':
         st.success("✅ Query executed successfully!")
         
@@ -791,20 +846,80 @@ def display_query_results():
                     file_name=f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                     mime="text/csv"
                 )
+            else:
+                st.info("No data available")
         
         with tab3:
             st.code(result.get('sql_query', ''), language='sql')
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("Time", f"{result.get('execution_time', 0):.2f}s")
+                st.metric("Execution Time", f"{result.get('execution_time', 0):.2f}s")
             with col2:
-                st.metric("Rows", result.get('result_count', 0))
+                st.metric("Rows Returned", result.get('result_count', 0))
             with col3:
                 status = "✅" if result.get('results_valid') else "⚠️"
-                st.metric("Valid", status)
+                st.metric("Status", status)
+        
+        return
     
-    elif result.get('status') == 'error':
+    # ✅ HANDLE ERRORS
+    if result.get('status') == 'error':
         st.error(f"❌ {result.get('error', 'Unknown error')}")
+        
+        # Show helpful suggestions based on error type
+        error_msg = str(result.get('error', '')).lower()
+        
+        st.markdown("### 💡 Troubleshooting Tips:")
+        
+        if 'sum' in error_msg and 'string' in error_msg:
+            st.warning("""
+            **Data Type Issue Detected:**
+            - Some numeric columns are stored as text (STRING)
+            - Re-run the data pipeline to convert them to proper numeric types
+            - Or try asking questions that don't require calculations
+            """)
+        
+        elif 'date' in error_msg or 'parse' in error_msg:
+            st.warning("""
+            **Date Format Issue Detected:**
+            - Your date columns may have inconsistent formats
+            - Try asking questions without date comparisons
+            - Or specify exact date values in your question
+            """)
+        
+        elif 'syntax' in error_msg:
+            st.warning("""
+            **SQL Syntax Error:**
+            - Try rephrasing your question
+            - Be more specific about what you want to analyze
+            - Avoid ambiguous terms
+            """)
+        
+        else:
+            st.markdown("""
+            **General Tips:**
+            - Make sure your question is about the data
+            - Try being more specific about what you want to analyze
+            - Check that column names exist in the dataset
+            - Use the sample queries in the sidebar for inspiration
+            """)
+        
+        # Show sample queries as alternatives
+        st.markdown("### 🔄 Try these instead:")
+        
+        dataset_name = st.session_state.selected_dataset
+        safe_examples = [
+            f"Show me the first 10 rows of {dataset_name}",
+            f"What columns are in {dataset_name}?",
+            f"Count the total records in {dataset_name}",
+        ]
+        
+        for idx, example in enumerate(safe_examples):
+            if st.button(f"📊 {example}", key=f"safe_example_{idx}", use_container_width=True):
+                st.session_state.example_query = example
+                st.rerun()
+        
+        return
 
 
 # Sidebar
