@@ -14,10 +14,16 @@ from google.cloud import bigquery
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part, GenerationConfig
 import logging
+import re
 
 # Add paths
 sys.path.insert(0, str(Path(__file__).parent.parent / 'data-pipeline' / 'scripts'))
 from pdf_2_image import pdf_to_base64_images
+
+# Add model-training scripts path for metadata + feature engineering
+sys.path.insert(0, str(Path(__file__).parent.parent / 'model-training' / 'scripts'))
+from feature_engineering import FeatureEngineer
+from metadata_manager import MetadataManager
 
 # Add model_1 path
 sys.path.insert(0, str(Path(__file__).parent.parent / 'model_1' / 'v2_vertex'))
@@ -39,11 +45,31 @@ class UnstructuredDataHandler:
         vertexai.init(project=project_id, location=region)
         
         self.logger = logging.getLogger(__name__)
+        self.metadata_manager = MetadataManager(project_id, dataset_id)
         
         # Model configuration
         self.model_name = "gemini-2.0-flash-exp"
         self.model = GenerativeModel(self.model_name)
+
+    def _normalize_doc_type(self, doc_type: str) -> str:
+        """Convert arbitrary doc type strings to safe dataset identifiers"""
+        cleaned = (doc_type or "documents").strip().lower()
+        cleaned = cleaned.replace(" ", "_").replace("-", "_")
+        cleaned = re.sub(r"[^\w]", "", cleaned)
+        if cleaned and cleaned[0].isdigit():
+            cleaned = f"_{cleaned}"
+        return cleaned or "documents"
     
+    def _store_metadata(self, dataset_name: str, df: pd.DataFrame):
+        """
+        Generate and persist metadata for the processed unstructured dataset
+        so downstream querying uses the same MetadataManager path as structured data.
+        """
+        engineer = FeatureEngineer(df, {}, dataset_name)
+        metadata = engineer.generate_metadata()
+        llm_context = engineer.create_llm_context()
+        self.metadata_manager.store_metadata(dataset_name, metadata, llm_context)
+
     def dataurl_to_part(self, url: str) -> Part:
         """Convert base64 data URL to Gemini Part"""
         raw = base64.b64decode(url.split(",", 1)[1])
@@ -154,9 +180,18 @@ class UnstructuredDataHandler:
                 )
             )
             
+            
             extracted_data = self.safe_json_parse(response.text or "{}")
             
+            if isinstance(extracted_data, list):
+                if extracted_data and isinstance(extracted_data[0], dict):
+                    extracted_data = extracted_data[0]
+                else:
+                    # fallback if list is empty or not dicts
+                    extracted_data = {}
+            
             # Add metadata
+            print(extracted_data.keys())
             extracted_data['_metadata'] = {
                 'document_type': doc_type,
                 'origin_file': os.path.basename(pdf_path),
@@ -269,7 +304,8 @@ class UnstructuredDataHandler:
             raise ValueError("No data to store")
         
         # Create table name
-        table_name = f"{doc_type.lower().replace(' ', '_').replace('-', '_')}{table_suffix}"
+        dataset_name = self._normalize_doc_type(doc_type)
+        table_name = f"{dataset_name}{table_suffix}"
         table_id = f"{self.project_id}.{self.dataset_id}.{table_name}"
         
         self.logger.info(f"Storing data in BigQuery table: {table_id}")
@@ -296,16 +332,31 @@ class UnstructuredDataHandler:
         df = pd.DataFrame(flattened_data)
         
         # Normalize column names
-        df.columns = [
-            col.replace(' ', '_').replace('-', '_').lower()
-            for col in df.columns
-        ]
+
+
+        def sanitize_field_name(name: str) -> str:
+            name = name.strip().lower()
+            name = name.replace(" ", "_")
+            # remove everything that is NOT a letter, digit, or underscore
+            name = re.sub(r"[^\w]", "", name)   # \w = [A-Za-z0-9_]
+            # BigQuery: cannot start with a digit
+            if name and name[0].isdigit():
+                name = "_" + name
+            return name or "field"
+
+# For your pandas DataFrame:
+        df.columns = [sanitize_field_name(c) for c in df.columns]
+        # df.columns = [
+        #             col.replace(' ', '_').replace('-', '_').lower()
+        #             for col in df.columns
+        #         ]
         
         # Configure load job - Use CSV format for dataframe
         job_config = bigquery.LoadJobConfig(
-            write_disposition="WRITE_APPEND",  # Append to existing table
+            write_disposition="WRITE_TRUNCATE",  # Append to existing table
             autodetect=True,  # Auto-detect schema
-            source_format=bigquery.SourceFormat.CSV  # ✅ Use CSV format
+            source_format=bigquery.SourceFormat.CSV,
+            column_name_character_map="V2"  
         )
         
         # Load to BigQuery
@@ -318,6 +369,9 @@ class UnstructuredDataHandler:
             job.result()  # Wait for completion
             
             self.logger.info(f"✓ Loaded {len(df)} rows to {table_id}")
+
+            # Generate and store dataset metadata for querying
+            self._store_metadata(dataset_name, df)
             
             return table_id
             
@@ -336,7 +390,7 @@ class UnstructuredDataHandler:
         Returns:
             Table information
         """
-        table_name = f"{doc_type.lower().replace(' ', '_').replace('-', '_')}{table_suffix}"
+        table_name = f"{self._normalize_doc_type(doc_type)}{table_suffix}"
         table_id = f"{self.project_id}.{self.dataset_id}.{table_name}"
         
         try:
