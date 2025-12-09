@@ -355,8 +355,7 @@ class UnstructuredDataHandler:
         job_config = bigquery.LoadJobConfig(
             write_disposition="WRITE_TRUNCATE",  # Append to existing table
             autodetect=True,  # Auto-detect schema
-            source_format=bigquery.SourceFormat.CSV,
-            column_name_character_map="V2"  
+            source_format=bigquery.SourceFormat.CSV
         )
         
         # Load to BigQuery
