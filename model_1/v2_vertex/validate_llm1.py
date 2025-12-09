@@ -6,7 +6,7 @@ from pathlib import Path
 
 from Levenshtein import ratio as similarity
 
-
+# This script validates LLM extraction outputs against ground truth data.
 def find_ground_truth_root(start: Path) -> Path:
     """Locate data_pipeline/data-pipeline folder starting from current file."""
     for parent in [start] + list(start.parents):
